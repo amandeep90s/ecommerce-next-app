@@ -15,19 +15,9 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import {
-  Field,
-  FieldDescription,
-  FieldError,
-  FieldGroup,
-  FieldLabel,
-} from '@/components/ui/field';
+import { Field, FieldDescription, FieldError, FieldGroup, FieldLabel } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
-import {
-  InputGroup,
-  InputGroupAddon,
-  InputGroupInput,
-} from '@/components/ui/input-group';
+import { InputGroup, InputGroupAddon, InputGroupInput } from '@/components/ui/input-group';
 import { Spinner } from '@/components/ui/spinner';
 
 import { SignUpFormData, signUpSchema } from '../validator';
@@ -56,9 +46,7 @@ export default function SignUpForm() {
     <Card className="w-full max-w-sm">
       <CardHeader>
         <CardTitle className="text-xl">Sign Up</CardTitle>
-        <CardDescription>
-          Create a new account to access our services.
-        </CardDescription>
+        <CardDescription>Create a new account to access our services.</CardDescription>
       </CardHeader>
       <CardContent>
         <form id="sign-up-form" onSubmit={form.handleSubmit(onSubmit)}>
@@ -78,9 +66,7 @@ export default function SignUpForm() {
                     autoComplete="off"
                     disabled={form.formState.isSubmitting}
                   />
-                  {fieldState.invalid && (
-                    <FieldError errors={[fieldState.error]} />
-                  )}
+                  {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
                 </Field>
               )}
             />
@@ -100,9 +86,7 @@ export default function SignUpForm() {
                     autoComplete="off"
                     disabled={form.formState.isSubmitting}
                   />
-                  {fieldState.invalid && (
-                    <FieldError errors={[fieldState.error]} />
-                  )}
+                  {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
                 </Field>
               )}
             />
@@ -128,22 +112,14 @@ export default function SignUpForm() {
                         variant="ghost"
                         type="button"
                         onClick={() => setShowPassword((prev) => !prev)}
-                        aria-label={
-                          showPassword ? 'Hide password' : 'Show password'
-                        }
+                        aria-label={showPassword ? 'Hide password' : 'Show password'}
                         className="text-muted-foreground hover:text-foreground cursor-pointer hover:bg-transparent focus:outline-none"
                       >
-                        {showPassword ? (
-                          <EyeIcon size={16} />
-                        ) : (
-                          <EyeOffIcon size={16} />
-                        )}
+                        {showPassword ? <EyeIcon size={16} /> : <EyeOffIcon size={16} />}
                       </Button>
                     </InputGroupAddon>
                   </InputGroup>
-                  {fieldState.invalid && (
-                    <FieldError errors={[fieldState.error]} />
-                  )}
+                  {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
                   <FieldDescription className="text-xs">
                     Use uppercase, lowercase, number, and special characters.
                   </FieldDescription>
@@ -156,9 +132,7 @@ export default function SignUpForm() {
               control={form.control}
               render={({ field, fieldState }) => (
                 <Field data-invalid={fieldState.invalid}>
-                  <FieldLabel htmlFor="confirmPassword">
-                    Confirm Password
-                  </FieldLabel>
+                  <FieldLabel htmlFor="confirmPassword">Confirm Password</FieldLabel>
                   <InputGroup>
                     <InputGroupInput
                       {...field}
@@ -174,24 +148,14 @@ export default function SignUpForm() {
                         variant="ghost"
                         type="button"
                         onClick={() => setShowConfirmPassword((prev) => !prev)}
-                        aria-label={
-                          showConfirmPassword
-                            ? 'Hide password'
-                            : 'Show password'
-                        }
+                        aria-label={showConfirmPassword ? 'Hide password' : 'Show password'}
                         className="text-muted-foreground hover:text-foreground cursor-pointer hover:bg-transparent focus:outline-none"
                       >
-                        {showConfirmPassword ? (
-                          <EyeIcon size={16} />
-                        ) : (
-                          <EyeOffIcon size={16} />
-                        )}
+                        {showConfirmPassword ? <EyeIcon size={16} /> : <EyeOffIcon size={16} />}
                       </Button>
                     </InputGroupAddon>
                   </InputGroup>
-                  {fieldState.invalid && (
-                    <FieldError errors={[fieldState.error]} />
-                  )}
+                  {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
                 </Field>
               )}
             />
@@ -200,14 +164,8 @@ export default function SignUpForm() {
       </CardContent>
       <CardFooter className="flex-col gap-4">
         <Field orientation="responsive">
-          <Button
-            type="submit"
-            form="sign-up-form"
-            disabled={form.formState.isSubmitting}
-          >
-            {form.formState.isSubmitting && (
-              <Spinner data-icon="inline-start" />
-            )}
+          <Button type="submit" form="sign-up-form" disabled={form.formState.isSubmitting}>
+            {form.formState.isSubmitting && <Spinner data-icon="inline-start" />}
             {form.formState.isSubmitting ? 'Signing Up...' : 'Sign Up'}
           </Button>
         </Field>

@@ -33,9 +33,7 @@ export const signUpSchema = z
       .regex(/[^A-Za-z0-9]/, {
         message: 'Password must contain at least one special character',
       }),
-    confirmPassword: z
-      .string()
-      .min(1, { message: 'Confirm Password is required' }),
+    confirmPassword: z.string().min(1, { message: 'Confirm Password is required' }),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: 'Passwords do not match',

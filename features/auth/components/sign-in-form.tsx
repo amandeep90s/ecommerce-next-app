@@ -15,18 +15,9 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import {
-  Field,
-  FieldError,
-  FieldGroup,
-  FieldLabel,
-} from '@/components/ui/field';
+import { Field, FieldError, FieldGroup, FieldLabel } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
-import {
-  InputGroup,
-  InputGroupAddon,
-  InputGroupInput,
-} from '@/components/ui/input-group';
+import { InputGroup, InputGroupAddon, InputGroupInput } from '@/components/ui/input-group';
 import { Spinner } from '@/components/ui/spinner';
 
 import { SignInFormData, signInSchema } from '../validator';
@@ -52,9 +43,7 @@ export default function SignInForm() {
     <Card className="w-full max-w-sm">
       <CardHeader>
         <CardTitle className="text-xl">Sign In</CardTitle>
-        <CardDescription>
-          Enter your credentials to access your account.
-        </CardDescription>
+        <CardDescription>Enter your credentials to access your account.</CardDescription>
       </CardHeader>
       <CardContent>
         <form id="sign-in-form" onSubmit={form.handleSubmit(onSubmit)}>
@@ -74,9 +63,7 @@ export default function SignInForm() {
                     autoComplete="off"
                     disabled={form.formState.isSubmitting}
                   />
-                  {fieldState.invalid && (
-                    <FieldError errors={[fieldState.error]} />
-                  )}
+                  {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
                 </Field>
               )}
             />
@@ -102,32 +89,21 @@ export default function SignInForm() {
                         variant="ghost"
                         type="button"
                         onClick={() => setShowPassword((prev) => !prev)}
-                        aria-label={
-                          showPassword ? 'Hide password' : 'Show password'
-                        }
+                        aria-label={showPassword ? 'Hide password' : 'Show password'}
                         className="text-muted-foreground hover:text-foreground cursor-pointer hover:bg-transparent focus:outline-none"
                       >
-                        {showPassword ? (
-                          <EyeIcon size={16} />
-                        ) : (
-                          <EyeOffIcon size={16} />
-                        )}
+                        {showPassword ? <EyeIcon size={16} /> : <EyeOffIcon size={16} />}
                       </Button>
                     </InputGroupAddon>
                   </InputGroup>
-                  {fieldState.invalid && (
-                    <FieldError errors={[fieldState.error]} />
-                  )}
+                  {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
                 </Field>
               )}
             />
 
             <div className="text-right">
               <p className="text-muted-foreground text-sm">
-                <Link
-                  href="/forgot-password"
-                  className="text-primary hover:underline"
-                >
+                <Link href="/forgot-password" className="text-primary hover:underline">
                   Forgot Password?
                 </Link>
               </p>
@@ -137,14 +113,8 @@ export default function SignInForm() {
       </CardContent>
       <CardFooter className="flex-col gap-4">
         <Field orientation="responsive">
-          <Button
-            type="submit"
-            form="sign-in-form"
-            disabled={form.formState.isSubmitting}
-          >
-            {form.formState.isSubmitting && (
-              <Spinner data-icon="inline-start" />
-            )}
+          <Button type="submit" form="sign-in-form" disabled={form.formState.isSubmitting}>
+            {form.formState.isSubmitting && <Spinner data-icon="inline-start" />}
             {form.formState.isSubmitting ? 'Signing In...' : 'Sign In'}
           </Button>
         </Field>

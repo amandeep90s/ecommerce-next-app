@@ -18,8 +18,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: 'Full Stack Ecommerce App',
-  description:
-    'A full stack ecommerce application built with Next.js, TypeScript, Tailwind CSS',
+  description: 'A full stack ecommerce application built with Next.js, TypeScript, Tailwind CSS',
 };
 
 export default function RootLayout({
