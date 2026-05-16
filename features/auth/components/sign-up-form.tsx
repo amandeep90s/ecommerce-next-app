@@ -5,6 +5,7 @@ import { EyeIcon, EyeOffIcon } from 'lucide-react';
 import Link from 'next/link';
 import { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
+import { toast } from 'sonner';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -19,12 +20,15 @@ import { Field, FieldDescription, FieldError, FieldGroup, FieldLabel } from '@/c
 import { Input } from '@/components/ui/input';
 import { InputGroup, InputGroupAddon, InputGroupInput } from '@/components/ui/input-group';
 import { Spinner } from '@/components/ui/spinner';
-
-import { SignUpFormData, signUpSchema } from '../validator';
+import { useSignUp } from '@/features/auth/hooks/use-sign-up';
+import { SignUpFormData, signUpSchema } from '@/features/auth/validator';
+import { handleFormError } from '@/lib/form-error';
 
 export default function SignUpForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+  const { mutate: signUp, isPending } = useSignUp();
 
   const form = useForm<SignUpFormData>({
     resolver: zodResolver(signUpSchema),
@@ -37,9 +41,16 @@ export default function SignUpForm() {
     mode: 'onSubmit',
   });
 
-  const onSubmit = async (data: SignUpFormData) => {
-    console.log(data);
-    form.reset();
+  const onSubmit = (formData: SignUpFormData) => {
+    signUp(formData, {
+      onSuccess: () => {
+        form.reset();
+        toast.success(
+          'Account created successfully! Please check your email to verify your account.',
+        );
+      },
+      onError: (error) => handleFormError(error, form),
+    });
   };
 
   return (
@@ -64,7 +75,7 @@ export default function SignUpForm() {
                     aria-invalid={fieldState.invalid}
                     placeholder="Enter your name"
                     autoComplete="off"
-                    disabled={form.formState.isSubmitting}
+                    disabled={isPending}
                   />
                   {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
                 </Field>
@@ -84,7 +95,7 @@ export default function SignUpForm() {
                     aria-invalid={fieldState.invalid}
                     placeholder="Enter your email address"
                     autoComplete="off"
-                    disabled={form.formState.isSubmitting}
+                    disabled={isPending}
                   />
                   {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
                 </Field>
@@ -105,7 +116,7 @@ export default function SignUpForm() {
                       aria-invalid={fieldState.invalid}
                       placeholder="Enter your password"
                       autoComplete="off"
-                      disabled={form.formState.isSubmitting}
+                      disabled={isPending}
                     />
                     <InputGroupAddon align="inline-end">
                       <Button
@@ -141,7 +152,7 @@ export default function SignUpForm() {
                       aria-invalid={fieldState.invalid}
                       placeholder="Confirm your password"
                       autoComplete="off"
-                      disabled={form.formState.isSubmitting}
+                      disabled={isPending}
                     />
                     <InputGroupAddon align="inline-end">
                       <Button
@@ -164,9 +175,9 @@ export default function SignUpForm() {
       </CardContent>
       <CardFooter className="flex-col gap-4">
         <Field orientation="responsive">
-          <Button type="submit" form="sign-up-form" disabled={form.formState.isSubmitting}>
-            {form.formState.isSubmitting && <Spinner data-icon="inline-start" />}
-            {form.formState.isSubmitting ? 'Signing Up...' : 'Sign Up'}
+          <Button type="submit" form="sign-up-form" disabled={isPending}>
+            {isPending && <Spinner data-icon="inline-start" />}
+            {isPending ? 'Signing Up...' : 'Sign Up'}
           </Button>
         </Field>
 
