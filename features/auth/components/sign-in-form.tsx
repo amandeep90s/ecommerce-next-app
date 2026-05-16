@@ -3,7 +3,6 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { EyeIcon, EyeOffIcon } from 'lucide-react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { toast } from 'sonner';
@@ -21,15 +20,15 @@ import { Field, FieldError, FieldGroup, FieldLabel } from '@/components/ui/field
 import { Input } from '@/components/ui/input';
 import { InputGroup, InputGroupAddon, InputGroupInput } from '@/components/ui/input-group';
 import { Spinner } from '@/components/ui/spinner';
+import OtpVerificationForm from '@/features/auth/components/otp-verification-form';
 import { useSignIn } from '@/features/auth/hooks/use-sign-in';
+import { SignInFormData, signInSchema } from '@/features/auth/validator';
 import { handleFormError } from '@/lib/form-error';
 
-import { SignInFormData, signInSchema } from '../validator';
-
 export default function SignInForm() {
-  const router = useRouter();
   const { mutate: signIn, isPending } = useSignIn();
   const [showPassword, setShowPassword] = useState(false);
+  const [otpSentEmail, setOtpSentEmail] = useState<string | null>(null);
 
   const form = useForm<SignInFormData>({
     resolver: zodResolver(signInSchema),
@@ -44,11 +43,15 @@ export default function SignInForm() {
     signIn(data, {
       onSuccess: (res) => {
         toast.success(res.message);
-        router.push(`/otp-verification?email=${encodeURIComponent(data.email)}`);
+        setOtpSentEmail(data.email);
       },
       onError: (err) => handleFormError(err, form),
     });
   };
+
+  if (otpSentEmail) {
+    return <OtpVerificationForm email={otpSentEmail} />;
+  }
 
   return (
     <Card className="w-full max-w-sm">
