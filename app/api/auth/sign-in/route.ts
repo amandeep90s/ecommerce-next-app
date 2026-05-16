@@ -70,6 +70,13 @@ export async function POST(request: NextRequest) {
       });
     }
 
+    if (!user.is_active) {
+      return errorResponse({
+        message: 'Your account has been deactivated. Please contact support for assistance.',
+        statusCode: StatusCodes.FORBIDDEN,
+      });
+    }
+
     // OTP generation and sending logic can be implemented here
     // Delete any existing OTPs for the user
     await OTP.deleteMany({ email });
