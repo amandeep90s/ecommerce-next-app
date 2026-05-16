@@ -2,6 +2,19 @@ import mongoose, { Mongoose } from 'mongoose';
 
 import { DB_NAME, MONGO_URI } from '@/config/env';
 
+// Global plugin: transform _id -> id and remove __v on all schemas
+mongoose.plugin((schema) => {
+  schema.set('toJSON', {
+    virtuals: true,
+    transform: function (_doc, ret: Record<string, unknown>) {
+      ret.id = ret._id;
+      delete ret._id;
+      delete ret.__v;
+      return ret;
+    },
+  });
+});
+
 interface MongooseCache {
   conn: Mongoose | null;
   promise: Promise<Mongoose> | null;

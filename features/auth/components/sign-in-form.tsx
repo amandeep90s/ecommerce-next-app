@@ -3,8 +3,10 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { EyeIcon, EyeOffIcon } from 'lucide-react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
+import { toast } from 'sonner';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -19,10 +21,14 @@ import { Field, FieldError, FieldGroup, FieldLabel } from '@/components/ui/field
 import { Input } from '@/components/ui/input';
 import { InputGroup, InputGroupAddon, InputGroupInput } from '@/components/ui/input-group';
 import { Spinner } from '@/components/ui/spinner';
+import { useSignIn } from '@/features/auth/hooks/use-sign-in';
+import { handleFormError } from '@/lib/form-error';
 
 import { SignInFormData, signInSchema } from '../validator';
 
 export default function SignInForm() {
+  const router = useRouter();
+  const { mutate: signIn, isPending } = useSignIn();
   const [showPassword, setShowPassword] = useState(false);
 
   const form = useForm<SignInFormData>({
@@ -35,8 +41,13 @@ export default function SignInForm() {
   });
 
   const onSubmit = async (data: SignInFormData) => {
-    console.log(data);
-    form.reset();
+    signIn(data, {
+      onSuccess: (res) => {
+        toast.success(res.message);
+        router.push(`/otp-verification?email=${encodeURIComponent(data.email)}`);
+      },
+      onError: (err) => handleFormError(err, form),
+    });
   };
 
   return (
@@ -61,7 +72,7 @@ export default function SignInForm() {
                     aria-invalid={fieldState.invalid}
                     placeholder="Enter your email address"
                     autoComplete="off"
-                    disabled={form.formState.isSubmitting}
+                    disabled={isPending}
                   />
                   {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
                 </Field>
@@ -82,7 +93,7 @@ export default function SignInForm() {
                       aria-invalid={fieldState.invalid}
                       placeholder="Enter your password"
                       autoComplete="off"
-                      disabled={form.formState.isSubmitting}
+                      disabled={isPending}
                     />
                     <InputGroupAddon align="inline-end">
                       <Button
@@ -113,9 +124,9 @@ export default function SignInForm() {
       </CardContent>
       <CardFooter className="flex-col gap-4">
         <Field orientation="responsive">
-          <Button type="submit" form="sign-in-form" disabled={form.formState.isSubmitting}>
-            {form.formState.isSubmitting && <Spinner data-icon="inline-start" />}
-            {form.formState.isSubmitting ? 'Signing In...' : 'Sign In'}
+          <Button type="submit" form="sign-in-form" disabled={isPending}>
+            {isPending && <Spinner data-icon="inline-start" />}
+            {isPending ? 'Signing In...' : 'Sign In'}
           </Button>
         </Field>
 

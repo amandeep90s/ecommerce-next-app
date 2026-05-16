@@ -40,6 +40,26 @@ export const signUpSchema = z
     path: ['confirmPassword'],
   });
 
+export const otpVerificationSchema = z.object({
+  email: z
+    .email()
+    .min(1, { message: 'Email is required' })
+    .max(100, { message: 'Email must be less than 100 characters' }),
+  otp: z
+    .string()
+    .length(6, { message: 'OTP must be exactly 6 digits' })
+    .regex(/^\d{6}$/, { message: 'OTP must contain only digits' }),
+});
+
+export const resendOtpSchema = z.object({
+  email: z
+    .email()
+    .min(1, { message: 'Email is required' })
+    .max(100, { message: 'Email must be less than 100 characters' }),
+});
+
 // Infer the TypeScript type from the Zod schema
 export type SignInFormData = z.infer<typeof signInSchema>;
 export type SignUpFormData = z.infer<typeof signUpSchema>;
+export type OtpVerificationFormData = z.infer<typeof otpVerificationSchema>;
+export type ResendOtpFormData = z.infer<typeof resendOtpSchema>;
