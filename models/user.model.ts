@@ -1,15 +1,15 @@
 import bcrypt from 'bcryptjs';
 import mongoose from 'mongoose';
 
-import { Role } from '@/types/auth';
+import { ERole } from '@/enums';
 
 const userSchema = new mongoose.Schema(
   {
     role: {
       type: String,
       required: true,
-      enum: Object.values(Role),
-      default: Role.USER,
+      enum: Object.values(ERole),
+      default: ERole.USER,
     },
     name: {
       type: String,
@@ -39,15 +39,19 @@ const userSchema = new mongoose.Schema(
         trim: true,
       },
     },
-    isEmailVerified: {
-      type: Boolean,
-      default: false,
-    },
     phone: {
       type: String,
       trim: true,
     },
-    address: {
+    is_email_verified: {
+      type: Boolean,
+      default: false,
+    },
+    is_active: {
+      type: Boolean,
+      default: true,
+    },
+    refresh_token: {
       type: String,
       trim: true,
     },
