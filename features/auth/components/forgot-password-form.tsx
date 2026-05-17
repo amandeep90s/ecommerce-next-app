@@ -22,7 +22,7 @@ import { useForgotPassword } from '@/features/auth/hooks/use-forgot-password';
 import { ForgotPasswordFormData, forgotPasswordSchema } from '@/features/auth/validator';
 import { handleFormError } from '@/lib/form-error';
 
-export default function ForgotPasswordForm() {
+export function ForgotPasswordForm() {
   const { mutate: forgotPassword, isPending } = useForgotPassword();
   const [submitted, setSubmitted] = useState(false);
 

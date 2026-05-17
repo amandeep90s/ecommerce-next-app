@@ -28,7 +28,7 @@ interface ResetPasswordFormProps {
   token: string;
 }
 
-export default function ResetPasswordForm({ token }: ResetPasswordFormProps) {
+export function ResetPasswordForm({ token }: ResetPasswordFormProps) {
   const router = useRouter();
   const { mutate: resetPassword, isPending } = useResetPassword();
   const [showPassword, setShowPassword] = useState(false);

@@ -1,4 +1,4 @@
-import EmailVerification from '@/features/auth/components/email-verification';
+import { EmailVerification } from '@/features/auth/components/email-verification';
 
 interface EmailVerificationPageProps {
   params: Promise<{ token: string }>;

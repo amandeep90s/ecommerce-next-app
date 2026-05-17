@@ -24,7 +24,7 @@ interface EmailVerificationProps {
   token: string;
 }
 
-export default function EmailVerification({ token }: EmailVerificationProps) {
+export function EmailVerification({ token }: EmailVerificationProps) {
   const { mutate: verifyEmail, isPending, isSuccess, isError, error } = useEmailVerification();
   const {
     mutate: resendVerification,

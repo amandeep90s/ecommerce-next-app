@@ -18,12 +18,12 @@ import {
 import { Field, FieldError, FieldGroup, FieldLabel } from '@/components/ui/field';
 import { InputOTP, InputOTPGroup, InputOTPSlot } from '@/components/ui/input-otp';
 import { Spinner } from '@/components/ui/spinner';
+import { ERole } from '@/enums';
 import { setUser } from '@/features/auth/authSlice';
 import { useOtpVerification } from '@/features/auth/hooks/use-otp-verification';
 import { useResendOtp } from '@/features/auth/hooks/use-resend-otp';
 import { OtpVerificationFormData, otpVerificationSchema } from '@/features/auth/validator';
 import { useAppDispatch } from '@/store/hooks';
-import { ERole } from '@/enums';
 
 const RESEND_COOLDOWN = 60;
 
@@ -31,7 +31,7 @@ interface OtpVerificationFormProps {
   email: string;
 }
 
-export default function OtpVerificationForm({ email }: OtpVerificationFormProps) {
+export function OtpVerificationForm({ email }: OtpVerificationFormProps) {
   const router = useRouter();
   const dispatch = useAppDispatch();
   const { mutate: verifyOtp, isPending } = useOtpVerification();

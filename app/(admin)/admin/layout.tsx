@@ -2,6 +2,7 @@ import { redirect } from 'next/navigation';
 import React from 'react';
 
 import { ERole } from '@/enums';
+import { AdminLayout } from '@/features/admin/layouts/admin-layout';
 import { getServerUser } from '@/lib/get-server-user';
 
 interface LayoutProps {
@@ -19,5 +20,5 @@ export default async function Layout({ children }: LayoutProps) {
     redirect('/customer/dashboard');
   }
 
-  return <div>{children}</div>;
+  return <AdminLayout>{children}</AdminLayout>;
 }

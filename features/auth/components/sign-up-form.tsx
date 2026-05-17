@@ -24,7 +24,7 @@ import { useSignUp } from '@/features/auth/hooks/use-sign-up';
 import { SignUpFormData, signUpSchema } from '@/features/auth/validator';
 import { handleFormError } from '@/lib/form-error';
 
-export default function SignUpForm() {
+export function SignUpForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 

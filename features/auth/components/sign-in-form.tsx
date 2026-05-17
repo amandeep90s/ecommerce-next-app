@@ -20,12 +20,12 @@ import { Field, FieldError, FieldGroup, FieldLabel } from '@/components/ui/field
 import { Input } from '@/components/ui/input';
 import { InputGroup, InputGroupAddon, InputGroupInput } from '@/components/ui/input-group';
 import { Spinner } from '@/components/ui/spinner';
-import OtpVerificationForm from '@/features/auth/components/otp-verification-form';
+import { OtpVerificationForm } from '@/features/auth/components/otp-verification-form';
 import { useSignIn } from '@/features/auth/hooks/use-sign-in';
 import { SignInFormData, signInSchema } from '@/features/auth/validator';
 import { handleFormError } from '@/lib/form-error';
 
-export default function SignInForm() {
+export function SignInForm() {
   const { mutate: signIn, isPending } = useSignIn();
   const [showPassword, setShowPassword] = useState(false);
   const [otpSentEmail, setOtpSentEmail] = useState<string | null>(null);
