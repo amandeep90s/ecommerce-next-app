@@ -1,5 +1,17 @@
-import React from 'react';
+import { redirect } from 'next/navigation';
 
-export default function ResetPassword() {
-  return <div>ResetPassword</div>;
+import ResetPasswordForm from '@/features/auth/components/reset-password-form';
+
+interface ResetPasswordPageProps {
+  searchParams: Promise<{ token?: string }>;
+}
+
+export default async function ResetPassword({ searchParams }: ResetPasswordPageProps) {
+  const { token } = await searchParams;
+
+  if (!token) {
+    redirect('/forgot-password');
+  }
+
+  return <ResetPasswordForm token={token} />;
 }
