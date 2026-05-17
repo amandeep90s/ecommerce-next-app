@@ -80,7 +80,7 @@ export async function POST(request: NextRequest) {
       .setProtectedHeader({ alg: 'HS256' })
       .sign(secret);
 
-    const refreshToken = await new SignJWT({ userId: user.id.toString() })
+    const refreshToken = await new SignJWT({ id: user.id.toString() })
       .setIssuedAt()
       .setExpirationTime('7d')
       .setProtectedHeader({ alg: 'HS256' })
