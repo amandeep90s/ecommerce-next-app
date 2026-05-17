@@ -3,6 +3,7 @@
 import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
 
+import { Loader } from '@/components/loader';
 import { persistor, store } from '@/store';
 
 export function StoreProvider({ children }: { children: React.ReactNode }) {
@@ -13,7 +14,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
        * Rehydration happens in the background; components read persisted state
        * once the REHYDRATE action is dispatched.
        */}
-      <PersistGate loading={null} persistor={persistor}>
+      <PersistGate loading={<Loader fullScreen={true} />} persistor={persistor}>
         {children}
       </PersistGate>
     </Provider>
