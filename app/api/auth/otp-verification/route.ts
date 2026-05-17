@@ -66,10 +66,12 @@ export async function POST(request: NextRequest) {
     const secret = new TextEncoder().encode(SECRET_KEY);
 
     const loggedInUser = {
-      userId: user.id.toString(),
+      id: user.id.toString(),
+      name: user.name,
       email: user.email,
       role: user.role,
       avatar: user.avatar,
+      phone: user.phone,
     };
 
     const accessToken = await new SignJWT(loggedInUser)
@@ -106,6 +108,7 @@ export async function POST(request: NextRequest) {
 
     return successResponse({
       message: 'Sign in successful',
+      data: loggedInUser,
     });
   } catch (error) {
     return errorResponse({

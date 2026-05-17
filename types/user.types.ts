@@ -26,3 +26,17 @@ export interface IUser {
 export interface IUserDocument extends IUser, mongoose.Document {
   comparePassword(candidatePassword: string): Promise<boolean>;
 }
+
+// Serializable, non-sensitive snapshot of the authenticated user.
+// Never store password, refresh_token, or raw ObjectIds here.
+export interface IAuthUser {
+  id: string;
+  name: string;
+  email: string;
+  role: ERole;
+  avatar?: {
+    url?: string;
+    public_id?: string;
+  };
+  phone?: string;
+}

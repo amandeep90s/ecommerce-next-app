@@ -1,20 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
-import { ERole } from '@/enums';
-
-// Serializable, non-sensitive snapshot of the authenticated user.
-// Never store password, refresh_token, or raw ObjectIds here.
-export interface IAuthUser {
-  id: string;
-  name: string;
-  email: string;
-  role: ERole;
-  avatar?: {
-    url?: string;
-    public_id?: string;
-  };
-  phone?: string;
-}
+import { IAuthUser } from '@/types';
 
 interface AuthState {
   user: IAuthUser | null;

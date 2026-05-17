@@ -3,9 +3,11 @@ import { StatusCodes } from 'http-status-codes';
 
 import type { OtpVerificationFormData } from '@/features/auth/validator';
 import { ValidationError } from '@/lib/form-error';
+import { IAuthUser } from '@/types';
 
 interface OtpVerificationResponse {
   message: string;
+  data?: IAuthUser;
 }
 
 async function verifyOtp(data: OtpVerificationFormData): Promise<OtpVerificationResponse> {

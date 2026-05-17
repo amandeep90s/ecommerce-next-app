@@ -14,7 +14,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
        * Rehydration happens in the background; components read persisted state
        * once the REHYDRATE action is dispatched.
        */}
-      <PersistGate loading={<Loader fullScreen={true} />} persistor={persistor}>
+      <PersistGate loading={<Loader />} persistor={persistor}>
         {children}
       </PersistGate>
     </Provider>
