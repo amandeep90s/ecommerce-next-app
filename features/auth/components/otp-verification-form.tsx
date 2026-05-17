@@ -23,6 +23,7 @@ import { useOtpVerification } from '@/features/auth/hooks/use-otp-verification';
 import { useResendOtp } from '@/features/auth/hooks/use-resend-otp';
 import { OtpVerificationFormData, otpVerificationSchema } from '@/features/auth/validator';
 import { useAppDispatch } from '@/store/hooks';
+import { ERole } from '@/enums';
 
 const RESEND_COOLDOWN = 60;
 
@@ -77,8 +78,8 @@ export default function OtpVerificationForm({ email }: OtpVerificationFormProps)
         toast.success(res.message);
         if (res.data) {
           dispatch(setUser(res.data));
+          router.push(res.data.role === ERole.ADMIN ? '/admin/dashboard' : '/customer/dashboard');
         }
-        router.push('/');
       },
       onError: (err) => {
         toast.error(err.message);
