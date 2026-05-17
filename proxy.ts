@@ -28,26 +28,44 @@ async function resolveUser(
     return { isAuthenticated: false, payload: null };
   }
 
+  // Secret is needed in all branches — define it once here.
+  const secret = new TextEncoder().encode(process.env.SECRET_KEY);
+
   if (accessToken) {
-    const secret = new TextEncoder().encode(process.env.SECRET_KEY);
     try {
       const { payload } = await jwtVerify(accessToken, secret);
       return { isAuthenticated: true, payload: payload as TokenPayload };
     } catch (err) {
       const isExpired = err instanceof Error && err.name === 'JWTExpired';
       if (isExpired && refreshToken) {
-        // Decode the expired token to retain the role. The refresh_token's
-        // presence is treated as proof the session is still recoverable — the
-        // client AuthInitializer will silently issue a new access_token.
-        const decoded = decodeJwt(accessToken) as TokenPayload;
-        return { isAuthenticated: true, payload: decoded };
+        // Access token is expired — verify the refresh token signature + expiry
+        // before trusting it (no DB needed, just JWT validation).
+        try {
+          await jwtVerify(refreshToken, secret);
+          // Refresh token is valid → decode the expired access token to retain role.
+          // The client AuthInitializer will silently exchange it for a new access token.
+          const decoded = decodeJwt(accessToken) as TokenPayload;
+          return { isAuthenticated: true, payload: decoded };
+        } catch {
+          // Refresh token is also expired/tampered → session is truly dead.
+          return { isAuthenticated: false, payload: null };
+        }
       }
+      // Access token is invalid (not just expired) → unauthenticated.
+      return { isAuthenticated: false, payload: null };
     }
   }
 
-  // Has refresh_token but no (valid) access_token and we couldn't decode role.
+  // No access token but refresh token present — verify it before trusting.
   if (refreshToken) {
-    return { isAuthenticated: true, payload: null };
+    try {
+      await jwtVerify(refreshToken, secret);
+      // Valid refresh token but no access token — authenticated but role is unknown.
+      // The client AuthInitializer will fetch /api/auth/me or refresh transparently.
+      return { isAuthenticated: true, payload: null };
+    } catch {
+      return { isAuthenticated: false, payload: null };
+    }
   }
 
   return { isAuthenticated: false, payload: null };

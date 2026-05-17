@@ -1,9 +1,23 @@
+import { redirect } from 'next/navigation';
 import React from 'react';
+
+import { ERole } from '@/enums';
+import { getServerUser } from '@/lib/get-server-user';
 
 interface LayoutProps {
   children: React.ReactNode;
 }
 
-export default function Layout({ children }: LayoutProps) {
+export default async function Layout({ children }: LayoutProps) {
+  const user = await getServerUser();
+
+  if (!user) {
+    redirect('/sign-in');
+  }
+
+  if (user.role !== ERole.USER) {
+    redirect('/admin/dashboard');
+  }
+
   return <div>{children}</div>;
 }

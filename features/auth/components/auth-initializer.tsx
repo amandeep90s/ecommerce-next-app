@@ -31,32 +31,59 @@ async function refreshAndFetchUser(): Promise<IAuthUser | null> {
  * Invisible component that rehydrates the Redux auth state from the
  * httpOnly cookies on every full-page load / navigation.
  *
- * Mount order: StoreProvider → AuthInitializer → rest of the app.
+ * Also handles two additional scenarios:
+ *  - Tokens expiring while the user is idle on a page (visibilitychange re-check).
+ *  - fetchWithAuth reporting a final 401 via the `auth:session-expired` event.
  */
 export function AuthInitializer() {
   const dispatch = useAppDispatch();
-  const initialized = useRef(false);
+  const hasMounted = useRef(false);
 
   useEffect(() => {
-    if (initialized.current) return;
-    initialized.current = true;
-
-    (async () => {
-      // 1. Try to get user from a valid access token.
+    const checkAuth = async () => {
       let user = await fetchMe();
+      if (!user) user = await refreshAndFetchUser();
 
-      // 2. If access token is expired/missing, try the refresh token.
-      if (!user) {
-        user = await refreshAndFetchUser();
-      }
-
-      // 3. Hydrate the store — or clear it if both failed (unauthenticated).
       if (user) {
         dispatch(setUser(user));
       } else {
         dispatch(clearUser());
+        // Redirect to sign-in if currently on a protected route.
+        const { pathname } = window.location;
+        const isProtected = pathname.startsWith('/admin') || pathname.startsWith('/customer');
+        if (isProtected) {
+          window.location.href = '/sign-in';
+        }
       }
-    })();
+    };
+
+    // Run once on first mount to hydrate the store.
+    if (!hasMounted.current) {
+      hasMounted.current = true;
+      checkAuth();
+    }
+
+    // Re-check when the user returns to the tab after a long idle period
+    // (e.g. tokens may have expired while the tab was in the background).
+    const onVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        checkAuth();
+      }
+    };
+
+    // Handle session expiry reported by fetchWithAuth (both tokens failed).
+    const onSessionExpired = () => {
+      dispatch(clearUser());
+      window.location.href = '/sign-in';
+    };
+
+    document.addEventListener('visibilitychange', onVisibilityChange);
+    window.addEventListener('auth:session-expired', onSessionExpired);
+
+    return () => {
+      document.removeEventListener('visibilitychange', onVisibilityChange);
+      window.removeEventListener('auth:session-expired', onSessionExpired);
+    };
   }, [dispatch]);
 
   return null;

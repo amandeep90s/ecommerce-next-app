@@ -6,8 +6,9 @@
  * Usage:
  *   const res = await fetchWithAuth('/api/protected-route', { method: 'GET' });
  *
- * If the refresh also fails (e.g. refresh token expired), the caller receives
- * the 401 response and should redirect the user to sign-in.
+ * If the refresh also fails (e.g. refresh token expired), a global
+ * `auth:session-expired` DOM event is dispatched so that AuthInitializer
+ * can clear Redux state and redirect the user to /sign-in.
  */
 export async function fetchWithAuth(
   input: RequestInfo | URL,
@@ -26,8 +27,11 @@ export async function fetchWithAuth(
   });
 
   if (!refreshRes.ok) {
-    // Refresh failed — return the original 401 so the caller can handle it
-    // (e.g. redirect to /sign-in).
+    // Both tokens have failed — session is truly expired.
+    // Notify the AuthInitializer to clear state and redirect to sign-in.
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new Event('auth:session-expired'));
+    }
     return response;
   }
 
