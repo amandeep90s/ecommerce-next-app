@@ -1,6 +1,7 @@
 import mongoose from 'mongoose';
 
 import { EAddressType } from '@/enums';
+import type { IAddressDocument } from '@/types';
 
 const addressSchema = new mongoose.Schema(
   {
@@ -67,6 +68,11 @@ const addressSchema = new mongoose.Schema(
   { timestamps: true },
 );
 
-const Address = mongoose.models.Address || mongoose.model('Address', addressSchema, 'addresses');
+const Address = (mongoose.models.Address ||
+  mongoose.model<IAddressDocument>(
+    'Address',
+    addressSchema,
+    'addresses',
+  )) as mongoose.Model<IAddressDocument>;
 
 export default Address;

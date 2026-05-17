@@ -2,6 +2,7 @@ import bcrypt from 'bcryptjs';
 import mongoose from 'mongoose';
 
 import { ERole } from '@/enums';
+import type { IUserDocument } from '@/types';
 
 const userSchema = new mongoose.Schema(
   {
@@ -95,6 +96,7 @@ userSchema.methods = {
   },
 };
 
-const User = mongoose.models.User || mongoose.model('User', userSchema, 'users');
+const User = (mongoose.models.User ||
+  mongoose.model<IUserDocument>('User', userSchema, 'users')) as mongoose.Model<IUserDocument>;
 
 export default User;
