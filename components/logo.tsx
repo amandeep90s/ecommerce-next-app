@@ -1,25 +1,32 @@
 import Image from 'next/image';
-import React from 'react';
 
-export default function Logo() {
+import { cn } from '@/lib/utils';
+
+interface LogoProps {
+  height?: number;
+  width?: number;
+  className?: string;
+}
+
+export default function Logo({ height = 59, width = 156, className }: LogoProps) {
   return (
-    <div>
+    <>
       <Image
         src="/images/logo-black.png"
         alt="Logo"
-        width={156}
-        height={59}
-        className="h-auto w-auto dark:hidden"
+        width={width}
+        height={height}
+        className={cn('h-auto w-auto dark:hidden', className)}
         loading="eager"
       />
       <Image
         src="/images/logo-white.png"
         alt="Logo"
-        width={156}
-        height={59}
-        className="hidden h-auto w-auto dark:block"
+        width={width}
+        height={height}
+        className={cn('hidden h-auto w-auto dark:block', className)}
         loading="eager"
       />
-    </div>
+    </>
   );
 }
