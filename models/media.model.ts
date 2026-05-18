@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 
-import { IMediaDocument } from '@/types/media.types';
+import { IMediaDocument } from '@/types';
 
 const mediaSchema = new mongoose.Schema(
   {

@@ -12,4 +12,17 @@ export interface IMedia {
   updatedAt: Date;
 }
 
+export interface IUploadMediaPayload {
+  asset_id: string;
+  public_id: string;
+  path: string;
+  thumbnail_url: string;
+  alt?: string;
+}
+
+export interface IUploadMediaResponse {
+  message: string;
+  data?: unknown;
+}
+
 export interface IMediaDocument extends IMedia, mongoose.Document {}
