@@ -1,3 +1,4 @@
+// App configuration
 export const NODE_ENV = process.env.NODE_ENV as string;
 export const APP_NAME = process.env.NEXT_PUBLIC_APP_NAME as string;
 export const APP_BASE_URL = process.env.NEXT_PUBLIC_APP_BASE_URL as string;
@@ -12,3 +13,8 @@ export const EMAIL_PASSWORD = process.env.EMAIL_PASSWORD as string;
 export const EMAIL_FROM = process.env.EMAIL_FROM as string;
 export const EMAIL_HOST = process.env.EMAIL_HOST as string;
 export const EMAIL_PORT = Number(process.env.EMAIL_PORT) || 587;
+
+// Cloudinary configuration
+export const CLOUDINARY_CLOUD_NAME = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
+export const CLOUDINARY_API_KEY = process.env.NEXT_PUBLIC_CLOUDINARY_API_KEY;
+export const CLOUDINARY_API_SECRET = process.env.CLOUDINARY_API_SECRET;
