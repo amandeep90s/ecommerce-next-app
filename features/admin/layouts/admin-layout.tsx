@@ -2,10 +2,10 @@
 
 import React from 'react';
 
-import { ThemeToggle } from '@/components/theme-toggle';
-import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
-
-import { AdminSidebar } from '../components/sidebar';
+import { Footer } from '@/components/footer';
+import { SidebarProvider } from '@/components/ui/sidebar';
+import { AdminSidebar } from '@/features/admin/components/sidebar';
+import { Topbar } from '@/features/admin/components/topbar';
 
 interface AdminLayoutProps {
   children: React.ReactNode;
@@ -16,12 +16,10 @@ export function AdminLayout({ children }: AdminLayoutProps) {
     <SidebarProvider>
       <AdminSidebar />
 
-      <main className="w-full">
-        <nav className="flex h-14 items-center justify-between border-b px-3 py-2">
-          <SidebarTrigger />
-          <ThemeToggle />
-        </nav>
-        {children}
+      <main className="flex w-full flex-col">
+        <Topbar />
+        <div className="grow p-4">{children}</div>
+        <Footer />
       </main>
     </SidebarProvider>
   );

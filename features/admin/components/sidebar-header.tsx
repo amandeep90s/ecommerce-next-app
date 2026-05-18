@@ -2,6 +2,7 @@ import { HandbagIcon } from 'lucide-react';
 import Link from 'next/link';
 
 import { SidebarHeader } from '@/components/ui/sidebar';
+import { APP_NAME } from '@/config/env';
 
 export function AdminSidebarHeader() {
   return (
@@ -9,7 +10,9 @@ export function AdminSidebarHeader() {
       <Link href="/" className="">
         <div className="flex items-center justify-start space-x-2">
           <HandbagIcon className="text-primary h-7 w-auto" />
-          <p className="text-foreground text-2xl group-data-[collapsible=icon]:hidden">Estore</p>
+          <p className="text-foreground text-2xl font-semibold group-data-[collapsible=icon]:hidden">
+            {APP_NAME}
+          </p>
         </div>
       </Link>
     </SidebarHeader>

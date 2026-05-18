@@ -36,10 +36,7 @@ export function AdminSidebarFooter() {
         <SidebarMenuItem>
           <DropdownMenu open={isDropdownOpen} onOpenChange={setIsDropdownOpen}>
             <DropdownMenuTrigger asChild>
-              <SidebarMenuButton
-                size={'lg'}
-                className="flex items-center justify-between px-3 py-2"
-              >
+              <SidebarMenuButton size={'lg'} className="flex items-center justify-between px-3">
                 <div className="flex min-w-0 items-center gap-2">
                   <Avatar size="default">
                     <AvatarImage src={user?.avatar?.url} alt={user?.name || 'User'} />
