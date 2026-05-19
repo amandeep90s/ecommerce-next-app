@@ -71,7 +71,7 @@ export function UploadMedia({ isMultiple = true }: UploadMediaProps) {
         },
       },
     );
-  }, [uploadMediaBatch]);
+  }, [queryClient, uploadMediaBatch]);
 
   return (
     <CldUploadWidget
