@@ -50,7 +50,7 @@ export function CategoryForm({
   }
 
   return (
-    <Card className="max-w-xl">
+    <Card>
       <CardHeader>
         <CardTitle className="text-base font-medium">Category Details</CardTitle>
       </CardHeader>
@@ -88,7 +88,6 @@ export function CategoryForm({
           </FieldGroup>
         </form>
       </CardContent>
-      <Separator />
       <CardFooter className="gap-2">
         <Button type="submit" form="category-form" disabled={isPending || isLoading}>
           {isPending && <Spinner data-icon="inline-start" />}

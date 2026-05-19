@@ -42,4 +42,19 @@ export interface IGetCategoryByIdResponse {
   data: ICategoryItem | null;
 }
 
+export interface ICategoryPaginationMeta {
+  page: number;
+  limit: number;
+  total: number;
+  totalPages: number;
+}
+
+export interface IGetCategoriesResponse {
+  message: string;
+  data: {
+    items: ICategoryItem[];
+    meta: ICategoryPaginationMeta;
+  } | null;
+}
+
 export interface ICategoryDocument extends ICategory, mongoose.Document {}

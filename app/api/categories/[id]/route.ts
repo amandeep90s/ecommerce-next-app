@@ -111,3 +111,33 @@ export async function PATCH(request: Request, { params }: RouteContext) {
     });
   }
 }
+
+export async function DELETE(_request: Request, { params }: RouteContext) {
+  const auth = await requireAuth(ERole.ADMIN);
+  if (auth.response) return auth.response;
+
+  try {
+    await connectToDatabase();
+
+    const { id } = await params;
+    const category = await Category.findByIdAndUpdate(id, { deleteAt: new Date() }, { new: true });
+
+    if (!category) {
+      return errorResponse({
+        message: 'Category not found',
+        statusCode: StatusCodes.NOT_FOUND,
+      });
+    }
+
+    return successResponse({
+      message: 'Category moved to trash',
+      data: category,
+    });
+  } catch (error) {
+    return errorResponse({
+      message: 'Failed to delete category',
+      errors: error,
+      statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
+    });
+  }
+}
