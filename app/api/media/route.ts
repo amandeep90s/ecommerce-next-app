@@ -1,11 +1,16 @@
 import { StatusCodes } from 'http-status-codes';
 
 import { connectToDatabase } from '@/config/database';
+import { ERole } from '@/enums';
 import { uploadMediaSchema } from '@/features/admin/validator';
 import { errorResponse, successResponse } from '@/lib/api-response';
+import { requireAuth } from '@/lib/require-auth';
 import Media from '@/models/media.model';
 
 export async function POST(request: Request) {
+  const auth = await requireAuth(ERole.ADMIN);
+  if (auth.response) return auth.response;
+
   try {
     await connectToDatabase();
 

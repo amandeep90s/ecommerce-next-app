@@ -20,6 +20,10 @@ export interface IUploadMediaPayload {
   alt?: string;
 }
 
+export interface IUploadMediaBatchPayload {
+  files: IUploadMediaPayload[];
+}
+
 export interface IUploadMediaResponse {
   message: string;
   data?: unknown;

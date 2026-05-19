@@ -1,15 +1,27 @@
 'use client';
 
-import { CldUploadWidget, CloudinaryUploadWidgetResults } from 'next-cloudinary';
+import { PlusIcon } from 'lucide-react';
+import {
+  CldUploadWidget,
+  CloudinaryUploadWidgetError,
+  CloudinaryUploadWidgetResults,
+} from 'next-cloudinary';
+import { useCallback, useRef } from 'react';
 import { toast } from 'sonner';
 
 import { Button } from '@/components/ui/button';
-import { useUploadMedia } from '@/features/admin/hooks/use-upload-media';
+import { useUploadMediaBatch } from '@/features/admin/hooks/use-upload-media';
+import { IUploadMediaPayload } from '@/types';
 
-export function UploadMedia() {
-  const { mutate: uploadMedia } = useUploadMedia();
+interface UploadMediaProps {
+  isMultiple?: boolean;
+}
 
-  function handleSuccess(results: CloudinaryUploadWidgetResults) {
+export function UploadMedia({ isMultiple = true }: UploadMediaProps) {
+  const collectedFilesRef = useRef<IUploadMediaPayload[]>([]);
+  const { mutate: uploadMediaBatch } = useUploadMediaBatch();
+
+  const handleSuccess = useCallback((results: CloudinaryUploadWidgetResults) => {
     if (results.event !== 'success') return;
 
     const info = results.info as {
@@ -19,16 +31,35 @@ export function UploadMedia() {
       thumbnail_url: string;
     };
 
-    uploadMedia(
+    collectedFilesRef.current = [
+      ...collectedFilesRef.current,
       {
         asset_id: info.asset_id,
         public_id: info.public_id,
         path: info.secure_url,
         thumbnail_url: info.thumbnail_url,
       },
+    ];
+  }, []);
+
+  // CloudinaryUploadWidgetError = string | { status: string; statusText: string } | undefined
+  const handleError = useCallback((error: CloudinaryUploadWidgetError) => {
+    const message =
+      typeof error === 'string' ? error : (error?.statusText ?? 'Upload failed. Please try again.');
+    toast.error(message);
+  }, []);
+
+  // onQueuesEnd receives the same results shape + a widget ref in the second arg
+  const handleQueuesEnd = useCallback(() => {
+    const files = collectedFilesRef.current;
+    if (files.length === 0) return;
+
+    uploadMediaBatch(
+      { files },
       {
         onSuccess: () => {
-          toast.success('Media uploaded successfully.');
+          toast.success(`${files.length} media file(s) uploaded successfully.`);
+          collectedFilesRef.current = [];
         },
         onError: (error) => {
           const message = error instanceof Error ? error.message : 'Failed to save media.';
@@ -36,16 +67,19 @@ export function UploadMedia() {
         },
       },
     );
-  }
+  }, [uploadMediaBatch]);
 
   return (
     <CldUploadWidget
       signatureEndpoint="/api/sign-cloudinary-params"
       onSuccess={handleSuccess}
-      options={{ sources: ['local', 'url', 'camera'], multiple: true }}
+      onError={handleError}
+      onQueuesEnd={handleQueuesEnd}
+      options={{ sources: ['local', 'url', 'google_drive', 'unsplash'], multiple: isMultiple }}
     >
       {({ open }) => (
         <Button variant="default" className="w-fit" onClick={() => open()}>
+          <PlusIcon className="size-4" />
           Upload Media
         </Button>
       )}
