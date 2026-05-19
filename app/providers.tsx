@@ -4,6 +4,7 @@
 // Since QueryClientProvider relies on useContext under the hood, we have to put 'use client' on top
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
+import { NuqsAdapter } from 'nuqs/adapters/next/app';
 
 import { AuthInitializer } from '@/features/auth/components/auth-initializer';
 import { StoreProvider } from '@/store/StoreProvider';
@@ -44,12 +45,14 @@ export function Providers({ children }: { children: React.ReactNode }) {
   const queryClient = getQueryClient();
 
   return (
-    <StoreProvider>
-      <AuthInitializer />
-      <QueryClientProvider client={queryClient}>
-        {children}
-        <ReactQueryDevtools initialIsOpen={false} />
-      </QueryClientProvider>
-    </StoreProvider>
+    <NuqsAdapter>
+      <StoreProvider>
+        <AuthInitializer />
+        <QueryClientProvider client={queryClient}>
+          {children}
+          <ReactQueryDevtools initialIsOpen={false} />
+        </QueryClientProvider>
+      </StoreProvider>
+    </NuqsAdapter>
   );
 }

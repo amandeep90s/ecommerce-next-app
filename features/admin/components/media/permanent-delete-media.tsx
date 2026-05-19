@@ -5,27 +5,28 @@ import { toast } from 'sonner';
 
 import { Button } from '@/components/ui/button';
 import { ConfirmDialog } from '@/components/ui/confirm-dialog';
-import { useBulkDeleteMedia } from '@/features/admin/hooks/use-delete-media';
+import { usePermanentDeleteMedia } from '@/features/admin/hooks/use-permanent-delete-media';
 
-interface DeleteMediaProps {
+interface PermanentDeleteMediaProps {
   selectedIds: Set<string>;
   onSuccess: () => void;
 }
 
-export function DeleteMedia({ selectedIds, onSuccess }: DeleteMediaProps) {
-  const { mutate: bulkDelete, isPending } = useBulkDeleteMedia();
+export function PermanentDeleteMedia({ selectedIds, onSuccess }: PermanentDeleteMediaProps) {
+  const { mutate: permanentDelete, isPending } = usePermanentDeleteMedia();
   const count = selectedIds.size;
 
   function handleDelete() {
-    bulkDelete(
+    permanentDelete(
       { ids: Array.from(selectedIds) },
       {
         onSuccess: () => {
-          toast.success(`${count} media file(s) moved to trash.`);
+          toast.success(`${count} media file(s) permanently deleted.`);
           onSuccess();
         },
         onError: (error) => {
-          const message = error instanceof Error ? error.message : 'Failed to move media to trash.';
+          const message =
+            error instanceof Error ? error.message : 'Failed to permanently delete media.';
           toast.error(message);
         },
       },
@@ -37,12 +38,12 @@ export function DeleteMedia({ selectedIds, onSuccess }: DeleteMediaProps) {
       trigger={
         <Button variant="destructive" disabled={count === 0 || isPending}>
           <Trash2Icon />
-          {isPending ? 'Moving...' : count > 0 ? `Trash (${count})` : 'Trash'}
+          {isPending ? 'Deleting...' : count > 0 ? `Delete Forever (${count})` : 'Delete Forever'}
         </Button>
       }
-      title="Move to trash?"
-      description={`${count} file(s) will be moved to trash. You can restore them later.`}
-      confirmLabel="Move to Trash"
+      title="Delete permanently?"
+      description={`This will permanently delete ${count} file(s) from Cloudinary and cannot be undone.`}
+      confirmLabel="Delete Forever"
       variant="destructive"
       onConfirm={handleDelete}
       disabled={count === 0 || isPending}

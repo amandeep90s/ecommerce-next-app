@@ -1,5 +1,7 @@
 import mongoose from 'mongoose';
 
+export type MediaFilter = 'active' | 'trashed';
+
 export interface IMedia {
   id: mongoose.Types.ObjectId;
   asset_id: string;
@@ -25,6 +27,13 @@ export interface IMediaItem {
   updatedAt: string;
 }
 
+export interface IMediaPaginationMeta {
+  page: number;
+  limit: number;
+  total: number;
+  totalPages: number;
+}
+
 export interface IUploadMediaPayload {
   asset_id: string;
   public_id: string;
@@ -44,7 +53,10 @@ export interface IUploadMediaResponse {
 
 export interface IGetMediaResponse {
   message: string;
-  data: IMediaItem[] | null;
+  data: {
+    items: IMediaItem[];
+    meta: IMediaPaginationMeta;
+  } | null;
 }
 
 export interface IBulkDeleteMediaPayload {
@@ -52,6 +64,15 @@ export interface IBulkDeleteMediaPayload {
 }
 
 export interface IBulkDeleteMediaResponse {
+  message: string;
+  data?: unknown;
+}
+
+export interface IRestoreMediaPayload {
+  ids: string[];
+}
+
+export interface IRestoreMediaResponse {
   message: string;
   data?: unknown;
 }

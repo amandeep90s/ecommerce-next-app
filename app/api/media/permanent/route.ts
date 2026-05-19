@@ -1,5 +1,6 @@
 import { StatusCodes } from 'http-status-codes';
 
+import cloudinary from '@/config/cloudinary';
 import { connectToDatabase } from '@/config/database';
 import { ERole } from '@/enums';
 import { errorResponse, successResponse } from '@/lib/api-response';
@@ -23,17 +24,26 @@ export async function DELETE(request: Request) {
       });
     }
 
-    // Soft delete — set deletedAt timestamp
-    const result = await Media.updateMany({ _id: { $in: body.ids } }, { deletedAt: new Date() });
+    // Fetch public_ids before deleting so we can remove from Cloudinary
+    const mediaItems = await Media.find({ _id: { $in: body.ids } }).select('public_id');
+    const publicIds = mediaItems.map((item) => item.public_id);
+
+    // Delete from Cloudinary
+    if (publicIds.length > 0) {
+      await cloudinary.api.delete_resources(publicIds);
+    }
+
+    // Hard delete from MongoDB
+    const result = await Media.deleteMany({ _id: { $in: body.ids } });
 
     return successResponse({
-      message: `${result.modifiedCount} media file(s) moved to trash`,
-      data: { deletedCount: result.modifiedCount },
+      message: `${result.deletedCount} media file(s) permanently deleted`,
+      data: { deletedCount: result.deletedCount },
       statusCode: StatusCodes.OK,
     });
   } catch (error) {
     return errorResponse({
-      message: 'Failed to move media to trash',
+      message: 'Failed to permanently delete media',
       errors: error,
       statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
     });

@@ -6,7 +6,7 @@ import { errorResponse, successResponse } from '@/lib/api-response';
 import { requireAuth } from '@/lib/require-auth';
 import Media from '@/models/media.model';
 
-export async function DELETE(request: Request) {
+export async function PATCH(request: Request) {
   const auth = await requireAuth(ERole.ADMIN);
   if (auth.response) return auth.response;
 
@@ -23,17 +23,16 @@ export async function DELETE(request: Request) {
       });
     }
 
-    // Soft delete — set deletedAt timestamp
-    const result = await Media.updateMany({ _id: { $in: body.ids } }, { deletedAt: new Date() });
+    const result = await Media.updateMany({ _id: { $in: body.ids } }, { deletedAt: null });
 
     return successResponse({
-      message: `${result.modifiedCount} media file(s) moved to trash`,
-      data: { deletedCount: result.modifiedCount },
+      message: `${result.modifiedCount} media file(s) restored successfully`,
+      data: { restoredCount: result.modifiedCount },
       statusCode: StatusCodes.OK,
     });
   } catch (error) {
     return errorResponse({
-      message: 'Failed to move media to trash',
+      message: 'Failed to restore media',
       errors: error,
       statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
     });
