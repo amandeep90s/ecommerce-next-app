@@ -7,6 +7,29 @@ import { errorResponse, successResponse } from '@/lib/api-response';
 import { requireAuth } from '@/lib/require-auth';
 import Media from '@/models/media.model';
 
+export async function GET() {
+  const auth = await requireAuth(ERole.ADMIN);
+  if (auth.response) return auth.response;
+
+  try {
+    await connectToDatabase();
+
+    const media = await Media.find({ deletedAt: null }).sort({ createdAt: -1 });
+
+    return successResponse({
+      message: 'Media fetched successfully',
+      data: media,
+      statusCode: StatusCodes.OK,
+    });
+  } catch (error) {
+    return errorResponse({
+      message: 'Failed to fetch media',
+      errors: error,
+      statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
+    });
+  }
+}
+
 export async function POST(request: Request) {
   const auth = await requireAuth(ERole.ADMIN);
   if (auth.response) return auth.response;

@@ -1,5 +1,6 @@
 'use client';
 
+import { useQueryClient } from '@tanstack/react-query';
 import { PlusIcon } from 'lucide-react';
 import {
   CldUploadWidget,
@@ -10,6 +11,7 @@ import { useCallback, useRef } from 'react';
 import { toast } from 'sonner';
 
 import { Button } from '@/components/ui/button';
+import { MEDIA_QUERY_KEY } from '@/features/admin/hooks/use-get-media';
 import { useUploadMediaBatch } from '@/features/admin/hooks/use-upload-media';
 import { IUploadMediaPayload } from '@/types';
 
@@ -20,6 +22,7 @@ interface UploadMediaProps {
 export function UploadMedia({ isMultiple = true }: UploadMediaProps) {
   const collectedFilesRef = useRef<IUploadMediaPayload[]>([]);
   const { mutate: uploadMediaBatch } = useUploadMediaBatch();
+  const queryClient = useQueryClient();
 
   const handleSuccess = useCallback((results: CloudinaryUploadWidgetResults) => {
     if (results.event !== 'success') return;
@@ -60,6 +63,7 @@ export function UploadMedia({ isMultiple = true }: UploadMediaProps) {
         onSuccess: () => {
           toast.success(`${files.length} media file(s) uploaded successfully.`);
           collectedFilesRef.current = [];
+          queryClient.invalidateQueries({ queryKey: MEDIA_QUERY_KEY });
         },
         onError: (error) => {
           const message = error instanceof Error ? error.message : 'Failed to save media.';

@@ -1,5 +1,5 @@
 import { AdminBreadcrumb } from '@/features/admin/components/breadcrumb';
-import { UploadMedia } from '@/features/admin/components/media/upload-media';
+import { MediaPageView } from '@/features/admin/views/media-page-view';
 
 export default function MediaPage() {
   return (
@@ -13,7 +13,7 @@ export default function MediaPage() {
 
       <AdminBreadcrumb breadcrumbItems={[{ label: 'Media' }]} />
 
-      <UploadMedia />
+      <MediaPageView />
     </div>
   );
 }
