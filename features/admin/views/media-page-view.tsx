@@ -84,6 +84,7 @@ export function MediaPageView() {
           isLoading={isLoading}
           selectedIds={selectedIds}
           onToggle={handleToggle}
+          filter={filter as MediaFilter}
         />
 
         {meta && <MediaPagination meta={meta} onPageChange={handlePageChange} />}

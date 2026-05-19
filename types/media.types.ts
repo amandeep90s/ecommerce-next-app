@@ -77,4 +77,18 @@ export interface IRestoreMediaResponse {
   data?: unknown;
 }
 
+export interface IGetMediaByIdResponse {
+  message: string;
+  data: IMediaItem | null;
+}
+
+export interface IUpdateMediaPayload {
+  alt: string;
+}
+
+export interface IUpdateMediaResponse {
+  message: string;
+  data?: IMediaItem;
+}
+
 export interface IMediaDocument extends IMedia, mongoose.Document {}

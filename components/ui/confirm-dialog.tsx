@@ -17,8 +17,11 @@ import { buttonVariants } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
 interface ConfirmDialogProps {
-  /** The element that opens the dialog when clicked */
-  trigger: ReactNode;
+  /** Trigger element — omit when using controlled mode (open/onOpenChange). */
+  trigger?: ReactNode;
+  /** Controlled open state. Use alongside onOpenChange. */
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
   title: string;
   description: string;
   confirmLabel?: string;
@@ -31,6 +34,8 @@ interface ConfirmDialogProps {
 
 export function ConfirmDialog({
   trigger,
+  open,
+  onOpenChange,
   title,
   description,
   confirmLabel = 'Confirm',
@@ -39,11 +44,15 @@ export function ConfirmDialog({
   onConfirm,
   disabled,
 }: ConfirmDialogProps) {
+  const isControlled = open !== undefined;
+
   return (
-    <AlertDialog>
-      <AlertDialogTrigger asChild disabled={disabled}>
-        {trigger}
-      </AlertDialogTrigger>
+    <AlertDialog open={isControlled ? open : undefined} onOpenChange={onOpenChange}>
+      {trigger && (
+        <AlertDialogTrigger asChild disabled={disabled}>
+          {trigger}
+        </AlertDialogTrigger>
+      )}
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>{title}</AlertDialogTitle>

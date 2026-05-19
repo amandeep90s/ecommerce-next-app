@@ -2,16 +2,17 @@
 
 import { Skeleton } from '@/components/ui/skeleton';
 import { MediaItem } from '@/features/admin/components/media/media-item';
-import { IMediaItem } from '@/types';
+import { IMediaItem, MediaFilter } from '@/types';
 
 interface MediaGridProps {
   items: IMediaItem[];
   isLoading: boolean;
   selectedIds: Set<string>;
   onToggle: (id: string) => void;
+  filter: MediaFilter;
 }
 
-export function MediaGrid({ items, isLoading, selectedIds, onToggle }: MediaGridProps) {
+export function MediaGrid({ items, isLoading, selectedIds, onToggle, filter }: MediaGridProps) {
   if (isLoading) {
     return (
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
@@ -38,6 +39,7 @@ export function MediaGrid({ items, isLoading, selectedIds, onToggle }: MediaGrid
           media={media}
           isSelected={selectedIds.has(media.id)}
           onToggle={onToggle}
+          filter={filter}
         />
       ))}
     </div>
