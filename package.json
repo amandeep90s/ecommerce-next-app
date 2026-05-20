@@ -6,6 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
+    "seed": "bun --env-file .env.local seeders/index.ts",
+    "seed:fresh": "bun --env-file .env.local seeders/index.ts --fresh",
     "lint": "eslint",
     "lint:fix": "eslint . --fix",
     "format": "prettier --write .",
