@@ -18,7 +18,11 @@ export async function PATCH(_request: Request, { params }: RouteContext) {
     await connectToDatabase();
 
     const { id } = await params;
-    const category = await Category.findByIdAndUpdate(id, { deleteAt: null }, { new: true });
+    const category = await Category.findByIdAndUpdate(
+      id,
+      { deleteAt: null },
+      { returnDocument: 'after' },
+    );
 
     if (!category) {
       return errorResponse({

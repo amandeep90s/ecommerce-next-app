@@ -54,7 +54,7 @@ export async function PATCH(request: Request, { params }: RouteContext) {
     const media = await Media.findByIdAndUpdate(
       id,
       { alt: body.alt ?? '' },
-      { new: true, runValidators: true },
+      { returnDocument: 'after', runValidators: true },
     );
 
     if (!media) {

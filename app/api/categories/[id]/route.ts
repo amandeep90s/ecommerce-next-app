@@ -88,7 +88,7 @@ export async function PATCH(request: Request, { params }: RouteContext) {
     const category = await Category.findByIdAndUpdate(
       id,
       { name, slug },
-      { new: true, runValidators: true },
+      { returnDocument: 'after', runValidators: true },
     );
 
     if (!category) {
@@ -120,7 +120,11 @@ export async function DELETE(_request: Request, { params }: RouteContext) {
     await connectToDatabase();
 
     const { id } = await params;
-    const category = await Category.findByIdAndUpdate(id, { deleteAt: new Date() }, { new: true });
+    const category = await Category.findByIdAndUpdate(
+      id,
+      { deleteAt: new Date() },
+      { returnDocument: 'after' },
+    );
 
     if (!category) {
       return errorResponse({
