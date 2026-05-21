@@ -10,6 +10,7 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/componen
 import { Checkbox } from '@/components/ui/checkbox';
 import { Field, FieldError, FieldGroup, FieldLabel } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
+import { RichTextEditor } from '@/components/ui/rich-text-editor';
 import {
   Select,
   SelectContent,
@@ -19,7 +20,6 @@ import {
 } from '@/components/ui/select';
 import { Separator } from '@/components/ui/separator';
 import { Spinner } from '@/components/ui/spinner';
-import { Textarea } from '@/components/ui/textarea';
 import { useGetCategories } from '@/features/admin/hooks/use-get-categories';
 import { type CreateProductFormData, createProductSchema } from '@/features/admin/validator';
 import type { ICategoryItem } from '@/types';
@@ -137,10 +137,9 @@ export function ProductForm({
               render={({ field, fieldState }) => (
                 <Field data-invalid={fieldState.invalid || undefined}>
                   <FieldLabel htmlFor="description">Description</FieldLabel>
-                  <Textarea
-                    {...field}
-                    id="description"
-                    className="min-h-25 resize-none"
+                  <RichTextEditor
+                    value={field.value}
+                    onChange={field.onChange}
                     placeholder="Product description…"
                     disabled={isPending || isLoading}
                   />

@@ -14,7 +14,7 @@ export const createProductSchema = z.object({
     .string()
     .trim()
     .min(10, { message: 'Description must be at least 10 characters' })
-    .max(5000, { message: 'Description must be less than 5000 characters' }),
+    .max(10000, { message: 'Description must be less than 10000 characters' }),
   media: z.array(z.string()).min(1, { message: 'At least one media is required' }),
   sku: z
     .string()
