@@ -44,6 +44,21 @@ const productSchema = new mongoose.Schema(
         required: true,
       },
     ],
+    sku: {
+      type: String,
+      required: true,
+      unique: true,
+      trim: true,
+    },
+    stock: {
+      type: Number,
+      required: true,
+      default: 0,
+    },
+    isActive: {
+      type: Boolean,
+      default: true,
+    },
     deletedAt: {
       type: Date,
       default: null,

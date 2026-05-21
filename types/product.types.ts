@@ -13,6 +13,9 @@ export interface IProduct {
   discount: number;
   description?: string;
   media: (string | IMedia)[];
+  sku: string;
+  stock: number;
+  isActive: boolean;
   deletedAt: Date | null;
   createdAt: Date;
   updatedAt: Date;
@@ -27,6 +30,9 @@ export interface IProductCreate {
   discount?: number;
   description?: string;
   media: string[];
+  sku: string;
+  stock: number;
+  isActive?: boolean;
 }
 
 export interface IProductUpdate {
@@ -38,6 +44,9 @@ export interface IProductUpdate {
   discount?: number;
   description?: string;
   media?: string[];
+  sku?: string;
+  stock?: number;
+  isActive?: boolean;
 }
 
 export interface IProductResponse extends IProduct {
