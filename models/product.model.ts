@@ -36,7 +36,7 @@ const productSchema = new mongoose.Schema(
     description: {
       type: String,
       trim: true,
-      required: false,
+      required: true,
     },
     media: [
       {

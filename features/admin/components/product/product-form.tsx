@@ -7,6 +7,7 @@ import slugify from 'slugify';
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Checkbox } from '@/components/ui/checkbox';
 import { Field, FieldError, FieldGroup, FieldLabel } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
 import {
@@ -18,6 +19,7 @@ import {
 } from '@/components/ui/select';
 import { Separator } from '@/components/ui/separator';
 import { Spinner } from '@/components/ui/spinner';
+import { Textarea } from '@/components/ui/textarea';
 import { useGetCategories } from '@/features/admin/hooks/use-get-categories';
 import { type CreateProductFormData, createProductSchema } from '@/features/admin/validator';
 import type { ICategoryItem } from '@/types';
@@ -80,7 +82,9 @@ export function ProductForm({
 
   // Fetch categories for dropdown
   const { data: categoriesData } = useGetCategories({ page: 1, limit: 100, filter: 'active' });
-  const categories: ICategoryItem[] = categoriesData?.data?.items ?? [];
+  const categories: ICategoryItem[] = (categoriesData?.data?.items ?? []).sort((a, b) =>
+    a.name.localeCompare(b.name),
+  );
 
   function handleSubmit(data: CreateProductFormData) {
     onSubmit(data, form);
@@ -126,18 +130,18 @@ export function ProductForm({
               />
             </Field>
 
-            {/* SKU */}
+            {/* Description */}
             <Controller
-              name="sku"
+              name="description"
               control={form.control}
               render={({ field, fieldState }) => (
                 <Field data-invalid={fieldState.invalid || undefined}>
-                  <FieldLabel htmlFor="sku">SKU</FieldLabel>
-                  <Input
+                  <FieldLabel htmlFor="description">Description</FieldLabel>
+                  <Textarea
                     {...field}
-                    id="sku"
-                    placeholder="e.g. WH-1000XM5"
-                    autoComplete="off"
+                    id="description"
+                    className="min-h-25 resize-none"
+                    placeholder="Product description…"
                     disabled={isPending || isLoading}
                   />
                   {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
@@ -145,36 +149,55 @@ export function ProductForm({
               )}
             />
 
-            {/* Category */}
-            <Controller
-              name="category"
-              control={form.control}
-              render={({ field, fieldState }) => (
-                <Field data-invalid={fieldState.invalid || undefined}>
-                  <FieldLabel htmlFor="category">Category</FieldLabel>
-                  <Select
-                    value={field.value}
-                    onValueChange={field.onChange}
-                    disabled={isPending || isLoading}
-                  >
-                    <SelectTrigger id="category">
-                      <SelectValue placeholder="Select a category" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {categories.map((cat) => (
-                        <SelectItem key={cat.id} value={cat.id}>
-                          {cat.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
-                </Field>
-              )}
-            />
-
-            {/* Price & Selling Price */}
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+              {/* SKU */}
+              <Controller
+                name="sku"
+                control={form.control}
+                render={({ field, fieldState }) => (
+                  <Field data-invalid={fieldState.invalid || undefined}>
+                    <FieldLabel htmlFor="sku">SKU</FieldLabel>
+                    <Input
+                      {...field}
+                      id="sku"
+                      placeholder="e.g. WH-1000XM5"
+                      autoComplete="off"
+                      disabled={isPending || isLoading}
+                    />
+                    {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                  </Field>
+                )}
+              />
+
+              {/* Category */}
+              <Controller
+                name="category"
+                control={form.control}
+                render={({ field, fieldState }) => (
+                  <Field data-invalid={fieldState.invalid || undefined}>
+                    <FieldLabel htmlFor="category">Category</FieldLabel>
+                    <Select
+                      value={field.value}
+                      onValueChange={field.onChange}
+                      disabled={isPending || isLoading}
+                    >
+                      <SelectTrigger id="category">
+                        <SelectValue placeholder="Select a category" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {categories.map((cat) => (
+                          <SelectItem key={cat.id} value={cat.id}>
+                            {cat.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                  </Field>
+                )}
+              />
+
+              {/* Price & Selling Price */}
               <Controller
                 name="price"
                 control={form.control}
@@ -183,6 +206,7 @@ export function ProductForm({
                     <FieldLabel htmlFor="price">Price</FieldLabel>
                     <Input
                       {...field}
+                      onChange={(e) => field.onChange(e.target.valueAsNumber)}
                       id="price"
                       type="number"
                       min={0}
@@ -193,7 +217,10 @@ export function ProductForm({
                   </Field>
                 )}
               />
+            </div>
 
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+              {/* Selling Price */}
               <Controller
                 name="selling_price"
                 control={form.control}
@@ -202,6 +229,7 @@ export function ProductForm({
                     <FieldLabel htmlFor="selling_price">Selling Price</FieldLabel>
                     <Input
                       {...field}
+                      onChange={(e) => field.onChange(e.target.valueAsNumber)}
                       id="selling_price"
                       type="number"
                       min={0}
@@ -213,6 +241,7 @@ export function ProductForm({
                 )}
               />
 
+              {/* Discount */}
               <Controller
                 name="discount"
                 control={form.control}
@@ -221,6 +250,7 @@ export function ProductForm({
                     <FieldLabel htmlFor="discount">Discount (%)</FieldLabel>
                     <Input
                       {...field}
+                      onChange={(e) => field.onChange(e.target.valueAsNumber)}
                       id="discount"
                       type="number"
                       min={0}
@@ -231,63 +261,42 @@ export function ProductForm({
                   </Field>
                 )}
               />
+
+              {/* Stock */}
+              <Controller
+                name="stock"
+                control={form.control}
+                render={({ field, fieldState }) => (
+                  <Field data-invalid={fieldState.invalid || undefined}>
+                    <FieldLabel htmlFor="stock">Stock</FieldLabel>
+                    <Input
+                      {...field}
+                      onChange={(e) => field.onChange(e.target.valueAsNumber)}
+                      id="stock"
+                      type="number"
+                      min={0}
+                      disabled={isPending || isLoading}
+                    />
+                    {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                  </Field>
+                )}
+              />
             </div>
-
-            {/* Stock */}
-            <Controller
-              name="stock"
-              control={form.control}
-              render={({ field, fieldState }) => (
-                <Field data-invalid={fieldState.invalid || undefined}>
-                  <FieldLabel htmlFor="stock">Stock</FieldLabel>
-                  <Input
-                    {...field}
-                    id="stock"
-                    type="number"
-                    min={0}
-                    disabled={isPending || isLoading}
-                  />
-                  {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
-                </Field>
-              )}
-            />
-
-            {/* Description */}
-            <Controller
-              name="description"
-              control={form.control}
-              render={({ field, fieldState }) => (
-                <Field data-invalid={fieldState.invalid || undefined}>
-                  <FieldLabel htmlFor="description">Description</FieldLabel>
-                  <textarea
-                    {...field}
-                    id="description"
-                    rows={4}
-                    placeholder="Product description…"
-                    className="border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring flex w-full rounded-md border px-3 py-2 text-sm focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
-                    disabled={isPending || isLoading}
-                  />
-                  {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
-                </Field>
-              )}
-            />
 
             {/* isActive */}
             <Controller
               name="isActive"
               control={form.control}
-              render={({ field }) => (
-                <Field>
-                  <label className="flex items-center gap-2 text-sm font-medium">
-                    <input
-                      type="checkbox"
-                      checked={field.value}
-                      onChange={(e) => field.onChange(e.target.checked)}
-                      disabled={isPending || isLoading}
-                      className="size-4 rounded border"
-                    />
-                    Active
-                  </label>
+              render={({ field, fieldState }) => (
+                <Field orientation="horizontal" data-invalid={fieldState?.invalid || undefined}>
+                  <Checkbox
+                    checked={field.value}
+                    onCheckedChange={(checked) => field.onChange(checked)}
+                    id="isActive"
+                    aria-invalid={fieldState.invalid || undefined}
+                    disabled={isPending || isLoading}
+                  />
+                  <FieldLabel htmlFor="isActive">Active</FieldLabel>
                 </Field>
               )}
             />
