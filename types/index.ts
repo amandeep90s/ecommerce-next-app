@@ -3,4 +3,5 @@ export * from './category.types';
 export * from './media.types';
 export * from './otp.types';
 export * from './product.types';
+export * from './product-variant.types';
 export * from './user.types';
