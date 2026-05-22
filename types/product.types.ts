@@ -1,18 +1,18 @@
 import mongoose from 'mongoose';
 
-import { ICategory } from './category.types';
-import { IMedia } from './media.types';
+import { ICategoryItem } from './category.types';
+import { IMediaItem } from './media.types';
 
 export interface IProduct {
   id: string;
   name: string;
   slug: string;
-  category: string | ICategory;
+  category: string | ICategoryItem;
   price: number;
   selling_price: number;
   discount: number;
   description?: string;
-  media: (string | IMedia)[];
+  media: (string | IMediaItem)[];
   sku: string;
   stock: number;
   isActive: boolean;
@@ -21,9 +21,27 @@ export interface IProduct {
   updatedAt: Date;
 }
 
-export interface IProductCreate {
+// Serialized product item as returned from the API (JSON-safe)
+export interface IProductItem {
+  id: string;
   name: string;
   slug: string;
+  category: ICategoryItem;
+  price: number;
+  selling_price: number;
+  discount: number;
+  description?: string;
+  media: IMediaItem[];
+  sku: string;
+  stock: number;
+  isActive: boolean;
+  deletedAt: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface ICreateProductPayload {
+  name: string;
   category: string;
   price: number;
   selling_price: number;
@@ -35,9 +53,8 @@ export interface IProductCreate {
   isActive?: boolean;
 }
 
-export interface IProductUpdate {
+export interface IUpdateProductPayload {
   name?: string;
-  slug?: string;
   category?: string;
   price?: number;
   selling_price?: number;
@@ -49,9 +66,34 @@ export interface IProductUpdate {
   isActive?: boolean;
 }
 
-export interface IProductResponse extends IProduct {
-  category: ICategory;
-  media: IMedia[];
+export interface ICreateProductResponse {
+  message: string;
+  data?: IProductItem;
+}
+
+export interface IUpdateProductResponse {
+  message: string;
+  data?: IProductItem;
+}
+
+export interface IGetProductByIdResponse {
+  message: string;
+  data: IProductItem | null;
+}
+
+export interface IProductPaginationMeta {
+  page: number;
+  limit: number;
+  total: number;
+  totalPages: number;
+}
+
+export interface IGetProductsResponse {
+  message: string;
+  data: {
+    items: IProductItem[];
+    meta: IProductPaginationMeta;
+  } | null;
 }
 
 export interface IProductDocument extends IProduct, mongoose.Document {}
