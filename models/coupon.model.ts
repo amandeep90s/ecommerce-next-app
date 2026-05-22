@@ -44,6 +44,10 @@ const couponSchema = new mongoose.Schema(
 couponSchema.index({ deletedAt: 1, code: 1 });
 
 const Coupon = (mongoose.models.Coupon ||
-  mongoose.model<ICouponDocument>('Coupon', couponSchema)) as mongoose.Model<ICouponDocument>;
+  mongoose.model<ICouponDocument>(
+    'Coupon',
+    couponSchema,
+    'coupons',
+  )) as mongoose.Model<ICouponDocument>;
 
 export default Coupon;
