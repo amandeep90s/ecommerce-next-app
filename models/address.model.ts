@@ -5,7 +5,7 @@ import type { IAddressDocument } from '@/types';
 
 const addressSchema = new mongoose.Schema(
   {
-    user_id: {
+    user: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',
       required: true,
@@ -59,7 +59,7 @@ const addressSchema = new mongoose.Schema(
       enum: Object.values(EAddressType),
       default: EAddressType.SHIPPING,
     },
-    deleteAt: {
+    deletedAt: {
       type: Date,
       default: null,
       index: true,

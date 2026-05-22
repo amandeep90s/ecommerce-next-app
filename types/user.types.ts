@@ -40,3 +40,64 @@ export interface IAuthUser {
   };
   phone?: string;
 }
+
+// ─── Customer Types (Admin) ──────────────────────────────────────────────────
+
+export interface ICustomerItem {
+  id: string;
+  name: string;
+  email: string;
+  avatar?: IUserAvatar;
+  phone?: string;
+  is_email_verified: boolean;
+  is_active: boolean;
+  deleteAt: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface ICustomerDetail extends ICustomerItem {
+  addresses: ICustomerAddress[];
+}
+
+export interface ICustomerAddress {
+  id: string;
+  name: string;
+  phone: string;
+  address_line1: string;
+  address_line2?: string;
+  city: string;
+  state: string;
+  postal_code: string;
+  country: string;
+  is_default: boolean;
+  type: string;
+}
+
+export interface ICustomerPaginationMeta {
+  page: number;
+  limit: number;
+  total: number;
+  totalPages: number;
+}
+
+export interface IGetCustomersResponse {
+  success: boolean;
+  message: string;
+  data: {
+    items: ICustomerItem[];
+    meta: ICustomerPaginationMeta;
+  } | null;
+}
+
+export interface IGetCustomerByIdResponse {
+  success: boolean;
+  message: string;
+  data: ICustomerDetail | null;
+}
+
+export interface IToggleCustomerStatusResponse {
+  success: boolean;
+  message: string;
+  data: ICustomerItem | null;
+}

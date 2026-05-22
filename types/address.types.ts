@@ -4,7 +4,7 @@ import { EAddressType } from '@/enums';
 
 export interface IAddress {
   id: mongoose.Types.ObjectId;
-  user_id: mongoose.Types.ObjectId;
+  user: mongoose.Types.ObjectId;
   name: string;
   phone: string;
   address_line1: string;
@@ -15,7 +15,7 @@ export interface IAddress {
   country: string;
   is_default: boolean;
   type: EAddressType;
-  deleteAt: Date | null;
+  deletedAt: Date | null;
   createdAt: Date;
   updatedAt: Date;
 }
