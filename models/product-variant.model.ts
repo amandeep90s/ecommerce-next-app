@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 
+import { EProductVariantSize } from '@/enums';
 import { IProductVariantDocument } from '@/types';
 
 const productVariantSchema = new mongoose.Schema(
@@ -17,6 +18,7 @@ const productVariantSchema = new mongoose.Schema(
     size: {
       type: String,
       required: true,
+      enum: Object.values(EProductVariantSize),
       trim: true,
     },
     price: {
