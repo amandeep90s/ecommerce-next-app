@@ -1,5 +1,7 @@
 import mongoose from 'mongoose';
 
+import { EProductVariantSize } from '@/enums';
+
 import { IMediaItem } from './media.types';
 import { IProductItem } from './product.types';
 
@@ -7,7 +9,7 @@ export interface IProductVariant {
   id: string;
   product: string | IProductItem;
   color: string;
-  size: string;
+  size: EProductVariantSize;
   price: number;
   selling_price: number;
   discount: number;
@@ -25,7 +27,7 @@ export interface IProductVariantItem {
   id: string;
   product: IProductItem;
   color: string;
-  size: string;
+  size: EProductVariantSize;
   price: number;
   selling_price: number;
   discount: number;
@@ -41,7 +43,7 @@ export interface IProductVariantItem {
 export interface ICreateProductVariantPayload {
   product: string;
   color: string;
-  size: string;
+  size: EProductVariantSize;
   price: number;
   selling_price: number;
   discount?: number;
@@ -54,7 +56,7 @@ export interface ICreateProductVariantPayload {
 export interface IUpdateProductVariantPayload {
   product?: string;
   color?: string;
-  size?: string;
+  size?: EProductVariantSize;
   price?: number;
   selling_price?: number;
   discount?: number;

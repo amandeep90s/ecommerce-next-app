@@ -309,7 +309,10 @@ export function ProductVariantForm({
                     <FieldLabel htmlFor="price">Price</FieldLabel>
                     <Input
                       {...field}
-                      onChange={(e) => field.onChange(e.target.valueAsNumber)}
+                      onChange={(e) => {
+                        const num = e.target.valueAsNumber;
+                        field.onChange(Number.isNaN(num) ? '' : num);
+                      }}
                       id="price"
                       type="number"
                       min={0}
@@ -330,7 +333,10 @@ export function ProductVariantForm({
                     <FieldLabel htmlFor="selling_price">Selling Price</FieldLabel>
                     <Input
                       {...field}
-                      onChange={(e) => field.onChange(e.target.valueAsNumber)}
+                      onChange={(e) => {
+                        const num = e.target.valueAsNumber;
+                        field.onChange(Number.isNaN(num) ? '' : num);
+                      }}
                       id="selling_price"
                       type="number"
                       min={0}
@@ -366,7 +372,10 @@ export function ProductVariantForm({
                     <FieldLabel htmlFor="stock">Stock</FieldLabel>
                     <Input
                       {...field}
-                      onChange={(e) => field.onChange(e.target.valueAsNumber)}
+                      onChange={(e) => {
+                        const num = e.target.valueAsNumber;
+                        field.onChange(Number.isNaN(num) ? '' : num);
+                      }}
                       id="stock"
                       type="number"
                       min={0}
