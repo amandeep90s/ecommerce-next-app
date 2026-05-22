@@ -59,6 +59,7 @@ export function ProductEditView({ id }: ProductEditViewProps) {
         stock: product.stock,
         isActive: product.isActive,
       }}
+      defaultMediaItems={product.media ?? []}
       onSubmit={onSubmit}
       isPending={isPending}
       submitLabel="Save Changes"
