@@ -5,4 +5,5 @@ export * from './media.types';
 export * from './otp.types';
 export * from './product.types';
 export * from './product-variant.types';
+export * from './review.types';
 export * from './user.types';
