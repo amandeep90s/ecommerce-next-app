@@ -6,13 +6,14 @@ import { ThemeToggle } from '@/components/theme-toggle';
 import { Button } from '@/components/ui/button';
 import { SidebarTrigger } from '@/components/ui/sidebar';
 import { UserAvatar } from '@/components/user-avatar';
+import { GlobalSearch } from '@/features/admin/components/global-search';
 
 export function Topbar() {
   return (
     <nav className="flex h-14 items-center justify-between border-b px-3 py-2">
       <SidebarTrigger />
 
-      <div>Search Component</div>
+      <GlobalSearch />
 
       <div className="flex items-center gap-2">
         <Button variant="ghost" size="icon" className="relative">
