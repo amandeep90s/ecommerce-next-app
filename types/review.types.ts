@@ -1,12 +1,20 @@
 import mongoose from 'mongoose';
 
 import { IProductItem } from './product.types';
-import { IUser } from './user.types';
+import { IUserAvatar } from './user.types';
+
+// Serialized user shape as returned by populate('user', 'name email avatar')
+export interface IReviewUser {
+  id: string;
+  name: string;
+  email: string;
+  avatar?: IUserAvatar;
+}
 
 export interface IReview {
   id: string;
   product: string | IProductItem;
-  user: string | IUser;
+  user: string | IReviewUser;
   rating: number;
   title: string;
   comment: string;
@@ -19,7 +27,7 @@ export interface IReview {
 export interface IReviewItem {
   id: string;
   product: IProductItem;
-  user: IUser;
+  user: IReviewUser;
   rating: number;
   title: string;
   comment: string;
