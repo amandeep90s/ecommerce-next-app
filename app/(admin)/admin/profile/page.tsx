@@ -1,4 +1,5 @@
 import { AdminBreadcrumb } from '@/features/admin/components/breadcrumb';
+import { ProfileView } from '@/features/admin/views/profile-view';
 
 export default function ProfilePage() {
   return (
@@ -8,6 +9,8 @@ export default function ProfilePage() {
       </div>
 
       <AdminBreadcrumb breadcrumbItems={[{ label: 'Profile' }]} />
+
+      <ProfileView />
     </div>
   );
 }

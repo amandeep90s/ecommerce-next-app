@@ -28,6 +28,7 @@ import { useDeleteCustomer } from '@/features/admin/hooks/use-delete-customer';
 import { usePermanentDeleteCustomer } from '@/features/admin/hooks/use-permanent-delete-customer';
 import { useRestoreCustomer } from '@/features/admin/hooks/use-restore-customer';
 import { useToggleCustomerStatus } from '@/features/admin/hooks/use-toggle-customer-status';
+import { getInitials } from '@/lib/helpers';
 import type { ICustomerItem } from '@/types';
 
 // ─── Row Actions ─────────────────────────────────────────────────────────────
@@ -171,15 +172,6 @@ function CustomerRowActions({ customer, filter }: CustomerRowActionsProps) {
 }
 
 // ─── Column Factory ───────────────────────────────────────────────────────────
-
-function getInitials(name: string): string {
-  return name
-    .split(' ')
-    .map((n) => n[0])
-    .join('')
-    .toUpperCase()
-    .slice(0, 2);
-}
 
 interface GetCustomerColumnsOptions {
   filter: 'active' | 'trashed';

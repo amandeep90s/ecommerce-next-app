@@ -101,3 +101,28 @@ export interface IToggleCustomerStatusResponse {
   message: string;
   data: ICustomerItem | null;
 }
+
+// ─── Profile Types ───────────────────────────────────────────────────────────
+
+export interface IUpdateProfilePayload {
+  name: string;
+  phone?: string;
+}
+
+export interface IUpdateProfileResponse {
+  success: boolean;
+  message: string;
+  data: IAuthUser | null;
+}
+
+export interface IChangePasswordPayload {
+  currentPassword: string;
+  newPassword: string;
+  confirmPassword: string;
+}
+
+export interface IChangePasswordResponse {
+  success: boolean;
+  message: string;
+  data: null;
+}

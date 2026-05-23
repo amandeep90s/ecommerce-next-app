@@ -27,6 +27,7 @@ import {
 import { useDeleteReview } from '@/features/admin/hooks/use-delete-review';
 import { usePermanentDeleteReview } from '@/features/admin/hooks/use-permanent-delete-review';
 import { useRestoreReview } from '@/features/admin/hooks/use-restore-review';
+import { getInitials } from '@/lib/helpers';
 import type { IReviewItem } from '@/types';
 
 // ─── Row Actions ─────────────────────────────────────────────────────────────
@@ -158,17 +159,6 @@ function StarRating({ rating }: { rating: number }) {
       ))}
     </div>
   );
-}
-
-// ─── Helpers ──────────────────────────────────────────────────────────────────
-
-function getInitials(name: string): string {
-  return name
-    .split(' ')
-    .map((n) => n[0])
-    .join('')
-    .toUpperCase()
-    .slice(0, 2);
 }
 
 // ─── Column Factory ───────────────────────────────────────────────────────────

@@ -16,15 +16,7 @@ import { useDeleteReview } from '@/features/admin/hooks/use-delete-review';
 import { useGetReviewById } from '@/features/admin/hooks/use-get-review-by-id';
 import { usePermanentDeleteReview } from '@/features/admin/hooks/use-permanent-delete-review';
 import { useRestoreReview } from '@/features/admin/hooks/use-restore-review';
-
-function getInitials(name: string): string {
-  return name
-    .split(' ')
-    .map((n) => n[0])
-    .join('')
-    .toUpperCase()
-    .slice(0, 2);
-}
+import { getInitials } from '@/lib/helpers';
 
 function StarRating({ rating }: { rating: number }) {
   return (

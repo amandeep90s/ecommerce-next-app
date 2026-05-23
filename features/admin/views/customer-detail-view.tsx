@@ -13,15 +13,7 @@ import { ConfirmDialog } from '@/components/ui/confirm-dialog';
 import { Separator } from '@/components/ui/separator';
 import { useGetCustomerById } from '@/features/admin/hooks/use-get-customer-by-id';
 import { useToggleCustomerStatus } from '@/features/admin/hooks/use-toggle-customer-status';
-
-function getInitials(name: string): string {
-  return name
-    .split(' ')
-    .map((n) => n[0])
-    .join('')
-    .toUpperCase()
-    .slice(0, 2);
-}
+import { getInitials } from '@/lib/helpers';
 
 interface CustomerDetailViewProps {
   id: string;

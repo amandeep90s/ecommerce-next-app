@@ -1,4 +1,5 @@
 import { AdminBreadcrumb } from '@/features/admin/components/breadcrumb';
+import { ChangePasswordView } from '@/features/admin/views/change-password-view';
 
 export default function ChangePassword() {
   return (
@@ -8,6 +9,8 @@ export default function ChangePassword() {
       </div>
 
       <AdminBreadcrumb breadcrumbItems={[{ label: 'Change Password' }]} />
+
+      <ChangePasswordView />
     </div>
   );
 }
