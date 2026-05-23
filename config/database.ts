@@ -1,19 +1,19 @@
+// Side-effect imports — register all Mongoose schemas so .populate() always
+// resolves correctly regardless of which module is the API entry point.
+// These MUST stay; do not remove as "unused imports".
+import '@/models/address.model';
+import '@/models/category.model';
+import '@/models/coupon.model';
+import '@/models/media.model';
+import '@/models/otp.model';
+import '@/models/product-variant.model';
+import '@/models/product.model';
+import '@/models/review.model';
+import '@/models/user.model';
+
 import mongoose, { Mongoose } from 'mongoose';
 
 import { DB_NAME, MONGO_URI } from '@/config/env';
-
-// Global plugin: transform _id -> id and remove __v on all schemas
-mongoose.plugin((schema) => {
-  schema.set('toJSON', {
-    virtuals: true,
-    transform: function (_doc, ret: Record<string, unknown>) {
-      ret.id = ret._id;
-      delete ret._id;
-      delete ret.__v;
-      return ret;
-    },
-  });
-});
 
 interface MongooseCache {
   conn: Mongoose | null;

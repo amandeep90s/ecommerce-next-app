@@ -38,12 +38,12 @@ export function RevenueChart() {
         <CardDescription>Income in the last 6 months</CardDescription>
         <div className="flex items-center gap-4 text-sm">
           <div className="flex items-center gap-1.5">
-            <div className="size-2.5 rounded-full bg-[var(--chart-1)]" />
+            <div className="bg-chart-1 size-2.5 rounded-full" />
             <span className="text-muted-foreground">Desktop</span>
             <span className="font-medium">24,828</span>
           </div>
           <div className="flex items-center gap-1.5">
-            <div className="size-2.5 rounded-full bg-[var(--chart-2)]" />
+            <div className="bg-chart-2 size-2.5 rounded-full" />
             <span className="text-muted-foreground">Mobile</span>
             <span className="font-medium">25,010</span>
           </div>
