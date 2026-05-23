@@ -35,7 +35,18 @@ const reviewSchema = new mongoose.Schema(
       default: null,
     },
   },
-  { timestamps: true },
+  {
+    timestamps: true,
+    toJSON: {
+      virtuals: true,
+      transform: function (_doc, ret: Record<string, unknown>) {
+        ret.id = ret._id;
+        delete ret._id;
+        delete ret.__v;
+        return ret;
+      },
+    },
+  },
 );
 
 reviewSchema.index({ product: 1, user: 1 }, { unique: true });

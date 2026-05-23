@@ -58,33 +58,35 @@ export function CategoryForm({
       <CardContent className="pt-4">
         <form id="category-form" onSubmit={form.handleSubmit(handleSubmit)}>
           <FieldGroup>
-            <Controller
-              name="name"
-              control={form.control}
-              render={({ field, fieldState }) => (
-                <Field data-invalid={fieldState.invalid || undefined}>
-                  <FieldLabel htmlFor="name">Name</FieldLabel>
-                  <Input
-                    {...field}
-                    id="name"
-                    placeholder="e.g. Electronics"
-                    autoComplete="off"
-                    disabled={isPending || isLoading}
-                  />
-                  {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
-                </Field>
-              )}
-            />
-            <Field>
-              <FieldLabel>Slug (auto-generated)</FieldLabel>
-              <Input
-                value={slugPreview}
-                readOnly
-                disabled
-                className="text-muted-foreground"
-                placeholder="slug-will-appear-here"
+            <div className="grid gap-4 lg:grid-cols-2">
+              <Controller
+                name="name"
+                control={form.control}
+                render={({ field, fieldState }) => (
+                  <Field data-invalid={fieldState.invalid || undefined}>
+                    <FieldLabel htmlFor="name">Name</FieldLabel>
+                    <Input
+                      {...field}
+                      id="name"
+                      placeholder="e.g. Electronics"
+                      autoComplete="off"
+                      disabled={isPending || isLoading}
+                    />
+                    {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                  </Field>
+                )}
               />
-            </Field>
+              <Field>
+                <FieldLabel>Slug (auto-generated)</FieldLabel>
+                <Input
+                  value={slugPreview}
+                  readOnly
+                  disabled
+                  className="text-muted-foreground"
+                  placeholder="slug-will-appear-here"
+                />
+              </Field>
+            </div>
           </FieldGroup>
         </form>
       </CardContent>
