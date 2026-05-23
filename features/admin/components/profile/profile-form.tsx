@@ -101,7 +101,6 @@ export function ProfileForm({ defaultValues, email, onSubmit, isPending }: Profi
           </FieldGroup>
         </form>
       </CardContent>
-      <Separator />
       <CardFooter className="justify-end pt-4">
         <Button type="submit" form="profile-form" disabled={isPending}>
           {isPending && <Spinner className="mr-2 size-4" />}

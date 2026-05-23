@@ -5,7 +5,6 @@ import { toast } from 'sonner';
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Card, CardContent } from '@/components/ui/card';
-import { Separator } from '@/components/ui/separator';
 import { ProfileForm } from '@/features/admin/components/profile/profile-form';
 import { useUpdateProfile } from '@/features/admin/hooks/use-update-profile';
 import { type UpdateProfileFormData } from '@/features/admin/validator';
@@ -35,7 +34,7 @@ export function ProfileView() {
     <div className="flex flex-col gap-6">
       {/* Avatar Card */}
       <Card>
-        <CardContent className="flex items-center gap-4 pt-6">
+        <CardContent className="flex items-center gap-4">
           <Avatar className="size-16">
             <AvatarImage src={user?.avatar?.url} alt={user?.name || 'User'} />
             <AvatarFallback className="text-lg">
@@ -48,8 +47,6 @@ export function ProfileView() {
           </div>
         </CardContent>
       </Card>
-
-      <Separator />
 
       {/* Profile Form */}
       <ProfileForm

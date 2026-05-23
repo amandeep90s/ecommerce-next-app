@@ -39,15 +39,19 @@ export function ChangePasswordForm({ onSubmit, isPending }: ChangePasswordFormPr
         <CardTitle className="text-base font-medium">Update Password</CardTitle>
       </CardHeader>
       <Separator />
-      <CardContent className="pt-4">
-        <form id="change-password-form" onSubmit={form.handleSubmit(handleSubmit)}>
+      <CardContent>
+        <form
+          id="change-password-form"
+          className="max-w-xl"
+          onSubmit={form.handleSubmit(handleSubmit)}
+        >
           <FieldGroup>
-            <div className="grid gap-4 lg:grid-cols-2">
+            <div className="grid gap-4 lg:grid-cols-1">
               <Controller
                 name="currentPassword"
                 control={form.control}
                 render={({ field, fieldState }) => (
-                  <Field data-invalid={fieldState.invalid || undefined} className="lg:col-span-2">
+                  <Field data-invalid={fieldState.invalid || undefined}>
                     <FieldLabel htmlFor="currentPassword">Current Password</FieldLabel>
                     <InputGroup>
                       <InputGroupInput
