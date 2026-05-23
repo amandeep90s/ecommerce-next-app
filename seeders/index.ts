@@ -3,7 +3,8 @@ import mongoose from 'mongoose';
 import slugify from 'slugify';
 
 import { connectToDatabase } from '@/config/database';
-import { EProductVariantSize, ERole } from '@/enums';
+import { EAddressType, EProductVariantSize, ERole } from '@/enums';
+import Address from '@/models/address.model';
 import Category from '@/models/category.model';
 import Coupon from '@/models/coupon.model';
 import Media from '@/models/media.model';
@@ -11,9 +12,8 @@ import Product from '@/models/product.model';
 import ProductVariant from '@/models/product-variant.model';
 import Review from '@/models/review.model';
 import User from '@/models/user.model';
-
-import { categoriesData } from './data/categories';
-import { usersData } from './data/users';
+import { categoriesData } from '@/seeders/data/categories';
+import { usersData } from '@/seeders/data/users';
 
 const args = process.argv.slice(2);
 const shouldFresh = args.includes('--fresh');
@@ -116,7 +116,46 @@ async function seedCustomers(): Promise<mongoose.Types.ObjectId[]> {
 
   return customerIds;
 }
+// ─── Seed Addresses ─────────────────────────────────────────
+async function seedAddresses(customerIds: mongoose.Types.ObjectId[]): Promise<void> {
+  if (shouldFresh) {
+    await Address.deleteMany({});
+    console.log('  ✓ Cleared addresses collection');
+  }
 
+  const existingAddresses = await Address.countDocuments();
+  if (existingAddresses > 0 && !shouldFresh) {
+    console.log('  · Addresses already exist. Use --fresh to reseed.');
+    return;
+  }
+
+  let created = 0;
+  for (const customerId of customerIds) {
+    // Create 2 addresses per customer (1 shipping, 1 billing)
+    const addressTypes = [EAddressType.SHIPPING, EAddressType.BILLING];
+
+    for (let i = 0; i < addressTypes.length; i++) {
+      const addressType = addressTypes[i];
+      await Address.create({
+        user: customerId,
+        name: faker.person.fullName(),
+        phone: faker.phone.number({ style: 'international' }),
+        address_line1: faker.location.streetAddress(),
+        address_line2: Math.random() > 0.5 ? faker.location.secondaryAddress() : '',
+        city: faker.location.city(),
+        state: faker.location.state(),
+        postal_code: faker.location.zipCode(),
+        country: 'India',
+        type: addressType,
+        is_default: i === 0, // First address is default
+        deletedAt: null,
+      });
+      created++;
+    }
+  }
+
+  console.log(`  ✓ Created ${created} addresses for ${customerIds.length} customers`);
+}
 // ─── Seed Coupons ───────────────────────────────────────────
 async function seedCoupons(): Promise<void> {
   if (shouldFresh) {
@@ -402,7 +441,6 @@ async function seedProducts(
     return [];
   }
 
-  const colors = ['Black', 'White', 'Navy', 'Grey', 'Red', 'Olive', 'Beige', 'Blue'];
   const sizes = Object.values(EProductVariantSize); // XS, S, M, L, XL, XXL
 
   const allProducts: Array<Record<string, unknown>> = [];
@@ -577,7 +615,10 @@ async function main(): Promise<void> {
     console.log('\n👥 Seeding customers...');
     const customerIds = await seedCustomers();
 
-    console.log('\n🎟️  Seeding coupons...');
+    console.log('\n� Seeding addresses...');
+    await seedAddresses(customerIds);
+
+    console.log('\n�🎟️  Seeding coupons...');
     await seedCoupons();
 
     console.log('\n🖼️  Fetching media...');
