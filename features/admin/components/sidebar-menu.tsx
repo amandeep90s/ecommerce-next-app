@@ -144,7 +144,7 @@ export function AdminSidebarMenu() {
           Main Menu
         </SidebarGroupLabel>
         <SidebarGroupContent>
-          <SidebarMenu>
+          <SidebarMenu className="gap-2">
             {menuItems.map((item) => {
               const parentIsActive =
                 isActive(item.href) || (item.subMenu?.some((sub) => isActive(sub.href)) ?? false);

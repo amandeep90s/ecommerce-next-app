@@ -1,6 +1,7 @@
 'use client';
 
-import { Bell } from 'lucide-react';
+import { Bell, StoreIcon } from 'lucide-react';
+import Link from 'next/link';
 
 import { ThemeToggle } from '@/components/theme-toggle';
 import { Button } from '@/components/ui/button';
@@ -16,6 +17,11 @@ export function Topbar() {
       <GlobalSearch />
 
       <div className="flex items-center gap-2">
+        <Button size="icon" variant="ghost" title="Go to store" asChild>
+          <Link href="/">
+            <StoreIcon className="size-5" />
+          </Link>
+        </Button>
         <Button variant="ghost" size="icon" className="relative">
           <Bell className="size-5" />
           <span className="absolute top-1 right-1 size-2 rounded-full bg-red-500" />

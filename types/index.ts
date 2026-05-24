@@ -1,4 +1,5 @@
 export * from './address.types';
+export * from './button.types';
 export * from './category.types';
 export * from './coupon.types';
 export * from './media.types';
