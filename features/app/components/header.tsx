@@ -19,7 +19,7 @@ export function Header() {
 
   return (
     <header className="w-full shadow-sm">
-      <div className="container mx-auto flex grid-cols-3 items-center justify-between py-4">
+      <div className="container mx-auto flex grid-cols-3 items-center justify-between p-4">
         {/* Logo */}
         <Logo className="h-9 w-auto" />
 
@@ -50,7 +50,7 @@ export function Header() {
           {isAuthenticated ? (
             <UserAvatar />
           ) : (
-            <Button asChild variant="secondary" size="lg">
+            <Button asChild className="hidden lg:flex" variant="secondary" size="lg">
               <Link href="/sign-in">Sign In</Link>
             </Button>
           )}

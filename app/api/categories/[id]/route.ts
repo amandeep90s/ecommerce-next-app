@@ -1,4 +1,5 @@
 import { StatusCodes } from 'http-status-codes';
+import mongoose from 'mongoose';
 import { NextResponse } from 'next/server';
 import slugify from 'slugify';
 
@@ -21,7 +22,7 @@ export async function GET(_request: Request, { params }: RouteContext) {
     await connectToDatabase();
 
     const { id } = await params;
-    const category = await Category.findById(id);
+    const category = await Category.findById(id).populate('image');
 
     if (!category) {
       return errorResponse({
@@ -63,33 +64,43 @@ export async function PATCH(request: Request, { params }: RouteContext) {
       });
     }
 
-    const { name } = parsed.data;
-    const slug = slugify(name, { replacement: '-', lower: true, strict: true });
+    const { name, description, image } = parsed.data;
 
-    const existing = await Category.findOne({
-      _id: { $ne: id },
-      $or: [
-        { name: { $regex: new RegExp(`^${name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`, 'i') } },
-        { slug },
-      ],
-    });
+    const updateData: Record<string, unknown> = {};
 
-    if (existing) {
-      return NextResponse.json(
-        {
-          success: false,
-          message: 'Validation error',
-          errors: { name: ['A category with this name already exists'] },
-        },
-        { status: StatusCodes.UNPROCESSABLE_ENTITY },
-      );
+    if (name !== undefined) {
+      const slug = slugify(name, { replacement: '-', lower: true, strict: true });
+
+      const existing = await Category.findOne({
+        _id: { $ne: id },
+        $or: [
+          { name: { $regex: new RegExp(`^${name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`, 'i') } },
+          { slug },
+        ],
+      });
+
+      if (existing) {
+        return NextResponse.json(
+          {
+            success: false,
+            message: 'Validation error',
+            errors: { name: ['A category with this name already exists'] },
+          },
+          { status: StatusCodes.UNPROCESSABLE_ENTITY },
+        );
+      }
+
+      updateData.name = name;
+      updateData.slug = slug;
     }
 
-    const category = await Category.findByIdAndUpdate(
-      id,
-      { name, slug },
-      { returnDocument: 'after', runValidators: true },
-    );
+    if (description !== undefined) updateData.description = description ?? null;
+    if (image !== undefined) updateData.image = image ? new mongoose.Types.ObjectId(image) : null;
+
+    const category = await Category.findByIdAndUpdate(id, updateData, {
+      returnDocument: 'after',
+      runValidators: true,
+    }).populate('image');
 
     if (!category) {
       return errorResponse({

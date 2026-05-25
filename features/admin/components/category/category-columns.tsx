@@ -8,6 +8,7 @@ import {
   RotateCcwIcon,
   Trash2Icon,
 } from 'lucide-react';
+import Image from 'next/image';
 import Link from 'next/link';
 import { useState } from 'react';
 import { toast } from 'sonner';
@@ -155,6 +156,26 @@ export function getCategoryColumns({
 }: GetCategoryColumnsOptions): ColumnDef<ICategoryItem>[] {
   return [
     {
+      id: 'image',
+      header: 'Image',
+      cell: ({ row }) =>
+        row.original.image ? (
+          <div className="relative size-10 overflow-hidden rounded-md border">
+            <Image
+              src={row.original.image.path}
+              alt={row.original.image.alt || row.original.name}
+              fill
+              className="object-cover"
+              sizes="40px"
+            />
+          </div>
+        ) : (
+          <div className="bg-muted text-muted-foreground flex size-10 items-center justify-center rounded-md border text-xs">
+            N/A
+          </div>
+        ),
+    },
+    {
       accessorKey: 'name',
       header: ({ column }) => (
         <Button
@@ -187,6 +208,18 @@ export function getCategoryColumns({
           {row.original.slug}
         </code>
       ),
+    },
+    {
+      accessorKey: 'description',
+      header: 'Description',
+      cell: ({ row }) =>
+        row.original.description ? (
+          <span className="text-muted-foreground line-clamp-1 max-w-xs text-sm">
+            {row.original.description}
+          </span>
+        ) : (
+          <span className="text-muted-foreground/50 text-sm italic">—</span>
+        ),
     },
     {
       accessorKey: 'deleteAt',

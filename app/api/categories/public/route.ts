@@ -8,7 +8,7 @@ export async function GET() {
   try {
     await connectToDatabase();
 
-    const items = await Category.find({ deleteAt: null }).sort({ name: 1 });
+    const items = await Category.find({ deleteAt: null }).sort({ name: 1 }).populate('image');
 
     return successResponse({
       message: 'Categories fetched successfully',

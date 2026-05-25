@@ -45,7 +45,12 @@ export function CategoryEditView({ id }: CategoryEditViewProps) {
 
   return (
     <CategoryForm
-      defaultValues={{ name: category.name }}
+      defaultValues={{
+        name: category.name,
+        description: category.description ?? '',
+        image: category.image?.id ?? null,
+      }}
+      defaultImageItem={category.image ?? null}
       onSubmit={onSubmit}
       isPending={isPending}
       submitLabel="Save Changes"

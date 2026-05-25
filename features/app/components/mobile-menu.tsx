@@ -10,6 +10,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '@/components/ui/accordion';
+import { Button } from '@/components/ui/button';
 import {
   Drawer,
   DrawerContent,
@@ -127,6 +128,16 @@ export function MobileMenu({ open, onOpenChange }: MobileMenuProps) {
                   </AccordionContent>
                 </AccordionItem>
               </Accordion>
+            </li>
+
+            <li className="mt-4 space-y-4 border-t pt-4">
+              <Button asChild variant="secondary" className="w-full" size="lg">
+                <Link href="/sign-in">Sign In</Link>
+              </Button>
+
+              <Button asChild variant="outline" className="w-full" size="lg">
+                <Link href="/sign-up">Sign Up</Link>
+              </Button>
             </li>
           </ul>
         </nav>

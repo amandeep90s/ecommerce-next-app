@@ -7,10 +7,10 @@ import { APP_NAME } from '@/config/env';
 
 export function Footer() {
   return (
-    <footer className="bg-muted/50 py-8">
-      <div className="container mx-auto space-y-6">
+    <footer className="bg-muted/50 py-5 lg:py-8">
+      <div className="container mx-auto space-y-6 px-4">
         <div className="flex flex-col items-center justify-between space-y-4 lg:flex-row lg:space-y-0">
-          <Logo className="h-9 w-auto" />
+          <Logo className="hidden h-9 w-auto lg:flex" />
 
           <nav className="text-muted-foreground [&_a]:hover:text-primary flex flex-wrap justify-center gap-6 [&_a]:text-sm">
             <Link href="/">Home</Link>

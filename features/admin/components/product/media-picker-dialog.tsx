@@ -24,6 +24,7 @@ interface MediaPickerDialogProps {
   onOpenChange: (open: boolean) => void;
   selected: IMediaItem[];
   onConfirm: (items: IMediaItem[]) => void;
+  single?: boolean;
 }
 
 export function MediaPickerDialog({
@@ -31,6 +32,7 @@ export function MediaPickerDialog({
   onOpenChange,
   selected,
   onConfirm,
+  single = false,
 }: MediaPickerDialogProps) {
   const [page, setPage] = useState(1);
   const [localSelected, setLocalSelected] = useState<Map<string, IMediaItem>>(() => {
@@ -48,6 +50,7 @@ export function MediaPickerDialog({
     if (next.has(media.id)) {
       next.delete(media.id);
     } else {
+      if (single) next.clear();
       next.set(media.id, media);
     }
     setLocalSelected(next);
@@ -64,7 +67,9 @@ export function MediaPickerDialog({
         <DialogHeader>
           <DialogTitle>Select Media</DialogTitle>
           <DialogDescription>
-            Choose media files to attach to your product. You can select multiple files.
+            {single
+              ? 'Choose a single media file to attach.'
+              : 'Choose media files to attach to your product. You can select multiple files.'}
           </DialogDescription>
         </DialogHeader>
 
@@ -158,7 +163,9 @@ export function MediaPickerDialog({
             Cancel
           </Button>
           <Button onClick={handleConfirm}>
-            Select {localSelected.size > 0 ? `(${localSelected.size})` : ''}
+            {single
+              ? 'Select Image'
+              : `Select${localSelected.size > 0 ? ` (${localSelected.size})` : ''}`}
           </Button>
         </DialogFooter>
       </DialogContent>
