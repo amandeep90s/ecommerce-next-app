@@ -1,12 +1,5 @@
-import React from 'react';
-
-import { ThemeToggle } from '@/components/theme-toggle';
+import { HomeView } from '@/features/app/views/home-view';
 
 export default function Home() {
-  return (
-    <div>
-      Home
-      <ThemeToggle />
-    </div>
-  );
+  return <HomeView />;
 }

@@ -469,6 +469,8 @@ async function seedProducts(
         media: productMedia,
         sku,
         stock: faker.number.int({ min: 50, max: 500 }),
+        isTrending: Math.random() < 0.3, // 30% chance to be trending
+        isFeatured: Math.random() < 0.2, // 20% chance to be featured
         isActive: true,
         deletedAt: null,
       });

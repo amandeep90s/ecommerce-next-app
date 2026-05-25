@@ -107,7 +107,7 @@ const RatingStars = ({ rating }: { rating: number }) => (
   </div>
 );
 
-export function Testimonial1({ className }: { className?: string }) {
+export function Testimonials({ className }: { className?: string }) {
   const [api, setApi] = React.useState<CarouselApi | null>(null);
   const [current, setCurrent] = React.useState(0);
 
@@ -204,4 +204,3 @@ export function Testimonial1({ className }: { className?: string }) {
     </section>
   );
 }
-export default Testimonial1;

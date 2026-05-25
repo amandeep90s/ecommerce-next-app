@@ -41,7 +41,7 @@ const sortOptions = [
   { id: 'rating', label: 'Customer Rating' },
 ];
 
-export default function CategoryFilter2() {
+export function ProductCatalog() {
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [selectedPriceRange, setSelectedPriceRange] = useState('all');
   const [selectedSort, setSelectedSort] = useState('featured');

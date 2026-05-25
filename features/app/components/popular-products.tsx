@@ -37,7 +37,7 @@ const products: Product[] = [
   },
 ];
 
-const ProductCard2 = () => {
+export function PopularProducts() {
   return (
     <section className="py-12">
       <div className="mx-auto flex w-full max-w-7xl flex-col gap-8 px-4 sm:px-6 lg:px-8">
@@ -87,6 +87,4 @@ const ProductCard2 = () => {
       </div>
     </section>
   );
-};
-
-export default ProductCard2;
+}

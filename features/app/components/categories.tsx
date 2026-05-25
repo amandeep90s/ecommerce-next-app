@@ -61,7 +61,7 @@ const categories = [
   },
 ];
 
-export default function ProductCategory6() {
+export function HomeCategories() {
   return (
     <section className="py-12">
       <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">

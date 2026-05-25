@@ -196,6 +196,16 @@ export function getProductColumns({ filter }: GetProductColumnsOptions): ColumnD
       cell: ({ row }) => `₹${row.original.selling_price.toFixed(2)}`,
     },
     {
+      accessorKey: 'isFeatured',
+      header: 'Featured',
+      cell: ({ row }) => (row.original.isFeatured ? 'Yes' : 'No'),
+    },
+    {
+      accessorKey: 'isTrending',
+      header: 'Trending',
+      cell: ({ row }) => (row.original.isTrending ? 'Yes' : 'No'),
+    },
+    {
       accessorKey: 'stock',
       header: 'Stock',
       cell: ({ row }) => (

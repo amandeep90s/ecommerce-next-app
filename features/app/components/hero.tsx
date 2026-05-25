@@ -76,7 +76,7 @@ const storeData = {
   ] as Product[],
 };
 
-export default function StorefrontHero2() {
+export function Hero() {
   const [searchQuery, setSearchQuery] = useState('');
   const [api, setApi] = useState<{
     selectedScrollSnap: () => number;

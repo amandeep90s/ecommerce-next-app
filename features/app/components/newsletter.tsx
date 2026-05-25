@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 
-const CtaSection2 = () => {
+export function Newsletter() {
   return (
     <section className="w-full py-16 sm:py-24">
       <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
@@ -64,6 +64,4 @@ const CtaSection2 = () => {
       </div>
     </section>
   );
-};
-
-export default CtaSection2;
+}

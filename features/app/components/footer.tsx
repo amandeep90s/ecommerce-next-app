@@ -10,7 +10,7 @@ export function Footer() {
     <footer className="bg-muted/50 py-5 lg:py-8">
       <div className="container mx-auto space-y-6 px-4">
         <div className="flex flex-col items-center justify-between space-y-4 lg:flex-row lg:space-y-0">
-          <Logo className="hidden h-9 w-auto lg:flex" />
+          <Logo className="h-9 w-auto" />
 
           <nav className="text-muted-foreground [&_a]:hover:text-primary flex flex-wrap justify-center gap-6 [&_a]:text-sm">
             <Link href="/">Home</Link>
