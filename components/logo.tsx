@@ -1,4 +1,5 @@
 import Image from 'next/image';
+import Link from 'next/link';
 
 import { cn } from '@/lib/utils';
 
@@ -10,7 +11,7 @@ interface LogoProps {
 
 export default function Logo({ height = 59, width = 156, className }: LogoProps) {
   return (
-    <>
+    <Link href="/" className="flex items-center">
       <Image
         src="/images/logo-black.png"
         alt="Logo"
@@ -27,6 +28,6 @@ export default function Logo({ height = 59, width = 156, className }: LogoProps)
         className={cn('hidden h-auto w-auto dark:block', className)}
         loading="eager"
       />
-    </>
+    </Link>
   );
 }

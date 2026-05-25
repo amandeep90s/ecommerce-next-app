@@ -15,7 +15,7 @@ export function AppLayout({ children }: AppLayoutProps) {
     <>
       <PromoBanner />
       <Header />
-      <main className="bg-muted/50 grow">{children}</main>
+      <main className="grow">{children}</main>
       <Footer />
     </>
   );

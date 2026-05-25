@@ -15,8 +15,8 @@ export function Header() {
   const { isAuthenticated } = useAppSelector((state) => state.auth);
 
   return (
-    <header className="container mx-auto">
-      <div className="flex grid-cols-3 items-center justify-between p-4">
+    <header className="w-full shadow-sm">
+      <div className="container mx-auto flex grid-cols-3 items-center justify-between py-4">
         {/* Logo */}
         <Logo className="h-9 w-auto" />
 

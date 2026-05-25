@@ -11,7 +11,7 @@ interface AuthLayoutProps {
 export function AuthLayout({ children }: AuthLayoutProps) {
   return (
     <div className="flex min-h-screen min-w-screen flex-col items-center justify-center gap-4">
-      <Logo />
+      <Logo className="h-10 w-auto" />
       {children}
 
       <footer>
