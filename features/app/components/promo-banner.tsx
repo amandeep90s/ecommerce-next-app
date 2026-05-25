@@ -1,6 +1,7 @@
 'use client';
 
 import { X } from 'lucide-react';
+import Link from 'next/link';
 import { useState } from 'react';
 
 import { Button } from '@/components/ui/button';
@@ -31,12 +32,12 @@ export function PromoBanner() {
       <div className="flex items-center justify-center gap-2 text-sm font-medium">
         <span>{promoBannerData.message}</span>
         {promoBannerData.link && (
-          <a
+          <Link
             href={promoBannerData.link}
             className="underline underline-offset-4 hover:no-underline"
           >
             {promoBannerData.linkText}
-          </a>
+          </Link>
         )}
       </div>
 
