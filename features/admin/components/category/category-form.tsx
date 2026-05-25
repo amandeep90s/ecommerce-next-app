@@ -35,9 +35,12 @@ export function CategoryForm({
   isPending,
   submitLabel = 'Save',
 }: CategoryFormProps) {
-  const [selectedImage, setSelectedImage] = useState<IMediaItem | null>(defaultImageItem ?? null);
+  const [imageOverride, setImageOverride] = useState<IMediaItem | null | 'removed'>(null);
   const [mediaPickerOpen, setMediaPickerOpen] = useState(false);
   const [pickerKey, setPickerKey] = useState(0);
+
+  const selectedImage: IMediaItem | null =
+    imageOverride === 'removed' ? null : (imageOverride ?? defaultImageItem ?? null);
 
   const form = useForm<CreateCategoryFormData>({
     resolver: zodResolver(createCategorySchema),
@@ -53,7 +56,6 @@ export function CategoryForm({
         description: defaultValues.description ?? '',
         image: defaultValues.image ?? null,
       });
-      setSelectedImage(defaultImageItem ?? null);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [defaultValues?.name, defaultValues?.description, defaultValues?.image]);
@@ -63,12 +65,12 @@ export function CategoryForm({
 
   function handleImageConfirm(items: IMediaItem[]) {
     const item = items[0] ?? null;
-    setSelectedImage(item);
+    setImageOverride(item);
     form.setValue('image', item?.id ?? null, { shouldValidate: true });
   }
 
   function handleRemoveImage() {
-    setSelectedImage(null);
+    setImageOverride('removed');
     form.setValue('image', null, { shouldValidate: true });
   }
 
