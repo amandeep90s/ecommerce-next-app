@@ -17,7 +17,17 @@ const categorySchema = new mongoose.Schema(
       trim: true,
       lowercase: true,
     },
-    deleteAt: {
+    description: {
+      type: String,
+      trim: true,
+      default: null,
+    },
+    image: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Media',
+      default: null,
+    },
+    deletedAt: {
       type: Date,
       default: null,
       index: true,

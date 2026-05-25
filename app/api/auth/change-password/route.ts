@@ -49,7 +49,7 @@ export async function POST(request: NextRequest) {
 
     await connectToDatabase();
 
-    const user = await User.findOne({ _id: userId, deleteAt: null }).select('+password');
+    const user = await User.findOne({ _id: userId, deletedAt: null }).select('+password');
 
     if (!user) {
       return errorResponse({

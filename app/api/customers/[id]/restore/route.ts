@@ -20,7 +20,7 @@ export async function PATCH(_request: Request, { params }: RouteContext) {
     const { id } = await params;
     const customer = await User.findOneAndUpdate(
       { _id: id, role: ERole.USER },
-      { deleteAt: null },
+      { deletedAt: null },
       { returnDocument: 'after' },
     ).select('-password -refresh_token -__v');
 

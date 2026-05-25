@@ -1,4 +1,5 @@
 import { StatusCodes } from 'http-status-codes';
+import mongoose from 'mongoose';
 import { NextResponse } from 'next/server';
 import slugify from 'slugify';
 
@@ -23,7 +24,7 @@ export async function GET(request: Request) {
     const filter = searchParams.get('filter') === 'trashed' ? 'trashed' : 'active';
 
     const baseQuery: Record<string, unknown> = {
-      deleteAt: filter === 'trashed' ? { $ne: null } : null,
+      deletedAt: filter === 'trashed' ? { $ne: null } : null,
     };
 
     if (q) {
@@ -38,7 +39,8 @@ export async function GET(request: Request) {
       Category.find(baseQuery)
         .sort({ createdAt: -1 })
         .skip((page - 1) * limit)
-        .limit(limit),
+        .limit(limit)
+        .populate('image'),
       Category.countDocuments(baseQuery),
     ]);
 
@@ -76,7 +78,7 @@ export async function POST(request: Request) {
       });
     }
 
-    const { name } = parsed.data;
+    const { name, description, image } = parsed.data;
     const slug = slugify(name, { replacement: '-', lower: true, strict: true });
 
     const existing = await Category.findOne({
@@ -97,7 +99,12 @@ export async function POST(request: Request) {
       );
     }
 
-    const category = await Category.create({ name, slug });
+    const category = await Category.create({
+      name,
+      slug,
+      description: description ?? null,
+      image: image ? new mongoose.Types.ObjectId(image) : null,
+    });
 
     return successResponse({
       message: 'Category created successfully',

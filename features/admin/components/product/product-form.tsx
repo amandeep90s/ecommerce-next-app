@@ -61,6 +61,8 @@ export function ProductForm({
       sku: '',
       stock: 0,
       isActive: true,
+      isFeatured: false,
+      isTrending: false,
       ...defaultValues,
     },
     mode: 'onSubmit',
@@ -80,6 +82,8 @@ export function ProductForm({
         sku: '',
         stock: 0,
         isActive: true,
+        isFeatured: false,
+        isTrending: false,
         ...defaultValues,
       });
     }
@@ -399,6 +403,42 @@ export function ProductForm({
                     disabled={isPending || isLoading}
                   />
                   <FieldLabel htmlFor="isActive">Active</FieldLabel>
+                </Field>
+              )}
+            />
+
+            {/* isFeatured */}
+            <Controller
+              name="isFeatured"
+              control={form.control}
+              render={({ field, fieldState }) => (
+                <Field orientation="horizontal" data-invalid={fieldState?.invalid || undefined}>
+                  <Checkbox
+                    checked={field.value}
+                    onCheckedChange={(checked) => field.onChange(checked)}
+                    id="isFeatured"
+                    aria-invalid={fieldState.invalid || undefined}
+                    disabled={isPending || isLoading}
+                  />
+                  <FieldLabel htmlFor="isFeatured">Featured</FieldLabel>
+                </Field>
+              )}
+            />
+
+            {/* isTrending */}
+            <Controller
+              name="isTrending"
+              control={form.control}
+              render={({ field, fieldState }) => (
+                <Field orientation="horizontal" data-invalid={fieldState?.invalid || undefined}>
+                  <Checkbox
+                    checked={field.value}
+                    onCheckedChange={(checked) => field.onChange(checked)}
+                    id="isTrending"
+                    aria-invalid={fieldState.invalid || undefined}
+                    disabled={isPending || isLoading}
+                  />
+                  <FieldLabel htmlFor="isTrending">Trending</FieldLabel>
                 </Field>
               )}
             />

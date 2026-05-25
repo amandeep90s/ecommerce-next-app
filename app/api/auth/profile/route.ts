@@ -50,7 +50,7 @@ export async function PATCH(request: NextRequest) {
 
     await connectToDatabase();
 
-    const user = await User.findOne({ _id: userId, deleteAt: null });
+    const user = await User.findOne({ _id: userId, deletedAt: null });
 
     if (!user) {
       return errorResponse({

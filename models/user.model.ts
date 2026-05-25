@@ -56,7 +56,7 @@ const userSchema = new mongoose.Schema(
       type: String,
       trim: true,
     },
-    deleteAt: {
+    deletedAt: {
       type: Date,
       default: null,
       index: true,

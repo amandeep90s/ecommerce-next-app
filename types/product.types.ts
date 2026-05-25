@@ -16,6 +16,8 @@ export interface IProduct {
   sku: string;
   stock: number;
   isActive: boolean;
+  isFeatured: boolean;
+  isTrending: boolean;
   deletedAt: Date | null;
   createdAt: Date;
   updatedAt: Date;
@@ -35,6 +37,8 @@ export interface IProductItem {
   sku: string;
   stock: number;
   isActive: boolean;
+  isFeatured: boolean;
+  isTrending: boolean;
   deletedAt: string | null;
   createdAt: string;
   updatedAt: string;
@@ -94,6 +98,11 @@ export interface IGetProductsResponse {
     items: IProductItem[];
     meta: IProductPaginationMeta;
   } | null;
+}
+
+export interface IGetPublicProductsResponse {
+  message: string;
+  data: IProductItem[];
 }
 
 export interface IProductDocument extends IProduct, mongoose.Document {}

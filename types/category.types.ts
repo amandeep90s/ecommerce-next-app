@@ -1,10 +1,14 @@
 import mongoose from 'mongoose';
 
+import { IMediaItem } from './media.types';
+
 export interface ICategory {
   id: mongoose.Types.ObjectId;
   name: string;
   slug: string;
-  deleteAt: Date | null;
+  description: string | null;
+  image: mongoose.Types.ObjectId | IMediaItem | null;
+  deletedAt: Date | null;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -14,13 +18,17 @@ export interface ICategoryItem {
   id: string;
   name: string;
   slug: string;
-  deleteAt: string | null;
+  description: string | null;
+  image: IMediaItem | null;
+  deletedAt: string | null;
   createdAt: string;
   updatedAt: string;
 }
 
 export interface ICreateCategoryPayload {
   name: string;
+  description?: string | null;
+  image?: string | null;
 }
 
 export interface ICreateCategoryResponse {
@@ -29,7 +37,9 @@ export interface ICreateCategoryResponse {
 }
 
 export interface IUpdateCategoryPayload {
-  name: string;
+  name?: string;
+  description?: string | null;
+  image?: string | null;
 }
 
 export interface IUpdateCategoryResponse {
