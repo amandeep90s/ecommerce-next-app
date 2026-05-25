@@ -21,7 +21,7 @@ export async function GET(request: Request) {
 
     const baseQuery: Record<string, unknown> = {
       role: ERole.USER,
-      deleteAt: filter === 'trashed' ? { $ne: null } : null,
+      deletedAt: filter === 'trashed' ? { $ne: null } : null,
     };
 
     if (q) {

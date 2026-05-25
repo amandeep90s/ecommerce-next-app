@@ -222,10 +222,10 @@ export function getCategoryColumns({
         ),
     },
     {
-      accessorKey: 'deleteAt',
+      accessorKey: 'deletedAt',
       header: 'Status',
       cell: ({ row }) =>
-        row.original.deleteAt ? (
+        row.original.deletedAt ? (
           <Badge variant="destructive">Trashed</Badge>
         ) : (
           <Badge variant="secondary">Active</Badge>

@@ -226,7 +226,7 @@ export function getCustomerColumns({
       accessorKey: 'is_active',
       header: 'Status',
       cell: ({ row }) => {
-        if (row.original.deleteAt) {
+        if (row.original.deletedAt) {
           return <Badge variant="destructive">Trashed</Badge>;
         }
         return row.original.is_active ? (

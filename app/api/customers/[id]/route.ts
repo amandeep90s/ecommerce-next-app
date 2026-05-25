@@ -55,7 +55,7 @@ export async function DELETE(_request: Request, { params }: RouteContext) {
     const { id } = await params;
     const customer = await User.findOneAndUpdate(
       { _id: id, role: ERole.USER },
-      { deleteAt: new Date() },
+      { deletedAt: new Date() },
       { returnDocument: 'after' },
     ).select('-password -refresh_token -__v');
 

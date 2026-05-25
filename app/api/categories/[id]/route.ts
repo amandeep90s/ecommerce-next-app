@@ -133,7 +133,7 @@ export async function DELETE(_request: Request, { params }: RouteContext) {
     const { id } = await params;
     const category = await Category.findByIdAndUpdate(
       id,
-      { deleteAt: new Date() },
+      { deletedAt: new Date() },
       { returnDocument: 'after' },
     );
 

@@ -27,7 +27,7 @@ const categorySchema = new mongoose.Schema(
       ref: 'Media',
       default: null,
     },
-    deleteAt: {
+    deletedAt: {
       type: Date,
       default: null,
       index: true,

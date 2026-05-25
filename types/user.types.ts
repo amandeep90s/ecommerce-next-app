@@ -18,7 +18,7 @@ export interface IUser {
   is_email_verified: boolean;
   is_active: boolean;
   refresh_token?: string;
-  deleteAt: Date | null;
+  deletedAt: Date | null;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -51,7 +51,7 @@ export interface ICustomerItem {
   phone?: string;
   is_email_verified: boolean;
   is_active: boolean;
-  deleteAt: string | null;
+  deletedAt: string | null;
   createdAt: string;
   updatedAt: string;
 }

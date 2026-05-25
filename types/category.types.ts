@@ -8,7 +8,7 @@ export interface ICategory {
   slug: string;
   description: string | null;
   image: mongoose.Types.ObjectId | IMediaItem | null;
-  deleteAt: Date | null;
+  deletedAt: Date | null;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -20,7 +20,7 @@ export interface ICategoryItem {
   slug: string;
   description: string | null;
   image: IMediaItem | null;
-  deleteAt: string | null;
+  deletedAt: string | null;
   createdAt: string;
   updatedAt: string;
 }

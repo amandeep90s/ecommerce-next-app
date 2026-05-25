@@ -24,7 +24,7 @@ export async function GET(request: Request) {
     const filter = searchParams.get('filter') === 'trashed' ? 'trashed' : 'active';
 
     const baseQuery: Record<string, unknown> = {
-      deleteAt: filter === 'trashed' ? { $ne: null } : null,
+      deletedAt: filter === 'trashed' ? { $ne: null } : null,
     };
 
     if (q) {
