@@ -3,6 +3,7 @@
 import React from 'react';
 
 import Logo from '@/components/logo';
+import { APP_NAME } from '@/config/env';
 
 interface AuthLayoutProps {
   children: React.ReactNode;
@@ -16,7 +17,7 @@ export function AuthLayout({ children }: AuthLayoutProps) {
 
       <footer>
         <p className="text-muted-foreground text-sm">
-          &copy; {new Date().getFullYear()} E-Store. All rights reserved.
+          &copy; {new Date().getFullYear()} {APP_NAME}. All rights reserved.
         </p>
       </footer>
     </div>

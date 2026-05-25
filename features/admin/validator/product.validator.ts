@@ -23,6 +23,8 @@ export const createProductSchema = z.object({
     .max(100, { message: 'SKU must be less than 100 characters' }),
   stock: z.number().int().min(0, { message: 'Stock must be at least 0' }),
   isActive: z.boolean(),
+  isFeatured: z.boolean(),
+  isTrending: z.boolean(),
 });
 
 export const updateProductSchema = createProductSchema.partial();
