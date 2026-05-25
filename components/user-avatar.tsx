@@ -1,6 +1,13 @@
 'use client';
 
-import { Key, LogOut, User as UserIcon } from 'lucide-react';
+import {
+  HouseIcon,
+  Key,
+  LayoutDashboardIcon,
+  LogOut,
+  ShoppingBagIcon,
+  User as UserIcon,
+} from 'lucide-react';
 import Link from 'next/link';
 import { useState } from 'react';
 
@@ -15,6 +22,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { ERole } from '@/enums';
 import { useSignOut } from '@/features/auth/hooks/use-sign-out';
 import { useAppSelector } from '@/store/hooks';
 
@@ -22,6 +30,10 @@ export function UserAvatar() {
   const { mutate: signOut, isPending } = useSignOut();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const user = useAppSelector((state) => state.auth.user);
+
+  if (!user) {
+    return null;
+  }
 
   return (
     <DropdownMenu open={isDropdownOpen} onOpenChange={setIsDropdownOpen}>
@@ -46,12 +58,39 @@ export function UserAvatar() {
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
+          {user.role === ERole.ADMIN && (
+            <DropdownMenuItem asChild>
+              <Link href="/admin/dashboard" className="cursor-pointer">
+                <LayoutDashboardIcon className="mr-2 size-4" />
+                <span>My Dashboard</span>
+              </Link>
+            </DropdownMenuItem>
+          )}
           <DropdownMenuItem asChild>
-            <Link href="/admin/profile" className="cursor-pointer">
+            <Link
+              href={user.role === ERole.USER ? '/profile' : '/admin/profile'}
+              className="cursor-pointer"
+            >
               <UserIcon className="mr-2 size-4" />
               <span>My Profile</span>
             </Link>
           </DropdownMenuItem>
+          {user.role === ERole.USER && (
+            <>
+              <DropdownMenuItem asChild>
+                <Link href="/orders" className="cursor-pointer">
+                  <ShoppingBagIcon className="mr-2 size-4" />
+                  <span>My Orders</span>
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link href="/addresses" className="cursor-pointer">
+                  <HouseIcon className="mr-2 size-4" />
+                  <span>My Address</span>
+                </Link>
+              </DropdownMenuItem>
+            </>
+          )}
           <DropdownMenuItem asChild>
             <Link href="/admin/change-password" className="cursor-pointer">
               <Key className="mr-2 size-4" />

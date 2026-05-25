@@ -43,7 +43,7 @@ export function ProfileForm({ defaultValues, email, onSubmit, isPending }: Profi
         <CardTitle className="text-base font-medium">Profile Details</CardTitle>
       </CardHeader>
       <Separator />
-      <CardContent className="pt-4">
+      <CardContent>
         <form id="profile-form" onSubmit={form.handleSubmit(handleSubmit)}>
           <FieldGroup>
             <div className="grid gap-4 lg:grid-cols-2">
