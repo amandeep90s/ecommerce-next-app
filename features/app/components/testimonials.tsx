@@ -13,6 +13,7 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from '@/components/ui/carousel';
+import { useGetPublicReviews } from '@/features/app/hooks/use-get-public-reviews';
 import { cn } from '@/lib/utils';
 
 type EmblaEventType =
@@ -38,63 +39,6 @@ type CarouselApi = {
   off: (event: EmblaEventType, callback: () => void) => void;
 };
 
-interface Testimonial {
-  id: number;
-  name: string;
-  role: string;
-  image: string;
-  review: string;
-  rating: number;
-}
-
-const testimonials: Testimonial[] = [
-  {
-    id: 1,
-    name: 'Alison Dawn',
-    role: 'Developer',
-    image: 'https://notion-avatars.netlify.app/api/avatar?preset=female-1',
-    review:
-      'Pellentesque in ip sum dolor amet tellus vestibulum tincidunt. Pellentesque dignissim quis turpis quis faucibus.',
-    rating: 4.5,
-  },
-  {
-    id: 2,
-    name: 'Daniel Peter',
-    role: 'Product Designer',
-    image: 'https://notion-avatars.netlify.app/api/avatar?preset=male-2',
-    review:
-      'Pellentesque in ip sum dolor amet tellus vestibulum tincidunt. Pellentesque dignissim quis turpis quis faucibus.',
-    rating: 5.0,
-  },
-  {
-    id: 3,
-    name: 'Sarah Johnson',
-    role: 'Restaurant Owner',
-    image: 'https://notion-avatars.netlify.app/api/avatar?preset=female-3',
-    review:
-      'Pellentesque in ip sum dolor amet tellus vestibulum tincidunt. Pellentesque dignissim quis turpis quis faucibus.',
-    rating: 4.8,
-  },
-  {
-    id: 4,
-    name: 'Michael Chen',
-    role: 'Food Critic',
-    image: 'https://notion-avatars.netlify.app/api/avatar?preset=male-4',
-    review:
-      'Pellentesque in ip sum dolor amet tellus vestibulum tincidunt. Pellentesque dignissim quis turpis quis faucibus.',
-    rating: 4.9,
-  },
-  {
-    id: 5,
-    name: 'Emma Wilson',
-    role: 'Chef',
-    image: 'https://notion-avatars.netlify.app/api/avatar?preset=female-2',
-    review:
-      'Pellentesque in ip sum dolor amet tellus vestibulum tincidunt. Pellentesque dignissim quis turpis quis faucibus.',
-    rating: 4.7,
-  },
-];
-
 const RatingStars = ({ rating }: { rating: number }) => (
   <div className="flex items-center gap-1">
     {[...Array(5)].map((_, index) => (
@@ -110,6 +54,8 @@ const RatingStars = ({ rating }: { rating: number }) => (
 export function Testimonials({ className }: { className?: string }) {
   const [api, setApi] = React.useState<CarouselApi | null>(null);
   const [current, setCurrent] = React.useState(0);
+  const { data, isPending } = useGetPublicReviews(6);
+  const reviews = data?.data ?? [];
 
   React.useEffect(() => {
     if (!api) return;
@@ -134,7 +80,6 @@ export function Testimonials({ className }: { className?: string }) {
         <Carousel
           className="w-full"
           setApi={(api) => {
-            // Only update state if api is defined
             if (api) {
               setApi(api);
             } else {
@@ -147,51 +92,74 @@ export function Testimonials({ className }: { className?: string }) {
           }}
         >
           <CarouselContent className="-ml-1">
-            {testimonials.map((testimonial) => (
-              <CarouselItem
-                key={testimonial.id}
-                className="basis-full px-4 last:pe-0 sm:basis-1/2 lg:basis-1/3"
-              >
-                <Card className="border-border h-full overflow-hidden border py-6">
-                  <CardHeader className="gap-0 px-6">
-                    <div className="flex items-center gap-4">
-                      <Avatar className="bg-muted size-12">
-                        <AvatarImage
-                          src={testimonial.image}
-                          alt={testimonial.name}
-                          className="size-12"
-                        />
-                        <AvatarFallback className="bg-card">{testimonial.name[0]}</AvatarFallback>
-                      </Avatar>
-                      <div>
-                        <CardTitle className="text-foreground font-semibold">
-                          {testimonial.name}
-                        </CardTitle>
-                        <p className="text-muted-foreground text-sm">{testimonial.role}</p>
-                      </div>
-                    </div>
-                  </CardHeader>
-                  <CardContent className="px-6">
-                    <p className="text-muted-foreground text-base">{testimonial.review}</p>
-                  </CardContent>
-                  <CardFooter className="border-t-0 bg-transparent px-6 pb-6">
-                    <RatingStars rating={testimonial.rating} />
-                  </CardFooter>
-                </Card>
-              </CarouselItem>
-            ))}
+            {isPending
+              ? Array.from({ length: 3 }).map((_, i) => (
+                  <CarouselItem
+                    key={i}
+                    className="basis-full px-4 last:pe-0 sm:basis-1/2 lg:basis-1/3"
+                  >
+                    <Card className="border-border h-full overflow-hidden border py-6">
+                      <CardHeader className="gap-0 px-6">
+                        <div className="flex items-center gap-4">
+                          <div className="bg-muted size-12 animate-pulse rounded-full" />
+                          <div className="flex flex-col gap-2">
+                            <div className="bg-muted h-4 w-24 animate-pulse rounded" />
+                            <div className="bg-muted h-3 w-16 animate-pulse rounded" />
+                          </div>
+                        </div>
+                      </CardHeader>
+                      <CardContent className="px-6">
+                        <div className="bg-muted h-16 w-full animate-pulse rounded" />
+                      </CardContent>
+                    </Card>
+                  </CarouselItem>
+                ))
+              : reviews.map((review) => (
+                  <CarouselItem
+                    key={review.id}
+                    className="basis-full px-4 last:pe-0 sm:basis-1/2 lg:basis-1/3"
+                  >
+                    <Card className="border-border h-full overflow-hidden border py-6">
+                      <CardHeader className="gap-0 px-6">
+                        <div className="flex items-center gap-4">
+                          <Avatar className="bg-muted size-12">
+                            <AvatarImage
+                              src={review.user.avatar?.url ?? ''}
+                              alt={review.user.name}
+                              className="size-12"
+                            />
+                            <AvatarFallback className="bg-card">
+                              {review.user.name[0]}
+                            </AvatarFallback>
+                          </Avatar>
+                          <div>
+                            <CardTitle className="text-foreground font-semibold">
+                              {review.user.name}
+                            </CardTitle>
+                          </div>
+                        </div>
+                      </CardHeader>
+                      <CardContent className="px-6">
+                        <p className="text-muted-foreground text-base">{review.comment}</p>
+                      </CardContent>
+                      <CardFooter className="border-t-0 bg-transparent px-6 pb-6">
+                        <RatingStars rating={review.rating} />
+                      </CardFooter>
+                    </Card>
+                  </CarouselItem>
+                ))}
           </CarouselContent>
           <CarouselPrevious variant="outline" className="hidden cursor-pointer lg:flex" />
           <CarouselNext variant="outline" className="hidden cursor-pointer lg:flex" />
           <div className="mt-8 flex items-center justify-center gap-2">
-            {testimonials.map((_, index) => (
+            {reviews.map((_, index) => (
               <Button
                 variant="ghost"
                 key={index}
                 onClick={() => api?.scrollTo(index)}
                 className={cn(
                   'h-9 px-4 py-2',
-                  'size-2 cursor-pointer rounded-full !p-0 transition-all',
+                  'size-2 cursor-pointer rounded-full p-0! transition-all',
                   current === index ? 'bg-foreground w-6' : 'bg-muted',
                 )}
                 aria-label={`Go to slide ${index + 1}`}

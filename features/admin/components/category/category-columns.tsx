@@ -210,18 +210,6 @@ export function getCategoryColumns({
       ),
     },
     {
-      accessorKey: 'description',
-      header: 'Description',
-      cell: ({ row }) =>
-        row.original.description ? (
-          <span className="text-muted-foreground line-clamp-1 max-w-xs text-sm">
-            {row.original.description}
-          </span>
-        ) : (
-          <span className="text-muted-foreground/50 text-sm italic">—</span>
-        ),
-    },
-    {
       accessorKey: 'deletedAt',
       header: 'Status',
       cell: ({ row }) =>

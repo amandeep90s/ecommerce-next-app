@@ -7,4 +7,5 @@ export const categoriesData = [
   { name: 'Jackets & Coats', slug: 'jackets-coats' },
   { name: 'Activewear', slug: 'activewear' },
   { name: 'Ethnic Wear', slug: 'ethnic-wear' },
+  { name: 'Footwear', slug: 'footwear' },
 ];

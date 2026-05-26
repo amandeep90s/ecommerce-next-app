@@ -1,6 +1,6 @@
 'use client';
 
-import { ArrowRight, Flame, Search, ShoppingBag, Star, TrendingUp } from 'lucide-react';
+import { ArrowRight, Flame, Search, ShoppingBag, TrendingUp } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
 import { Badge } from '@/components/ui/badge';
@@ -8,72 +8,12 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Carousel, CarouselContent, CarouselItem } from '@/components/ui/carousel';
 import { Input } from '@/components/ui/input';
-
-interface Product {
-  id: number;
-  name: string;
-  image: string;
-  price: number;
-  rating: number;
-  reviews: number;
-  trending: boolean;
-  discount: string;
-  tag: string;
-}
+import { useGetFeaturedProducts } from '@/features/app/hooks/use-get-featured-products';
 
 const storeData = {
   title: 'Discover Your Perfect Style',
   subtitle:
     'Explore our curated collection of premium products. Each piece is handpicked for those who appreciate quality and style.',
-  featuredProducts: [
-    {
-      id: 1,
-      name: 'Classic Watch',
-      image:
-        'https://assets.shadcnstore.com/shadcnstore.com/stock/e-commerce/accessories.800w.900f12.avif',
-      price: 299,
-      rating: 4.9,
-      reviews: 128,
-      trending: true,
-      tag: 'Best Seller',
-    },
-    {
-      id: 2,
-      name: 'Premium Headphones',
-      image:
-        'https://assets.shadcnstore.com/shadcnstore.com/stock/e-commerce/premium-headphones.500w.3281fb.avif',
-      price: 199,
-      rating: 4.8,
-      reviews: 256,
-      trending: true,
-      discount: 'Free Shipping',
-      tag: 'New Arrival',
-    },
-    {
-      id: 3,
-      name: 'Luxury Sunglasses',
-      image:
-        'https://assets.shadcnstore.com/shadcnstore.com/stock/e-commerce/luxury-sunglasses.500w.9ef2ef.avif',
-      price: 159,
-      rating: 4.7,
-      reviews: 189,
-      trending: true,
-      discount: 'Limited Stock',
-      tag: 'Premium',
-    },
-    {
-      id: 4,
-      name: 'Smart Watch Pro',
-      image:
-        'https://assets.shadcnstore.com/shadcnstore.com/stock/e-commerce/refurbished.500w.77e256.avif',
-      price: 349,
-      rating: 4.9,
-      reviews: 312,
-      trending: true,
-      discount: 'Early Bird',
-      tag: 'Featured',
-    },
-  ] as Product[],
 };
 
 export function Hero() {
@@ -83,19 +23,21 @@ export function Hero() {
     scrollTo: (index: number) => void;
   }>();
   const [currentSlide, setCurrentSlide] = useState(0);
+  const { data, isPending } = useGetFeaturedProducts(4);
+  const featuredProducts = data?.data ?? [];
 
   // Auto-scroll functionality
   useEffect(() => {
-    if (!api) return;
+    if (!api || featuredProducts.length === 0) return;
 
     const interval = setInterval(() => {
-      const nextSlide = (currentSlide + 1) % storeData.featuredProducts.length;
+      const nextSlide = (currentSlide + 1) % featuredProducts.length;
       api.scrollTo(nextSlide);
       setCurrentSlide(nextSlide);
     }, 5000);
 
     return () => clearInterval(interval);
-  }, [api, currentSlide]);
+  }, [api, currentSlide, featuredProducts.length]);
 
   return (
     <section className="from-background to-accent/20 relative bg-linear-to-b">
@@ -170,61 +112,67 @@ export function Hero() {
                 }}
               >
                 <CarouselContent className="h-full">
-                  {storeData.featuredProducts.map((product) => (
-                    <CarouselItem key={product.id} className="h-full">
-                      <Card className="relative size-full overflow-hidden border-1 py-4">
-                        <CardContent className="px-4">
-                          <div className="relative size-full overflow-hidden rounded-md">
-                            <img
-                              src={product.image}
-                              alt={product.name}
-                              className="h-[500px] w-full object-cover"
-                              loading="lazy"
-                            />
-                          </div>
-                          <div className="from-background/90 via-background/30 absolute inset-0 bg-linear-to-t to-transparent" />
+                  {isPending
+                    ? Array.from({ length: 4 }).map((_, i) => (
+                        <CarouselItem key={i} className="h-full">
+                          <Card className="relative size-full overflow-hidden border-1 py-4">
+                            <CardContent className="px-4">
+                              <div className="bg-muted h-[500px] w-full animate-pulse rounded-md" />
+                            </CardContent>
+                          </Card>
+                        </CarouselItem>
+                      ))
+                    : featuredProducts.map((product) => (
+                        <CarouselItem key={product.id} className="h-full">
+                          <Card className="relative size-full overflow-hidden border-1 py-4">
+                            <CardContent className="px-4">
+                              <div className="relative size-full overflow-hidden rounded-md">
+                                <img
+                                  src={product.media[0]?.path ?? ''}
+                                  alt={product.name}
+                                  className="h-[500px] w-full object-cover"
+                                  loading="lazy"
+                                />
+                              </div>
+                              <div className="from-background/90 via-background/30 absolute inset-0 bg-linear-to-t to-transparent" />
 
-                          <div className="text-background-foreground absolute inset-0 flex flex-col justify-end p-8">
-                            <div className="relative z-10 flex max-w-md flex-col gap-4">
-                              <Badge className="w-fit rounded-full px-2.5 py-0.5 font-semibold">
-                                {product.tag}
-                              </Badge>
-                              <h2 className="text-4xl font-bold">{product.name}</h2>
-                              <p className="text-background-foreground/80 text-lg">
-                                Discover the latest in style and comfort with our premium
-                                collection.
-                              </p>
-                              <div className="flex items-center gap-4 pt-2">
-                                <Button size="lg" className="h-10 cursor-pointer rounded-full px-8">
-                                  Shop Now
-                                </Button>
-                                <div className="text-foreground flex items-center gap-1">
-                                  <Star className="fill-foreground size-5" />
-                                  <span className="font-medium">{product.rating}</span>
-                                  <span className="text-foreground/80">
-                                    ({product.reviews} reviews)
-                                  </span>
+                              <div className="text-background-foreground absolute inset-0 flex flex-col justify-end p-8">
+                                <div className="relative z-10 flex max-w-md flex-col gap-4">
+                                  <Badge className="w-fit rounded-full px-2.5 py-0.5 font-semibold">
+                                    Featured
+                                  </Badge>
+                                  <h2 className="text-4xl font-bold">{product.name}</h2>
+                                  <p className="text-background-foreground/80 text-lg">
+                                    Discover the latest in style and comfort with our premium
+                                    collection.
+                                  </p>
+                                  <div className="flex items-center gap-4 pt-2">
+                                    <Button
+                                      size="lg"
+                                      className="h-10 cursor-pointer rounded-full px-8"
+                                    >
+                                      Shop Now
+                                    </Button>
+                                  </div>
                                 </div>
                               </div>
-                            </div>
-                          </div>
 
-                          {product.trending && (
-                            <div className="text-background-foreground bg-foreground/10 dark:bg-background/20 absolute end-8 top-8 flex items-center gap-1 rounded-full px-3 py-1 text-sm font-medium backdrop-blur-xs">
-                              <Flame className="size-4" /> Trending
-                            </div>
-                          )}
-                        </CardContent>
-                      </Card>
-                    </CarouselItem>
-                  ))}
+                              {product.isTrending && (
+                                <div className="text-background-foreground bg-foreground/10 dark:bg-background/20 absolute end-8 top-8 flex items-center gap-1 rounded-full px-3 py-1 text-sm font-medium backdrop-blur-xs">
+                                  <Flame className="size-4" /> Trending
+                                </div>
+                              )}
+                            </CardContent>
+                          </Card>
+                        </CarouselItem>
+                      ))}
                 </CarouselContent>
               </Carousel>
             </div>
 
             {/* Dots Navigation - Enhanced */}
             <div className="relative mt-8 flex justify-center gap-3">
-              {storeData.featuredProducts.map((_, index) => (
+              {featuredProducts.map((_, index) => (
                 <button
                   key={index}
                   onClick={() => {
