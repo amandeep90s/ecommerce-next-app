@@ -10,6 +10,7 @@ import {
   Package2Icon,
   PackageIcon,
   Plus,
+  SettingsIcon,
   ShoppingCartIcon,
   StarIcon,
   TicketIcon,
@@ -139,6 +140,11 @@ export function AdminSidebarMenu() {
         label: 'Media',
         href: '/admin/media',
         icon: <ImageIcon />,
+      },
+      {
+        label: 'Settings',
+        href: '/admin/settings',
+        icon: <SettingsIcon />,
       },
     ];
   }, []);
