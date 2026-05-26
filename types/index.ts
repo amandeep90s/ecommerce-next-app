@@ -8,4 +8,5 @@ export * from './otp.types';
 export * from './product-variant.types';
 export * from './product.types';
 export * from './review.types';
+export * from './setting.types';
 export * from './user.types';
