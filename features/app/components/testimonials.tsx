@@ -128,7 +128,7 @@ export function Testimonials({ className }: { className?: string }) {
                               alt={review.user.name}
                               className="size-12"
                             />
-                            <AvatarFallback className="bg-card">
+                            <AvatarFallback className="bg-card text-foreground text-xl font-medium">
                               {review.user.name[0]}
                             </AvatarFallback>
                           </Avatar>

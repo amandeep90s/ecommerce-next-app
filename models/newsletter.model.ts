@@ -13,6 +13,11 @@ const newsletterSchema = new mongoose.Schema(
       type: Date,
       default: Date.now,
     },
+    unsubscribeToken: {
+      type: String,
+      required: true,
+      unique: true,
+    },
   },
   {
     timestamps: true,

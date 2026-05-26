@@ -1,9 +1,37 @@
+'use client';
+
+import { useState } from 'react';
+import { toast } from 'sonner';
+
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
+import { useSubscribeNewsletter } from '@/features/app/hooks/use-subscribe-newsletter';
 
 export function Newsletter() {
+  const [email, setEmail] = useState('');
+  const { mutate: subscribe, isPending } = useSubscribeNewsletter();
+
+  function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+
+    if (!email.trim()) return;
+
+    subscribe(
+      { email },
+      {
+        onSuccess: (data) => {
+          toast.success(data.message);
+          setEmail('');
+        },
+        onError: (error) => {
+          toast.error(error.message);
+        },
+      },
+    );
+  }
+
   return (
     <section className="w-full py-16 sm:py-24">
       <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
@@ -17,14 +45,23 @@ export function Newsletter() {
               </p>
             </div>
 
-            <div className="mx-auto flex flex-col gap-3 max-sm:w-full sm:flex-row">
+            <form
+              onSubmit={handleSubmit}
+              className="mx-auto flex flex-col gap-3 max-sm:w-full sm:flex-row"
+            >
               <Input
                 type="email"
                 className="h-9 w-78 max-sm:w-full"
                 placeholder="Enter your email here"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+                disabled={isPending}
               />
-              <Button className="h-9 cursor-pointer px-4 py-2">Join Now</Button>
-            </div>
+              <Button type="submit" className="h-9 cursor-pointer px-4 py-2" disabled={isPending}>
+                {isPending ? 'Joining…' : 'Join Now'}
+              </Button>
+            </form>
 
             <div className="flex flex-wrap items-center justify-center gap-2">
               <div className="*:ring-background flex -space-x-2 *:size-8 *:ring-2">
