@@ -6,6 +6,7 @@ import {
   ImageIcon,
   LayoutGridIcon,
   ListIcon,
+  MailIcon,
   Package2Icon,
   PackageIcon,
   Plus,
@@ -128,6 +129,11 @@ export function AdminSidebarMenu() {
         label: 'Rating & Reviews',
         href: '/admin/reviews',
         icon: <StarIcon />,
+      },
+      {
+        label: 'Newsletter',
+        href: '/admin/newsletter',
+        icon: <MailIcon />,
       },
       {
         label: 'Media',
