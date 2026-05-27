@@ -77,11 +77,6 @@ async function seedCategories(): Promise<void> {
 
 // ─── Seed Customers ─────────────────────────────────────────
 async function seedCustomers(): Promise<mongoose.Types.ObjectId[]> {
-  if (shouldFresh) {
-    await User.deleteMany({ role: ERole.USER });
-    console.log('  ✓ Cleared customer users');
-  }
-
   const customerIds: mongoose.Types.ObjectId[] = [];
   const existingCustomers = await User.find({ role: ERole.USER });
 

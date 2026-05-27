@@ -13,7 +13,7 @@ const AUTH_ROUTES = [
 ];
 
 function getDashboard(role: string) {
-  return role === ERole.ADMIN ? '/admin/dashboard' : '/customer/dashboard';
+  return role === ERole.ADMIN ? '/admin/dashboard' : '/dashboard';
 }
 
 interface TokenPayload {
@@ -96,7 +96,7 @@ export async function proxy(request: NextRequest) {
       return NextResponse.redirect(new URL('/sign-in', request.url));
     }
     if (role && role !== ERole.ADMIN) {
-      return NextResponse.redirect(new URL('/customer/dashboard', request.url));
+      return NextResponse.redirect(new URL('/dashboard', request.url));
     }
   }
 

@@ -78,7 +78,7 @@ export function OtpVerificationForm({ email }: OtpVerificationFormProps) {
         toast.success(res.message);
         if (res.data) {
           dispatch(setUser(res.data));
-          router.push(res.data.role === ERole.ADMIN ? '/admin/dashboard' : '/customer/dashboard');
+          router.push(res.data.role === ERole.ADMIN ? '/admin/dashboard' : '/dashboard');
         }
       },
       onError: (err) => {
