@@ -17,7 +17,7 @@ export default async function Layout({ children }: LayoutProps) {
   }
 
   if (user.role !== ERole.ADMIN) {
-    redirect('/customer/dashboard');
+    redirect('/dashboard');
   }
 
   return <AdminLayout>{children}</AdminLayout>;
