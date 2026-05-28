@@ -115,6 +115,17 @@ export interface IUpdateProfileResponse {
   data: IAuthUser | null;
 }
 
+export interface IUpdateAvatarPayload {
+  url: string;
+  public_id: string;
+}
+
+export interface IUpdateAvatarResponse {
+  success: boolean;
+  message: string;
+  data: IAuthUser | null;
+}
+
 export interface IChangePasswordPayload {
   currentPassword: string;
   newPassword: string;
