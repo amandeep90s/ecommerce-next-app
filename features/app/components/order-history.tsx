@@ -1,3 +1,5 @@
+import Image from 'next/image';
+
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -92,9 +94,11 @@ const OrderHistory1 = () => {
               {orders.map((order, i) => (
                 <TableRow key={i}>
                   <TableCell className="flex flex-col gap-3 py-3 sm:flex-row sm:items-center">
-                    <img
+                    <Image
                       src={order.image}
                       alt={order.name}
+                      width={64}
+                      height={64}
                       className="h-16 w-16 shrink-0 rounded-md object-cover"
                     />
                     <div className="min-w-0 flex-1">

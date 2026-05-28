@@ -13,6 +13,7 @@ import {
 import createWebStorage from 'redux-persist/lib/storage/createWebStorage';
 
 import appReducer from '@/features/app/appSlice';
+import catalogReducer from '@/features/app/catalogSlice';
 import authReducer from '@/features/auth/authSlice';
 
 // SSR-safe storage — prevents "localStorage is not defined" errors on the server
@@ -33,6 +34,7 @@ const storage: Storage =
 
 const rootReducer = combineReducers({
   app: appReducer,
+  catalog: catalogReducer,
   // Auth is intentionally excluded from the persist whitelist — session is
   // managed via httpOnly cookies; user state is rehydrated on page load.
   auth: authReducer,

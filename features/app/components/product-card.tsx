@@ -1,4 +1,5 @@
 import { Heart } from 'lucide-react';
+import Image from 'next/image';
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardTitle } from '@/components/ui/card';
@@ -22,7 +23,7 @@ export function ProductCardOne() {
         {/* Product Image */}
         <div className="relative mb-6">
           <div className="relative flex h-[280px] items-center justify-center overflow-hidden rounded-2xl bg-gray-100">
-            <img
+            <Image
               src={productData.image}
               alt={productData.name}
               className="object-fit h-full w-full"

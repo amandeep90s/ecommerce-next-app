@@ -105,4 +105,12 @@ export interface IGetPublicProductsResponse {
   data: IProductItem[];
 }
 
+export interface IGetPublicProductsPaginatedResponse {
+  message: string;
+  data: {
+    items: IProductItem[];
+    meta: IProductPaginationMeta;
+  } | null;
+}
+
 export interface IProductDocument extends IProduct, mongoose.Document {}

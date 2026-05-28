@@ -80,4 +80,9 @@ export interface IGetReviewsResponse {
   } | null;
 }
 
+export interface IGetPublicReviewsResponse {
+  message: string;
+  data: IReviewItem[];
+}
+
 export interface IReviewDocument extends IReview, mongoose.Document {}

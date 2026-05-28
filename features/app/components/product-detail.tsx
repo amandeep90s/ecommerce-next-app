@@ -1,6 +1,7 @@
 'use client';
 
-import { ChevronLeft, ChevronRight, Minus, Plus, Star } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Minus, Plus } from 'lucide-react';
+import Image from 'next/image';
 import { useState } from 'react';
 
 import { Button } from '@/components/ui/button';
@@ -55,24 +56,28 @@ export function ProductDetailOne() {
                 key={index}
                 onClick={() => setCurrentImageIndex(index)}
                 className={cn(
-                  'aspect-square overflow-hidden rounded-lg border-2 bg-gray-100 transition-colors',
+                  'relative aspect-square overflow-hidden rounded-lg border-2 bg-gray-100 transition-colors',
                   currentImageIndex === index ? 'border-gray-900' : 'border-transparent',
                 )}
               >
-                <img
+                <Image
                   src={image}
                   alt={`${productData.name} ${index + 1}`}
-                  className="h-full w-full object-cover"
+                  fill
+                  sizes="112px"
+                  className="object-cover"
                 />
               </button>
             ))}
           </div>
 
           <div className="relative aspect-[3/4] flex-1 overflow-hidden rounded-lg bg-gray-100">
-            <img
+            <Image
               src={productData.images[currentImageIndex]}
               alt={productData.name}
-              className="h-full w-full object-cover"
+              fill
+              sizes="(max-width: 1024px) 100vw, 50vw"
+              className="object-cover"
             />
 
             {/* Navigation Arrows */}

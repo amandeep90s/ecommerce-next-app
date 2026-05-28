@@ -11,6 +11,7 @@ import {
   Store,
   Trash2,
 } from 'lucide-react';
+import Image from 'next/image';
 import { useState } from 'react';
 
 import { Button } from '@/components/ui/button';
@@ -147,9 +148,11 @@ export function CartView() {
               >
                 <div className="flex flex-col sm:flex-row">
                   <div className="relative h-auto w-full sm:w-40">
-                    <img
+                    <Image
                       src={item.image}
                       alt={item.name}
+                      width={160}
+                      height={144}
                       className="h-36 w-full object-cover object-center"
                     />
                   </div>
