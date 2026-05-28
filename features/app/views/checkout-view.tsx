@@ -1,6 +1,7 @@
 'use client';
 
 import { ArrowLeft, CreditCard, Eye, EyeOff, Gift, Lock, Shield, Tag, Truck } from 'lucide-react';
+import Image from 'next/image';
 import { useState } from 'react';
 
 import { Badge } from '@/components/ui/badge';
@@ -420,9 +421,11 @@ export function CheckoutView() {
                   {orderSummary.items.map((item) => (
                     <div key={item.id} className="flex gap-4">
                       <div className="relative">
-                        <img
+                        <Image
                           src={item.image}
                           alt={item.name}
+                          width={64}
+                          height={64}
                           className="size-16 rounded-lg object-cover"
                         />
                         <Badge

@@ -10,8 +10,12 @@ export async function GET(request: Request) {
 
     const { searchParams } = new URL(request.url);
     const limit = Math.min(20, Math.max(1, parseInt(searchParams.get('limit') || '6', 10)));
+    const productId = searchParams.get('product') || '';
 
-    const items = await Review.find({ deletedAt: null })
+    const query: Record<string, unknown> = { deletedAt: null };
+    if (productId) query.product = productId;
+
+    const items = await Review.find(query)
       .populate('user', 'name email avatar')
       .sort({ createdAt: -1 })
       .limit(limit);

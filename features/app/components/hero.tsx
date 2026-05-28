@@ -1,6 +1,7 @@
 'use client';
 
 import { ArrowRight, Flame, Search, ShoppingBag, TrendingUp } from 'lucide-react';
+import Image from 'next/image';
 import { useEffect, useState } from 'react';
 
 import { Badge } from '@/components/ui/badge';
@@ -127,9 +128,11 @@ export function Hero() {
                           <Card className="relative size-full overflow-hidden border-1 py-4">
                             <CardContent className="px-4">
                               <div className="relative size-full overflow-hidden rounded-md">
-                                <img
+                                <Image
                                   src={product.media[0]?.path ?? ''}
                                   alt={product.name}
+                                  width={1200}
+                                  height={500}
                                   className="h-[500px] w-full object-cover"
                                   loading="lazy"
                                 />

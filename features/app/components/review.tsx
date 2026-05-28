@@ -1,6 +1,7 @@
 'use client';
 
 import { Quote } from 'lucide-react';
+import Image from 'next/image';
 
 import { Card, CardContent } from '@/components/ui/card';
 
@@ -17,9 +18,11 @@ export function ReviewOne() {
 
         <div className="flex items-center gap-4">
           <div className="h-12 w-12 overflow-hidden rounded-full">
-            <img
+            <Image
               src="https://pub-5f7cbdfd9ffa4c838e386788f395f0c4.r2.dev/people/simple_person_c.png"
               alt="Li Hua"
+              width={48}
+              height={48}
               className="h-full w-full object-cover"
             />
           </div>

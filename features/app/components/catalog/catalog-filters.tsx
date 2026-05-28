@@ -14,13 +14,13 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Input } from '@/components/ui/input';
 import {
+  type CatalogSortOption,
+  type CatalogState,
   resetFilters,
   setCategory,
   setPriceRange,
   setSearch,
   setSort,
-  type CatalogSortOption,
-  type CatalogState,
 } from '@/features/app/catalogSlice';
 import { useGetPublicCategories } from '@/features/app/hooks/use-get-public-categories';
 import { useAppDispatch } from '@/store/hooks';
@@ -52,6 +52,14 @@ export function CatalogFilters({ filters }: CatalogFiltersProps) {
   // Local search state — debounced before dispatching to Redux
   const [localSearch, setLocalSearch] = useState(filters.search);
 
+  // Derived-state sync: when filters.search changes externally (e.g. resetFilters),
+  // update the input without needing a setState-in-effect.
+  const [prevFiltersSearch, setPrevFiltersSearch] = useState(filters.search);
+  if (filters.search !== prevFiltersSearch) {
+    setPrevFiltersSearch(filters.search);
+    setLocalSearch(filters.search);
+  }
+
   useEffect(() => {
     const timer = setTimeout(() => {
       if (localSearch !== filters.search) {
@@ -60,11 +68,6 @@ export function CatalogFilters({ filters }: CatalogFiltersProps) {
     }, 400);
     return () => clearTimeout(timer);
   }, [localSearch, filters.search, dispatch]);
-
-  // Keep local search in sync when resetFilters is dispatched externally
-  useEffect(() => {
-    setLocalSearch(filters.search);
-  }, [filters.search]);
 
   const selectedCategory = categories.find((c) => c.id === filters.category);
   const selectedSort = SORT_OPTIONS.find((s) => s.id === filters.sort) ?? SORT_OPTIONS[0];

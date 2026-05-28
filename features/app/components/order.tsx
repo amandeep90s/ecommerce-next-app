@@ -1,11 +1,10 @@
 'use client';
 
-import { MoreHorizontal } from 'lucide-react';
+import Image from 'next/image';
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { cn } from '@/lib/utils';
 
 const orderData = {
   orderNumber: 'CP099-AB',
@@ -71,9 +70,11 @@ export function OrderOne() {
             <div key={item.id} className="flex items-center justify-between py-3">
               <div className="flex items-center gap-4">
                 <div className="h-12 w-12 flex-shrink-0 rounded-lg bg-gradient-to-br from-orange-400 to-pink-400">
-                  <img
+                  <Image
                     src={item.image}
                     alt={item.name}
+                    width={48}
+                    height={48}
                     className="h-full w-full rounded-lg object-cover opacity-80"
                   />
                 </div>

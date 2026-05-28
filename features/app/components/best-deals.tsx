@@ -1,5 +1,7 @@
 'use client';
 
+import Image from 'next/image';
+
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import { useGetFeaturedProducts } from '@/features/app/hooks/use-get-featured-products';
@@ -40,7 +42,7 @@ export function BestDeals() {
                 >
                   <CardContent className="flex flex-1 flex-col gap-4 px-4">
                     <div className="aspect-square overflow-hidden rounded-md">
-                      <img
+                      <Image
                         src={product.media[0]?.path ?? ''}
                         alt={product.name}
                         className="size-full rounded-md object-contain dark:brightness-[0.95] dark:invert"

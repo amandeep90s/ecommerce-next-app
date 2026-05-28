@@ -1,6 +1,7 @@
 'use client';
 
 import { ArrowRight, ShoppingBag } from 'lucide-react';
+import Image from 'next/image';
 
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -36,10 +37,12 @@ export function HomeCategories() {
                 >
                   <div className="relative aspect-5/4 overflow-hidden">
                     {category.image?.path ? (
-                      <img
+                      <Image
                         src={category.image.path}
                         alt={category.name}
-                        className="size-full object-cover transition-transform duration-500 group-hover:scale-105"
+                        fill
+                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                        className="object-cover transition-transform duration-500 group-hover:scale-105"
                       />
                     ) : (
                       <div className="bg-muted size-full" />

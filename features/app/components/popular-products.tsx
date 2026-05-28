@@ -1,5 +1,7 @@
 'use client';
 
+import Image from 'next/image';
+
 import { Card, CardContent, CardTitle } from '@/components/ui/card';
 import { useGetTrendingProducts } from '@/features/app/hooks/use-get-trending-products';
 
@@ -38,7 +40,7 @@ export function PopularProducts() {
                 >
                   <CardContent className="flex flex-col gap-4">
                     <div className="overflow-hidden rounded-md">
-                      <img
+                      <Image
                         src={product.media[0]?.path ?? ''}
                         alt={product.name}
                         width={400}

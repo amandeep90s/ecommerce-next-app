@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import Link from 'next/link';
 
 import { Badge } from '@/components/ui/badge';
@@ -20,10 +21,12 @@ export function ProductCard({ product }: ProductCardProps) {
         <CardContent className="p-0">
           {/* Image */}
           <div className="relative aspect-square overflow-hidden bg-gray-50">
-            <img
+            <Image
               src={imageUrl}
               alt={product.name}
-              className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+              fill
+              sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+              className="object-cover transition-transform duration-300 group-hover:scale-105"
             />
             {hasDiscount && (
               <Badge variant="destructive" className="absolute top-2 left-2">
