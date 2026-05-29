@@ -1,0 +1,138 @@
+import { Minus, Plus, Star } from 'lucide-react';
+import Link from 'next/link';
+
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Separator } from '@/components/ui/separator';
+import type { IProductItem, IReviewItem } from '@/types';
+
+interface ProductInfoProps {
+  product: IProductItem;
+  reviews: IReviewItem[];
+  averageRating: number;
+  quantity: number;
+  hasDiscount: boolean;
+  isOutOfStock: boolean;
+  onDecrement: () => void;
+  onIncrement: () => void;
+  onAddToCart: () => void;
+}
+
+export function AverageStarRating({ rating }: { rating: number }) {
+  return (
+    <div className="flex items-center gap-1">
+      {Array.from({ length: 5 }).map((_, i) => (
+        <Star
+          key={i}
+          className={`size-4 ${i < Math.round(rating) ? 'fill-yellow-400 text-yellow-400' : 'fill-muted text-muted'}`}
+        />
+      ))}
+    </div>
+  );
+}
+
+export function ProductInfo({
+  product,
+  reviews,
+  averageRating,
+  quantity,
+  hasDiscount,
+  isOutOfStock,
+  onDecrement,
+  onIncrement,
+  onAddToCart,
+}: ProductInfoProps) {
+  return (
+    <div className="flex flex-col gap-4">
+      {/* Category */}
+      <Link
+        href={`/shop?category=${product.category.id}`}
+        className="text-muted-foreground hover:text-primary w-fit text-sm transition-colors"
+      >
+        {product.category.name}
+      </Link>
+
+      {/* Name */}
+      <h1 className="text-3xl leading-tight font-bold">{product.name}</h1>
+
+      {/* Badges */}
+      <div className="flex flex-wrap gap-2">
+        {hasDiscount && <Badge variant="destructive">-{product.discount}% OFF</Badge>}
+        {product.isFeatured && <Badge>Featured</Badge>}
+        {product.isTrending && <Badge variant="secondary">Trending</Badge>}
+      </div>
+
+      {/* Rating summary */}
+      {reviews.length > 0 && (
+        <div className="flex items-center gap-2">
+          <AverageStarRating rating={averageRating} />
+          <span className="text-muted-foreground text-sm">
+            {averageRating.toFixed(1)} ({reviews.length} review{reviews.length !== 1 ? 's' : ''})
+          </span>
+        </div>
+      )}
+
+      {/* Price */}
+      <div className="flex items-baseline gap-3">
+        <span className="text-2xl font-bold">${product.selling_price.toFixed(2)}</span>
+        {hasDiscount && (
+          <span className="text-muted-foreground text-base line-through">
+            ${product.price.toFixed(2)}
+          </span>
+        )}
+      </div>
+
+      <Separator />
+
+      {/* Description */}
+      {product.description && (
+        <p className="text-muted-foreground text-sm leading-relaxed">{product.description}</p>
+      )}
+
+      {/* Stock */}
+      <p className={`text-sm font-medium ${isOutOfStock ? 'text-destructive' : 'text-green-600'}`}>
+        {isOutOfStock ? 'Out of Stock' : `In Stock (${product.stock} available)`}
+      </p>
+
+      {/* SKU */}
+      <p className="text-muted-foreground text-xs">SKU: {product.sku}</p>
+
+      {/* Quantity + Add to Cart */}
+      {!isOutOfStock && (
+        <div className="flex items-center gap-3">
+          <div className="flex items-center rounded-md border">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-10 w-10 rounded-r-none"
+              onClick={onDecrement}
+              disabled={quantity <= 1}
+            >
+              <Minus className="size-4" />
+            </Button>
+            <span className="w-10 text-center text-sm font-medium">{quantity}</span>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-10 w-10 rounded-l-none"
+              onClick={onIncrement}
+              disabled={quantity >= product.stock}
+            >
+              <Plus className="size-4" />
+            </Button>
+          </div>
+
+          <Button className="flex-1" size="lg" onClick={onAddToCart}>
+            Add to Cart
+          </Button>
+        </div>
+      )}
+
+      {isOutOfStock && (
+        <Button variant="outline" disabled className="w-full">
+          Out of Stock
+        </Button>
+      )}
+    </div>
+  );
+}
