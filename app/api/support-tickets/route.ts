@@ -8,13 +8,13 @@ import { requireAuth } from '@/lib/require-auth';
 import SupportTicket from '@/models/support-ticket.model';
 
 const createTicketSchema = z.object({
-  name: z.string().min(1, 'Name is required').max(100),
-  email: z.string().email('Please enter a valid email address'),
-  orderId: z.string().max(100).optional(),
+  name: z.string().trim().min(1, 'Name is required').max(100),
+  email: z.string().trim().email('Please enter a valid email address'),
+  orderId: z.string().trim().max(100).optional(),
   category: z.enum(['order', 'product', 'shipping', 'billing', 'account', 'other']),
   priority: z.enum(['low', 'medium', 'high']).default('medium'),
-  subject: z.string().min(1, 'Subject is required').max(200),
-  message: z.string().min(10, 'Message must be at least 10 characters').max(3000),
+  subject: z.string().trim().min(1, 'Subject is required').max(200),
+  message: z.string().trim().min(10, 'Message must be at least 10 characters').max(3000),
 });
 
 // ─── POST /api/support-tickets — Public: submit a support ticket ─────────────
