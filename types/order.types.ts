@@ -10,6 +10,11 @@ export interface IOrderProduct {
   selling_price: number;
   image?: string;
   quantity: number;
+  // Variant snapshot — null when no variant was selected
+  variantId?: string | null;
+  color?: string | null;
+  size?: string | null;
+  sku?: string | null;
 }
 
 export interface IOrderShippingAddress {

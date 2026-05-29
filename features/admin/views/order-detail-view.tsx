@@ -141,6 +141,14 @@ export function AdminOrderDetailView({ id }: AdminOrderDetailViewProps) {
                   )}
                   <div className="min-w-0 flex-1">
                     <p className="truncate text-sm font-medium">{item.name}</p>
+                    {(item.color || item.size) && (
+                      <p className="text-muted-foreground text-xs">
+                        {[item.color, item.size].filter(Boolean).join(' / ')}
+                      </p>
+                    )}
+                    {item.sku && (
+                      <p className="text-muted-foreground font-mono text-xs">SKU: {item.sku}</p>
+                    )}
                     <p className="text-muted-foreground text-xs">Qty: {item.quantity}</p>
                   </div>
                   <div className="shrink-0 text-right text-sm">

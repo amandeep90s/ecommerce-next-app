@@ -30,7 +30,7 @@ const orderSchema = new mongoose.Schema(
           required: true,
         },
         // Snapshot fields — recorded at the moment the order is placed so
-        // that changes/deletions to the product never corrupt order data.
+        // that changes/deletions to the product/variant never corrupt order data.
         name: {
           type: String,
           required: true,
@@ -51,6 +51,26 @@ const orderSchema = new mongoose.Schema(
         quantity: {
           type: Number,
           default: 1,
+        },
+        variantId: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: 'ProductVariant',
+          default: null,
+        },
+        color: {
+          type: String,
+          trim: true,
+          default: null,
+        },
+        size: {
+          type: String,
+          trim: true,
+          default: null,
+        },
+        sku: {
+          type: String,
+          trim: true,
+          default: null,
         },
       },
     ],
