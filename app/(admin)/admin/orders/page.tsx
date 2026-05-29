@@ -1,4 +1,5 @@
 import { AdminBreadcrumb } from '@/features/admin/components/breadcrumb';
+import { OrderPageView } from '@/features/admin/views/order-page-view';
 
 export default function OrdersPage() {
   return (
@@ -8,6 +9,8 @@ export default function OrdersPage() {
       </div>
 
       <AdminBreadcrumb breadcrumbItems={[{ label: 'Orders' }]} />
+
+      <OrderPageView />
     </div>
   );
 }

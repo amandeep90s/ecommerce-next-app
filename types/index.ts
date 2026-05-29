@@ -5,6 +5,7 @@ export * from './contact.types';
 export * from './coupon.types';
 export * from './media.types';
 export * from './newsletter.types';
+export * from './order.types';
 export * from './otp.types';
 export * from './product.types';
 export * from './product-variant.types';
