@@ -2,6 +2,7 @@
 
 import {
   ChevronDown,
+  HeadphonesIcon,
   HomeIcon,
   ImageIcon,
   LayoutGridIcon,
@@ -141,6 +142,11 @@ export function AdminSidebarMenu() {
         label: 'Contact',
         href: '/admin/contact',
         icon: <MessageSquareIcon />,
+      },
+      {
+        label: 'Support Tickets',
+        href: '/admin/support-tickets',
+        icon: <HeadphonesIcon />,
       },
       {
         label: 'Media',
