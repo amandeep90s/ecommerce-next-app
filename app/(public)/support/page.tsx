@@ -1,5 +1,5 @@
-import { ShopView } from '@/features/app/views/shop-view';
+import { SupportView } from '@/features/app/views/support-view';
 
 export default function SupportPage() {
-  return <ShopView />;
+  return <SupportView />;
 }
