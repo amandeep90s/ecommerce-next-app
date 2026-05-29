@@ -14,7 +14,7 @@ export function Footer() {
 
           <nav className="text-muted-foreground [&_a]:hover:text-primary flex flex-wrap justify-center gap-6 [&_a]:text-sm">
             <Link href="/">Home</Link>
-            <Link href="/collections">Collections</Link>
+            <Link href="/about">About</Link>
             <Link href="/shop">Shop</Link>
             <Link href="/contact">Contact</Link>
             <Link href="/faqs">FAQs</Link>
@@ -75,7 +75,7 @@ export function Footer() {
               className="text-muted-foreground hover:text-primary text-xs hover:underline"
               href="/support"
             >
-              Support Ticket
+              Support
             </Link>
           </div>
         </div>
