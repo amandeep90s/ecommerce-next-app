@@ -12,106 +12,36 @@ import {
   Trash2,
 } from 'lucide-react';
 import Image from 'next/image';
-import { useState } from 'react';
+import Link from 'next/link';
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
+import {
+  clearCart,
+  removeFromCart,
+  selectCartItemCount,
+  selectCartItems,
+  selectCartTotal,
+  updateQuantity,
+} from '@/features/app/cartSlice';
 import { cn } from '@/lib/utils';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
 
-interface CartItem {
-  id: string;
-  name: string;
-  color: string;
-  size: string;
-  price: number;
-  originalPrice: number;
-  quantity: number;
-  image: string;
-  estimatedDelivery: string;
-}
-
-interface CartData {
-  items: CartItem[];
-  shipping: {
-    freeThreshold: number;
-    message: string;
-  };
-}
-
-const cartData: CartData = {
-  items: [
-    {
-      id: '1',
-      name: 'Premium Wool Cardigan',
-      color: 'Sage Green',
-      size: 'M',
-      price: 129.99,
-      originalPrice: 159.99,
-      quantity: 1,
-      image:
-        'https://assets.shadcnstore.com/shadcnstore.com/stock/e-commerce/premium-wool-sweater.800w.b234d4.avif',
-      estimatedDelivery: '2-4 business days',
-    },
-    {
-      id: '2',
-      name: 'Designer Leather Bag',
-      color: 'Vintage Brown',
-      size: 'One Size',
-      price: 299.99,
-      originalPrice: 349.99,
-      quantity: 1,
-      image:
-        'https://assets.shadcnstore.com/shadcnstore.com/stock/e-commerce/designer-leather-bag.800w.b43230.avif',
-      estimatedDelivery: '3-5 business days',
-    },
-    {
-      id: '3',
-      name: 'Smart Watch Pro',
-      color: 'Space Grey',
-      size: 'One Size',
-      price: 199.99,
-      originalPrice: 249.99,
-      quantity: 1,
-      image:
-        'https://assets.shadcnstore.com/shadcnstore.com/stock/e-commerce/accessories.800w.900f12.avif',
-      estimatedDelivery: '1-3 business days',
-    },
-  ],
-  shipping: {
-    freeThreshold: 500,
-    message: 'Free shipping on orders over $500',
-  },
-};
+const FREE_SHIPPING_THRESHOLD = 500;
+const SHIPPING_COST = 15.99;
 
 export function CartView() {
-  const [items, setItems] = useState<CartItem[]>(cartData.items);
-  const [isRemoving, setIsRemoving] = useState<string | null>(null);
+  const dispatch = useAppDispatch();
+  const items = useAppSelector(selectCartItems);
+  const subtotal = useAppSelector(selectCartTotal);
+  const itemCount = useAppSelector(selectCartItemCount);
 
-  const updateQuantity = (id: string, increment: boolean) => {
-    setItems((currentItems) =>
-      currentItems.map((item) =>
-        item.id === id
-          ? { ...item, quantity: Math.max(1, item.quantity + (increment ? 1 : -1)) }
-          : item,
-      ),
-    );
-  };
-
-  const removeItem = (id: string) => {
-    setIsRemoving(id);
-    setTimeout(() => {
-      setItems((currentItems) => currentItems.filter((item) => item.id !== id));
-      setIsRemoving(null);
-    }, 300);
-  };
-
-  const subtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
   const savings = items.reduce(
-    (sum, item) => sum + (item.originalPrice - item.price) * item.quantity,
+    (sum, item) => sum + (item.price - item.selling_price) * item.quantity,
     0,
   );
-  const shipping = subtotal >= cartData.shipping.freeThreshold ? 0 : 15.99;
+  const shipping = subtotal >= FREE_SHIPPING_THRESHOLD ? 0 : items.length > 0 ? SHIPPING_COST : 0;
   const total = subtotal + shipping;
 
   return (
@@ -119,7 +49,7 @@ export function CartView() {
       <div className="mb-8 flex flex-col gap-2 text-center">
         <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">Your Shopping Cart</h1>
         <p className="text-muted-foreground">
-          {items.length} {items.length === 1 ? 'item' : 'items'} in your cart •{' '}
+          {itemCount} {itemCount === 1 ? 'item' : 'items'} in your cart •{' '}
           <span className="text-foreground font-semibold">${subtotal.toFixed(2)}</span>
         </p>
       </div>
@@ -133,92 +63,133 @@ export function CartView() {
                 <ShoppingBag className="text-muted-foreground/50 mb-4 size-12" />
                 <h3 className="text-lg font-medium">Your cart is empty</h3>
                 <p className="text-muted-foreground mt-1 text-sm">Add some items to get started</p>
-                <Button className="mt-4 h-9 cursor-pointer px-4 py-2" variant="outline">
-                  Continue Shopping
+                <Button asChild className="mt-4 h-9 cursor-pointer px-4 py-2" variant="outline">
+                  <Link href="/shop">Continue Shopping</Link>
                 </Button>
               </CardContent>
             </Card>
           ) : (
-            items.map((item) => (
-              <Card
-                key={item.id}
-                className={cn('gap-0 overflow-hidden py-0', {
-                  'opacity-50': isRemoving === item.id,
-                })}
-              >
-                <div className="flex flex-col sm:flex-row">
-                  <div className="relative h-auto w-full sm:w-40">
-                    <Image
-                      src={item.image}
-                      alt={item.name}
-                      width={160}
-                      height={144}
-                      className="h-36 w-full object-cover object-center"
-                    />
-                  </div>
+            <>
+              {items.map((item) => (
+                <Card key={item.productId} className="gap-0 overflow-hidden py-0">
+                  <div className="flex flex-col sm:flex-row">
+                    <Link
+                      href={`/shop/${item.slug}`}
+                      className="flex h-auto w-full items-center sm:w-40"
+                    >
+                      <Image
+                        src={item.image}
+                        alt={item.name}
+                        width={160}
+                        height={144}
+                        className="h-30 w-full object-contain object-center"
+                      />
+                    </Link>
 
-                  <div className="flex-1 p-4">
-                    <div className="flex items-start justify-between">
-                      <div>
-                        <h3 className="text-foreground text-lg font-medium">{item.name}</h3>
-                        <p className="text-muted-foreground mt-1 text-sm">
-                          {item.color} {item.size && `• ${item.size}`}
-                        </p>
-                      </div>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="text-muted-foreground hover:bg-destructive/10 hover:text-destructive size-8 cursor-pointer"
-                        onClick={() => removeItem(item.id)}
-                      >
-                        <Trash2 />
-                      </Button>
-                    </div>
-
-                    <div className="mt-4 flex items-center justify-between">
-                      <div className="flex items-center gap-2">
+                    <div className="flex-1 p-4">
+                      <div className="flex items-start justify-between">
+                        <div>
+                          <Link href={`/shop/${item.slug}`}>
+                            <h3 className="text-foreground text-lg font-medium hover:underline">
+                              {item.name}
+                            </h3>
+                          </Link>
+                          {item.discount > 0 && (
+                            <p className="text-muted-foreground mt-1 text-sm">
+                              {item.discount}% off
+                            </p>
+                          )}
+                        </div>
                         <Button
-                          variant="outline"
+                          variant="ghost"
                           size="icon"
-                          className="size-8 cursor-pointer"
-                          onClick={() => updateQuantity(item.id, false)}
-                          disabled={item.quantity <= 1}
+                          className="text-muted-foreground hover:bg-destructive/10 hover:text-destructive size-8 cursor-pointer"
+                          onClick={() => dispatch(removeFromCart(item.productId))}
+                          aria-label={`Remove ${item.name} from cart`}
                         >
-                          <Minus />
-                        </Button>
-                        <span className="w-8 text-center text-sm font-medium">{item.quantity}</span>
-                        <Button
-                          variant="outline"
-                          size="icon"
-                          className="size-8 cursor-pointer"
-                          onClick={() => updateQuantity(item.id, true)}
-                        >
-                          <Plus />
+                          <Trash2 />
                         </Button>
                       </div>
 
-                      <div className="text-end">
-                        <p className="text-lg font-semibold">
-                          ${(item.price * item.quantity).toFixed(2)}
-                        </p>
-                        {item.originalPrice > item.price && (
-                          <p className="text-muted-foreground text-xs line-through">
-                            ${item.originalPrice.toFixed(2)}
+                      <div className="mt-4 flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <Button
+                            variant="outline"
+                            size="icon"
+                            className="size-8 cursor-pointer"
+                            onClick={() =>
+                              dispatch(
+                                updateQuantity({
+                                  productId: item.productId,
+                                  quantity: item.quantity - 1,
+                                }),
+                              )
+                            }
+                            disabled={item.quantity <= 1}
+                          >
+                            <Minus />
+                          </Button>
+                          <span className="w-8 text-center text-sm font-medium">
+                            {item.quantity}
+                          </span>
+                          <Button
+                            variant="outline"
+                            size="icon"
+                            className="size-8 cursor-pointer"
+                            onClick={() =>
+                              dispatch(
+                                updateQuantity({
+                                  productId: item.productId,
+                                  quantity: item.quantity + 1,
+                                }),
+                              )
+                            }
+                            disabled={item.quantity >= item.stock}
+                          >
+                            <Plus />
+                          </Button>
+                        </div>
+
+                        <div className="text-end">
+                          <p className="text-lg font-semibold">
+                            ${(item.selling_price * item.quantity).toFixed(2)}
                           </p>
-                        )}
+                          {item.discount > 0 && (
+                            <p className="text-muted-foreground text-xs line-through">
+                              ${(item.price * item.quantity).toFixed(2)}
+                            </p>
+                          )}
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
 
-                <CardFooter className="bg-muted/20 border-t px-4 !py-2">
-                  <div className="text-muted-foreground flex items-center text-sm">
-                    <Package className="me-2 size-4" />
-                    <span>Estimated delivery: {item.estimatedDelivery}</span>
-                  </div>
-                </CardFooter>
-              </Card>
-            ))
+                  <CardFooter className="bg-muted/20 border-t px-4 py-2!">
+                    <div className="text-muted-foreground flex items-center text-sm">
+                      <Package className="me-2 size-4" />
+                      <span>
+                        {item.stock > 0
+                          ? `${item.stock} in stock`
+                          : 'Out of stock — remove to continue'}
+                      </span>
+                    </div>
+                  </CardFooter>
+                </Card>
+              ))}
+
+              {/* Clear cart */}
+              <div className="flex justify-end">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="text-muted-foreground hover:text-destructive h-8 cursor-pointer text-xs"
+                  onClick={() => dispatch(clearCart())}
+                >
+                  <Trash2 className="mr-1 size-3" />
+                  Clear cart
+                </Button>
+              </div>
+            </>
           )}
         </div>
 
@@ -229,6 +200,22 @@ export function CartView() {
               <CardTitle className="text-xl">Order Summary</CardTitle>
             </CardHeader>
             <CardContent className="flex flex-col gap-4">
+              {/* Free shipping progress */}
+              {items.length > 0 && subtotal < FREE_SHIPPING_THRESHOLD && (
+                <div className="rounded-md bg-amber-50 px-3 py-2 text-xs text-amber-700 dark:bg-amber-950 dark:text-amber-300">
+                  Add{' '}
+                  <span className="font-semibold">
+                    ${(FREE_SHIPPING_THRESHOLD - subtotal).toFixed(2)}
+                  </span>{' '}
+                  more to get free shipping!
+                </div>
+              )}
+              {items.length > 0 && subtotal >= FREE_SHIPPING_THRESHOLD && (
+                <div className="rounded-md bg-green-50 px-3 py-2 text-xs text-green-700 dark:bg-green-950 dark:text-green-300">
+                  You qualify for free shipping!
+                </div>
+              )}
+
               <div className="flex flex-col gap-3">
                 <div className="flex justify-between text-sm">
                   <span className="text-muted-foreground">Subtotal</span>
@@ -236,12 +223,12 @@ export function CartView() {
                 </div>
                 <div className="flex justify-between text-sm">
                   <span className="text-muted-foreground">Shipping</span>
-                  <span className={shipping === 0 ? 'text-success' : ''}>
-                    {shipping === 0 ? 'Free' : `$${shipping.toFixed(2)}`}
+                  <span className={cn(shipping === 0 && items.length > 0 ? 'text-green-600' : '')}>
+                    {items.length === 0 ? '—' : shipping === 0 ? 'Free' : `$${shipping.toFixed(2)}`}
                   </span>
                 </div>
                 {savings > 0 && (
-                  <div className="flex justify-between text-sm font-medium">
+                  <div className="flex justify-between text-sm font-medium text-green-600">
                     <span>You Save</span>
                     <span>-${savings.toFixed(2)}</span>
                   </div>
@@ -259,12 +246,17 @@ export function CartView() {
               </div>
 
               <Button
+                asChild={items.length > 0}
                 size="lg"
-                className="mt-4 h-10 w-full cursor-pointer px-8 text-base font-medium"
+                className="mt-4 w-full cursor-pointer text-base font-medium"
                 disabled={items.length === 0}
               >
                 <ShoppingBag />
-                Proceed to Checkout
+                {items.length > 0 ? (
+                  <Link href="/checkout">Proceed to Checkout</Link>
+                ) : (
+                  <span>Proceed to Checkout</span>
+                )}
               </Button>
 
               <div className="text-muted-foreground flex items-center justify-center gap-2 text-xs">
@@ -290,10 +282,12 @@ export function CartView() {
             </CardContent>
           </Card>
 
-          <Button variant="outline" className="h-9 w-full cursor-pointer px-4 py-2">
-            <Store />
-            Continue Shopping
-            <MoveRight />
+          <Button asChild variant="outline" className="h-9 w-full cursor-pointer px-4 py-2">
+            <Link href="/shop">
+              <Store />
+              Continue Shopping
+              <MoveRight />
+            </Link>
           </Button>
         </div>
       </div>

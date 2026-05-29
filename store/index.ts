@@ -13,6 +13,7 @@ import {
 import createWebStorage from 'redux-persist/lib/storage/createWebStorage';
 
 import appReducer from '@/features/app/appSlice';
+import cartReducer from '@/features/app/cartSlice';
 import catalogReducer from '@/features/app/catalogSlice';
 import authReducer from '@/features/auth/authSlice';
 
@@ -35,6 +36,7 @@ const storage: Storage =
 const rootReducer = combineReducers({
   app: appReducer,
   catalog: catalogReducer,
+  cart: cartReducer,
   // Auth is intentionally excluded from the persist whitelist — session is
   // managed via httpOnly cookies; user state is rehydrated on page load.
   auth: authReducer,
@@ -48,7 +50,7 @@ const persistConfig = {
   key: 'root',
   version: 1,
   storage,
-  whitelist: [] as string[],
+  whitelist: ['cart'] as string[],
 };
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

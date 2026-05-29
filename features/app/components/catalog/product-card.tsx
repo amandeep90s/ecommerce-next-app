@@ -4,6 +4,8 @@ import Link from 'next/link';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
+import { addToCart } from '@/features/app/cartSlice';
+import { useAppDispatch } from '@/store/hooks';
 import type { IProductItem } from '@/types';
 
 interface ProductCardProps {
@@ -11,9 +13,27 @@ interface ProductCardProps {
 }
 
 export function ProductCard({ product }: ProductCardProps) {
+  const dispatch = useAppDispatch();
   const imageUrl = product.media[0]?.path ?? '/images/placeholder.png';
   const hasDiscount = product.discount > 0;
   const isOutOfStock = product.stock === 0;
+
+  function handleAddToCart(e: React.MouseEvent) {
+    e.preventDefault();
+    e.stopPropagation();
+    dispatch(
+      addToCart({
+        productId: product.id,
+        name: product.name,
+        slug: product.slug,
+        image: imageUrl,
+        price: product.price,
+        selling_price: product.selling_price,
+        discount: product.discount,
+        stock: product.stock,
+      }),
+    );
+  }
 
   return (
     <Link href={`/shop/${product.slug}`} className="group block">
@@ -59,7 +79,12 @@ export function ProductCard({ product }: ProductCardProps) {
               )}
             </div>
 
-            <Button size="sm" className="mt-1 w-full" disabled={isOutOfStock}>
+            <Button
+              size="sm"
+              className="mt-1 w-full"
+              disabled={isOutOfStock}
+              onClick={handleAddToCart}
+            >
               {isOutOfStock ? 'Out of Stock' : 'Add to Cart'}
             </Button>
           </div>

@@ -58,7 +58,6 @@ export function CategoryDataTable<TData>({
 }: CategoryDataTableProps<TData>) {
   const [sorting, setSorting] = useState<SortingState>([]);
 
-  // eslint-disable-next-line react-hooks/incompatible-library
   const table = useReactTable({
     data,
     columns,
