@@ -29,15 +29,15 @@ import { Textarea } from '@/components/ui/textarea';
 import { useSubmitSupportTicket } from '@/features/app/hooks/use-submit-support-ticket';
 
 const ticketSchema = z.object({
-  name: z.string().min(1, 'Name is required').max(100),
-  email: z.string().email('Please enter a valid email address'),
-  orderId: z.string().max(100).optional(),
+  name: z.string().trim().min(1, 'Name is required').max(100),
+  email: z.string().trim().email('Please enter a valid email address'),
+  orderId: z.string().trim().max(100).optional(),
   category: z.enum(['order', 'product', 'shipping', 'billing', 'account', 'other'], {
     message: 'Please select a category',
   }),
   priority: z.enum(['low', 'medium', 'high']),
-  subject: z.string().min(1, 'Subject is required').max(200),
-  message: z.string().min(10, 'Message must be at least 10 characters').max(3000),
+  subject: z.string().trim().min(1, 'Subject is required').max(200),
+  message: z.string().trim().min(10, 'Message must be at least 10 characters').max(3000),
 });
 
 type TicketFormValues = z.infer<typeof ticketSchema>;
