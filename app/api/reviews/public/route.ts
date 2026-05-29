@@ -1,13 +1,15 @@
 import { StatusCodes } from 'http-status-codes';
+import mongoose from 'mongoose';
 import { z } from 'zod';
 
 import { connectToDatabase } from '@/config/database';
 import { errorResponse, successResponse } from '@/lib/api-response';
 import { requireAuth } from '@/lib/require-auth';
+import Product from '@/models/product.model';
 import Review from '@/models/review.model';
 
 const createReviewSchema = z.object({
-  productId: z.string().min(1, 'Product ID is required'),
+  productId: z.string().refine((v) => mongoose.isValidObjectId(v), 'Invalid product ID'),
   rating: z.number().int().min(1).max(5),
   title: z.string().min(1).max(200),
   comment: z.string().min(10).max(2000),
@@ -60,10 +62,22 @@ export async function POST(request: Request) {
 
     await connectToDatabase();
 
+    const productExists = await Product.exists({
+      _id: parsed.data.productId,
+      deletedAt: null,
+      isActive: true,
+    });
+
+    if (!productExists) {
+      return errorResponse({
+        message: 'Product not found',
+        statusCode: StatusCodes.NOT_FOUND,
+      });
+    }
+
     const existing = await Review.findOne({
       product: parsed.data.productId,
       user: auth.user.id,
-      deletedAt: null,
     });
 
     if (existing) {
