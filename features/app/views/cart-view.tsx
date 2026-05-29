@@ -14,7 +14,7 @@ import {
 import Image from 'next/image';
 import Link from 'next/link';
 
-import { Button } from '@/components/ui/button';
+import { Button, buttonVariants } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import {
@@ -245,19 +245,27 @@ export function CartView() {
                 </div>
               </div>
 
-              <Button
-                asChild={items.length > 0}
-                size="lg"
-                className="mt-4 w-full cursor-pointer text-base font-medium"
-                disabled={items.length === 0}
-              >
-                <ShoppingBag />
-                {items.length > 0 ? (
-                  <Link href="/checkout">Proceed to Checkout</Link>
-                ) : (
-                  <span>Proceed to Checkout</span>
-                )}
-              </Button>
+              {items.length > 0 ? (
+                <Link
+                  href="/checkout"
+                  className={cn(
+                    buttonVariants({ size: 'lg' }),
+                    'mt-4 w-full text-base font-medium',
+                  )}
+                >
+                  <ShoppingBag />
+                  Proceed to Checkout
+                </Link>
+              ) : (
+                <Button
+                  size="lg"
+                  className="mt-4 w-full cursor-pointer text-base font-medium"
+                  disabled
+                >
+                  <ShoppingBag />
+                  Proceed to Checkout
+                </Button>
+              )}
 
               <div className="text-muted-foreground flex items-center justify-center gap-2 text-xs">
                 <CreditCard className="size-3.5" />
