@@ -24,13 +24,14 @@ const cartSlice = createSlice({
   name: 'cart',
   initialState,
   reducers: {
-    addToCart(state, action: PayloadAction<Omit<CartItem, 'quantity'>>) {
-      const existing = state.items.find((i) => i.productId === action.payload.productId);
+    addToCart(state, action: PayloadAction<Omit<CartItem, 'quantity'> & { quantity?: number }>) {
+      const { quantity: requestedQty = 1, ...item } = action.payload;
+      const existing = state.items.find((i) => i.productId === item.productId);
       if (existing) {
         // Clamp to available stock
-        existing.quantity = Math.min(existing.quantity + 1, existing.stock);
+        existing.quantity = Math.min(existing.quantity + requestedQty, existing.stock);
       } else {
-        state.items.push({ ...action.payload, quantity: 1 });
+        state.items.push({ ...item, quantity: Math.min(requestedQty, item.stock) });
       }
     },
     removeFromCart(state, action: PayloadAction<string>) {

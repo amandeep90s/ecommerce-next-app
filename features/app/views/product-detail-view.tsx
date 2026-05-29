@@ -8,10 +8,12 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { Skeleton } from '@/components/ui/skeleton';
+import { addToCart } from '@/features/app/cartSlice';
 import { ProductImageGallery } from '@/features/app/components/catalog/product-image-gallery';
 import { ReviewCard } from '@/features/app/components/catalog/review-card';
 import { useGetProductBySlug } from '@/features/app/hooks/use-get-product-by-slug';
 import { useGetProductReviews } from '@/features/app/hooks/use-get-product-reviews';
+import { useAppDispatch } from '@/store/hooks';
 
 interface ProductDetailViewProps {
   slug: string;
@@ -51,6 +53,7 @@ function AverageStarRating({ rating }: { rating: number }) {
 }
 
 export function ProductDetailView({ slug }: ProductDetailViewProps) {
+  const dispatch = useAppDispatch();
   const [quantity, setQuantity] = useState(1);
 
   const {
@@ -194,7 +197,26 @@ export function ProductDetailView({ slug }: ProductDetailViewProps) {
                     </Button>
                   </div>
 
-                  <Button className="flex-1" disabled={isOutOfStock}>
+                  <Button
+                    className="flex-1"
+                    size="lg"
+                    disabled={isOutOfStock}
+                    onClick={() =>
+                      dispatch(
+                        addToCart({
+                          productId: product.id,
+                          name: product.name,
+                          slug: product.slug,
+                          image: product.media[0]?.path ?? '/images/placeholder.png',
+                          price: product.price,
+                          selling_price: product.selling_price,
+                          discount: product.discount,
+                          stock: product.stock,
+                          quantity,
+                        }),
+                      )
+                    }
+                  >
                     Add to Cart
                   </Button>
                 </div>
