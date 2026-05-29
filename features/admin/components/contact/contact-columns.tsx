@@ -91,13 +91,14 @@ function ContactDetailSheet({
           <SheetTitle>Contact Submission</SheetTitle>
           <SheetDescription>
             Received on{' '}
-            {new Date(contact.createdAt).toLocaleDateString('en-US', {
+            {new Date(contact.createdAt).toLocaleString('en-US', {
               year: 'numeric',
               month: 'long',
               day: 'numeric',
               hour: '2-digit',
               minute: '2-digit',
             })}
+          </SheetDescription>
           </SheetDescription>
         </SheetHeader>
 
