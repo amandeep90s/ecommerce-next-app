@@ -122,11 +122,15 @@ export function SupportTicketDataTable<TData>({
       <div className="flex items-center justify-between gap-4">
         <p className="text-muted-foreground shrink-0 text-sm">
           {meta ? (
-            <>
-              {pagination.pageIndex * pagination.pageSize + 1}–
-              {Math.min((pagination.pageIndex + 1) * pagination.pageSize, meta.total)} of{' '}
-              {meta.total} tickets
-            </>
+            meta.total === 0 ? (
+              <>0 of 0 tickets</>
+            ) : (
+              <>
+                {pagination.pageIndex * pagination.pageSize + 1}–
+                {Math.min((pagination.pageIndex + 1) * pagination.pageSize, meta.total)} of{' '}
+                {meta.total} tickets
+              </>
+            )
           ) : null}
         </p>
 
