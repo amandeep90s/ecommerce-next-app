@@ -176,7 +176,7 @@ export function SupportTicketDataTable<TData>({
               <ChevronLeftIcon className="size-4" />
             </Button>
             <span className="text-muted-foreground px-2 text-sm">
-              {pagination.pageIndex + 1} / {meta?.totalPages ?? 1}
+              {pagination.pageIndex + 1} / {Math.max(1, meta?.totalPages ?? 1)}
             </span>
             <Button
               variant="outline"
