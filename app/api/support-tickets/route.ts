@@ -7,9 +7,20 @@ import { errorResponse, successResponse } from '@/lib/api-response';
 import { requireAuth } from '@/lib/require-auth';
 import SupportTicket from '@/models/support-ticket.model';
 
+/**
+ * Generates a collision-resistant ticket ID using the current timestamp (base36)
+ * plus 4 random alphanumeric chars to handle sub-millisecond concurrency.
+ * Example: "LNQ8KV4SA3B2" — no external dependencies, no DB round-trip.
+ */
+function generateTicketId(): string {
+  const ts = Date.now().toString(36).toUpperCase();
+  const rand = Math.random().toString(36).slice(2, 6).toUpperCase();
+  return `${ts}${rand}`;
+}
+
 const createTicketSchema = z.object({
   name: z.string().trim().min(1, 'Name is required').max(100),
-  email: z.string().trim().email('Please enter a valid email address'),
+  email: z.email('Please enter a valid email address').trim().max(100),
   orderId: z.string().trim().max(100).optional(),
   category: z.enum(['order', 'product', 'shipping', 'billing', 'account', 'other']),
   priority: z.enum(['low', 'medium', 'high']).default('medium'),
@@ -34,8 +45,7 @@ export async function POST(request: Request) {
 
     await connectToDatabase();
 
-    const count = await SupportTicket.countDocuments();
-    const ticketNumber = `TKT-${String(count + 1).padStart(5, '0')}`;
+    const ticketNumber = generateTicketId();
 
     const ticket = await SupportTicket.create({ ...parsed.data, ticketNumber });
 
