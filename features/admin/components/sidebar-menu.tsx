@@ -7,6 +7,7 @@ import {
   LayoutGridIcon,
   ListIcon,
   MailIcon,
+  MessageSquareIcon,
   Package2Icon,
   PackageIcon,
   Plus,
@@ -135,6 +136,11 @@ export function AdminSidebarMenu() {
         label: 'Newsletter',
         href: '/admin/newsletter',
         icon: <MailIcon />,
+      },
+      {
+        label: 'Contact',
+        href: '/admin/contact',
+        icon: <MessageSquareIcon />,
       },
       {
         label: 'Media',
