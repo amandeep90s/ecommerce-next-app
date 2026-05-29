@@ -279,9 +279,9 @@ export function SupportView() {
                     <MailIcon className="text-primary size-4" />
                   </div>
                   <div>
-                    <h4 className="text-sm font-medium">Confirmation email</h4>
+                    <h4 className="text-sm font-medium">Ticket confirmation</h4>
                     <p className="text-muted-foreground text-xs">
-                      We&apos;ll send a confirmation with your ticket number immediately.
+                      Your ticket number will be shown immediately after submission.
                     </p>
                   </div>
                 </div>
