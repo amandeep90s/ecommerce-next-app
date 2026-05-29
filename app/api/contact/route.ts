@@ -91,8 +91,8 @@ export async function GET(request: Request) {
       message: 'Contact submissions fetched successfully',
       data: {
         items,
-        meta: { page, limit, total, totalPages: Math.ceil(total / limit) },
-      },
+        meta: { page, limit, total, totalPages: Math.max(1, Math.ceil(total / limit)) },
+      }
     });
   } catch (error) {
     return errorResponse({
