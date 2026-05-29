@@ -1,12 +1,52 @@
+'use client';
+
+import { zodResolver } from '@hookform/resolvers/zod';
 import { Mail, MapPin, Phone } from 'lucide-react';
+import { useForm } from 'react-hook-form';
+import { toast } from 'sonner';
+import { z } from 'zod';
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Field, FieldGroup, FieldLabel } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
+import { useSubmitContact } from '@/features/app/hooks/use-submit-contact';
+
+const contactSchema = z.object({
+  firstName: z.string().min(1, 'First name is required').max(50),
+  lastName: z.string().min(1, 'Last name is required').max(50),
+  email: z.string().email('Please enter a valid email address'),
+  subject: z.string().min(1, 'Subject is required').max(200),
+  message: z.string().min(10, 'Message must be at least 10 characters').max(2000),
+});
+
+type ContactFormValues = z.infer<typeof contactSchema>;
 
 export function ContactView() {
+  const { mutate: submitContact, isPending } = useSubmitContact();
+
+  const form = useForm<ContactFormValues>({
+    resolver: zodResolver(contactSchema),
+    defaultValues: {
+      firstName: '',
+      lastName: '',
+      email: '',
+      subject: '',
+      message: '',
+    },
+  });
+
+  function onSubmit(values: ContactFormValues) {
+    submitContact(values, {
+      onSuccess: (res) => {
+        toast.success(res.message);
+        form.reset();
+      },
+      onError: (e) => toast.error(e.message),
+    });
+  }
+
   return (
     <section className="py-16">
       <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -25,40 +65,90 @@ export function ContactView() {
               <CardTitle className="text-balance">Send us a Message</CardTitle>
             </CardHeader>
             <CardContent className="flex flex-col gap-6 px-6">
-              <FieldGroup>
-                <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+              <form onSubmit={form.handleSubmit(onSubmit)} noValidate>
+                <FieldGroup>
+                  <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                    <Field>
+                      <FieldLabel htmlFor="firstName">First name</FieldLabel>
+                      <Input
+                        id="firstName"
+                        placeholder="John"
+                        className="h-9"
+                        {...form.register('firstName')}
+                      />
+                      {form.formState.errors.firstName && (
+                        <p className="text-destructive text-xs">
+                          {form.formState.errors.firstName.message}
+                        </p>
+                      )}
+                    </Field>
+                    <Field>
+                      <FieldLabel htmlFor="lastName">Last name</FieldLabel>
+                      <Input
+                        id="lastName"
+                        placeholder="Doe"
+                        className="h-9"
+                        {...form.register('lastName')}
+                      />
+                      {form.formState.errors.lastName && (
+                        <p className="text-destructive text-xs">
+                          {form.formState.errors.lastName.message}
+                        </p>
+                      )}
+                    </Field>
+                  </div>
                   <Field>
-                    <FieldLabel htmlFor="first-name-aB3x9">First name</FieldLabel>
-                    <Input id="first-name-aB3x9" placeholder="John" className="h-9" />
+                    <FieldLabel htmlFor="email">Email</FieldLabel>
+                    <Input
+                      id="email"
+                      type="email"
+                      placeholder="john@example.com"
+                      className="h-9"
+                      {...form.register('email')}
+                    />
+                    {form.formState.errors.email && (
+                      <p className="text-destructive text-xs">
+                        {form.formState.errors.email.message}
+                      </p>
+                    )}
                   </Field>
                   <Field>
-                    <FieldLabel htmlFor="last-name-cD4y8">Last name</FieldLabel>
-                    <Input id="last-name-cD4y8" placeholder="Doe" className="h-9" />
+                    <FieldLabel htmlFor="subject">Subject</FieldLabel>
+                    <Input
+                      id="subject"
+                      placeholder="How can we help?"
+                      className="h-9"
+                      {...form.register('subject')}
+                    />
+                    {form.formState.errors.subject && (
+                      <p className="text-destructive text-xs">
+                        {form.formState.errors.subject.message}
+                      </p>
+                    )}
                   </Field>
-                </div>
-                <Field>
-                  <FieldLabel htmlFor="email-eF5z7">Email</FieldLabel>
-                  <Input
-                    id="email-eF5z7"
-                    type="email"
-                    placeholder="john@example.com"
-                    className="h-9"
-                  />
-                </Field>
-                <Field>
-                  <FieldLabel htmlFor="subject-gH6w6">Subject</FieldLabel>
-                  <Input id="subject-gH6w6" placeholder="How can we help?" className="h-9" />
-                </Field>
-                <Field>
-                  <FieldLabel htmlFor="message-iJ7v5">Message</FieldLabel>
-                  <Textarea
-                    id="message-iJ7v5"
-                    placeholder="Tell us more about your project..."
-                    className="min-h-[120px]"
-                  />
-                </Field>
-              </FieldGroup>
-              <Button className="h-9 w-full cursor-pointer px-4 py-2">Send Message</Button>
+                  <Field>
+                    <FieldLabel htmlFor="message">Message</FieldLabel>
+                    <Textarea
+                      id="message"
+                      placeholder="Tell us more about your project..."
+                      className="min-h-[120px]"
+                      {...form.register('message')}
+                    />
+                    {form.formState.errors.message && (
+                      <p className="text-destructive text-xs">
+                        {form.formState.errors.message.message}
+                      </p>
+                    )}
+                  </Field>
+                </FieldGroup>
+                <Button
+                  type="submit"
+                  disabled={isPending}
+                  className="mt-6 h-9 w-full cursor-pointer px-4 py-2"
+                >
+                  {isPending ? 'Sending…' : 'Send Message'}
+                </Button>
+              </form>
             </CardContent>
           </Card>
 
