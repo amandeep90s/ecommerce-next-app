@@ -25,7 +25,7 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
     if (!parsed.success) {
       return errorResponse({
         message: 'Validation failed',
-        errors: parsed.error.flatten().fieldErrors,
+        errors: parsed.error,
         statusCode: StatusCodes.UNPROCESSABLE_ENTITY,
       });
     }

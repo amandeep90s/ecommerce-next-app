@@ -25,7 +25,7 @@ export async function POST(request: Request) {
     if (!parsed.success) {
       return errorResponse({
         message: 'Validation failed',
-        errors: parsed.error.flatten().fieldErrors,
+        errors: parsed.error,
         statusCode: StatusCodes.UNPROCESSABLE_ENTITY,
       });
     }
