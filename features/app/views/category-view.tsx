@@ -1,7 +1,8 @@
 'use client';
 
-import { ChevronDown, Search, SlidersHorizontal, X } from 'lucide-react';
+import { ChevronDown, FolderX, Search, SlidersHorizontal, X } from 'lucide-react';
 import Image from 'next/image';
+import Link from 'next/link';
 import { parseAsInteger, parseAsString, parseAsStringLiteral, useQueryStates } from 'nuqs';
 import { useEffect, useState } from 'react';
 
@@ -114,6 +115,29 @@ export function CategoryView({ slug }: CategoryViewProps) {
     void setParams({ q: null, priceMin: null, priceMax: null, sort: null, page: 1 });
   }
 
+  // After loading resolves with no matching category, show a dedicated not-found state
+  // so invalid slugs never render filters or a contradictory empty-products grid.
+  if (!categoryLoading && !category) {
+    return (
+      <section className="py-8">
+        <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="flex min-h-72 flex-col items-center justify-center gap-4 rounded-lg border border-dashed text-center">
+            <FolderX className="text-muted-foreground size-12" />
+            <div>
+              <h1 className="text-xl font-semibold">Collection not found</h1>
+              <p className="text-muted-foreground mt-1 text-sm">
+                The collection &quot;{slug}&quot; doesn&apos;t exist or has been removed.
+              </p>
+            </div>
+            <Button asChild variant="outline">
+              <Link href="/shop">Browse all products</Link>
+            </Button>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
   return (
     <section className="py-8">
       <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -127,13 +151,13 @@ export function CategoryView({ slug }: CategoryViewProps) {
                 <Skeleton className="h-4 w-72" />
               </div>
             </div>
-          ) : category ? (
+          ) : (
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-6">
-              {category.image?.path && (
+              {category!.image?.path && (
                 <div className="relative size-20 shrink-0 overflow-hidden rounded-lg">
                   <Image
-                    src={category.image.path}
-                    alt={category.name}
+                    src={category!.image.path}
+                    alt={category!.name}
                     fill
                     sizes="80px"
                     className="object-cover"
@@ -141,9 +165,9 @@ export function CategoryView({ slug }: CategoryViewProps) {
                 </div>
               )}
               <div>
-                <h1 className="text-3xl font-bold tracking-tight">{category.name}</h1>
-                {category.description && (
-                  <p className="text-muted-foreground mt-1 text-sm">{category.description}</p>
+                <h1 className="text-3xl font-bold tracking-tight">{category!.name}</h1>
+                {category!.description && (
+                  <p className="text-muted-foreground mt-1 text-sm">{category!.description}</p>
                 )}
                 {meta && (
                   <p className="text-muted-foreground mt-1 text-sm">
@@ -152,108 +176,102 @@ export function CategoryView({ slug }: CategoryViewProps) {
                 )}
               </div>
             </div>
-          ) : (
-            <div>
-              <h1 className="text-3xl font-bold tracking-tight">Category not found</h1>
-            </div>
           )}
         </div>
 
         {/* Filters */}
-        {category && (
-          <div className="mb-6 flex flex-col gap-4">
-            {/* Row 1: Search + Sort */}
-            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-              <div className="relative max-w-sm flex-1">
-                <Search className="text-muted-foreground absolute top-1/2 left-3 size-4 -translate-y-1/2" />
-                <Input
-                  placeholder="Search in this category…"
-                  value={localSearch}
-                  onChange={(e) => setLocalSearch(e.target.value)}
-                  className="h-9 pl-10"
-                />
-              </div>
-
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="outline" className="h-9 w-full cursor-pointer sm:w-auto">
-                    <SlidersHorizontal data-icon="inline-start" />
-                    Sort: {selectedSort.label}
-                    <ChevronDown data-icon="inline-end" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-52">
-                  {SORT_OPTIONS.map((option) => (
-                    <DropdownMenuItem
-                      key={option.id}
-                      onClick={() => void setParams({ sort: option.id, page: 1 })}
-                      className={params.sort === option.id ? 'bg-accent' : ''}
-                    >
-                      {option.label}
-                    </DropdownMenuItem>
-                  ))}
-                </DropdownMenuContent>
-              </DropdownMenu>
+        <div className="mb-6 flex flex-col gap-4">
+          {/* Row 1: Search + Sort */}
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <div className="relative max-w-sm flex-1">
+              <Search className="text-muted-foreground absolute top-1/2 left-3 size-4 -translate-y-1/2" />
+              <Input
+                placeholder="Search in this category…"
+                value={localSearch}
+                onChange={(e) => setLocalSearch(e.target.value)}
+                className="h-9 pl-10"
+              />
             </div>
 
-            {/* Row 2: Price filter */}
-            <div className="flex flex-wrap gap-2">
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="outline" size="sm" className="h-8 cursor-pointer px-3 text-xs">
-                    {selectedPriceRange.label}
-                    <ChevronDown data-icon="inline-end" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent className="w-48">
-                  {PRICE_RANGES.map((range) => (
-                    <DropdownMenuItem
-                      key={range.label}
-                      onClick={() =>
-                        void setParams({
-                          priceMin: range.min || null,
-                          priceMax: range.max || null,
-                          page: 1,
-                        })
-                      }
-                      className={selectedPriceRange.label === range.label ? 'bg-accent' : ''}
-                    >
-                      {range.label}
-                    </DropdownMenuItem>
-                  ))}
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </div>
-
-            {/* Active filter chips */}
-            {activeFilters.length > 0 && (
-              <div className="flex flex-wrap items-center gap-2">
-                <span className="text-muted-foreground text-sm font-medium">Active filters:</span>
-                {activeFilters.map((f) => (
-                  <Badge key={f.type} variant="secondary" className="gap-1 pr-1.5">
-                    {f.label}
-                    <button
-                      type="button"
-                      onClick={() => clearFilter(f.type)}
-                      className="hover:text-destructive ml-0.5 rounded-full"
-                      aria-label={`Remove ${f.label} filter`}
-                    >
-                      <X className="size-3" />
-                    </button>
-                  </Badge>
-                ))}
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={clearAll}
-                  className="text-muted-foreground h-7 px-2 text-xs"
-                >
-                  Clear all
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" className="h-9 w-full cursor-pointer sm:w-auto">
+                  <SlidersHorizontal data-icon="inline-start" />
+                  Sort: {selectedSort.label}
+                  <ChevronDown data-icon="inline-end" />
                 </Button>
-              </div>
-            )}
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-52">
+                {SORT_OPTIONS.map((option) => (
+                  <DropdownMenuItem
+                    key={option.id}
+                    onClick={() => void setParams({ sort: option.id, page: 1 })}
+                    className={params.sort === option.id ? 'bg-accent' : ''}
+                  >
+                    {option.label}
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
-        )}
+
+          {/* Row 2: Price filter */}
+          <div className="flex flex-wrap gap-2">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" size="sm" className="h-8 cursor-pointer px-3 text-xs">
+                  {selectedPriceRange.label}
+                  <ChevronDown data-icon="inline-end" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="w-48">
+                {PRICE_RANGES.map((range) => (
+                  <DropdownMenuItem
+                    key={range.label}
+                    onClick={() =>
+                      void setParams({
+                        priceMin: range.min || null,
+                        priceMax: range.max || null,
+                        page: 1,
+                      })
+                    }
+                    className={selectedPriceRange.label === range.label ? 'bg-accent' : ''}
+                  >
+                    {range.label}
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+
+          {/* Active filter chips */}
+          {activeFilters.length > 0 && (
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="text-muted-foreground text-sm font-medium">Active filters:</span>
+              {activeFilters.map((f) => (
+                <Badge key={f.type} variant="secondary" className="gap-1 pr-1.5">
+                  {f.label}
+                  <button
+                    type="button"
+                    onClick={() => clearFilter(f.type)}
+                    className="hover:text-destructive ml-0.5 rounded-full"
+                    aria-label={`Remove ${f.label} filter`}
+                  >
+                    <X className="size-3" />
+                  </button>
+                </Badge>
+              ))}
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={clearAll}
+                className="text-muted-foreground h-7 px-2 text-xs"
+              >
+                Clear all
+              </Button>
+            </div>
+          )}
+        </div>
 
         {/* Product Grid */}
         <CatalogGrid
