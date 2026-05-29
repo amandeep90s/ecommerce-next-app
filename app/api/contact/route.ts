@@ -92,7 +92,7 @@ export async function GET(request: Request) {
       data: {
         items,
         meta: { page, limit, total, totalPages: Math.max(1, Math.ceil(total / limit)) },
-      }
+      },
     });
   } catch (error) {
     return errorResponse({

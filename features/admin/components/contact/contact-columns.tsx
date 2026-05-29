@@ -99,7 +99,6 @@ function ContactDetailSheet({
               minute: '2-digit',
             })}
           </SheetDescription>
-          </SheetDescription>
         </SheetHeader>
 
         <div className="mt-6 flex flex-col gap-5 px-4">
