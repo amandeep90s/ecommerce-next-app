@@ -138,8 +138,8 @@ export async function POST(request: Request) {
     if (stripeCouponId) order.stripeCouponId = stripeCouponId;
     await order.save();
 
-    // Fire-and-forget admin notification
-    createNotification({
+    // Non-fatal admin notification
+    await createNotification({
       type: 'new_order',
       title: 'New Order Placed',
       message: `Order ${order.orderNumber} — $${totalAmount.toFixed(2)}`,
