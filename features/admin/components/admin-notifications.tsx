@@ -65,7 +65,7 @@ export function AdminNotifications() {
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <Button variant="ghost" size="icon" className="relative">
+        <Button variant="ghost" size="icon" className="relative" aria-label="Open notifications">
           <BellIcon className="size-5" />
           {unreadCount > 0 && (
             <Badge
