@@ -6,6 +6,7 @@ import { stripe } from '@/config/stripe';
 import { EOrderStatus, EPaymentMethod, EPaymentStatus } from '@/enums';
 import { errorResponse, successResponse } from '@/lib/api-response';
 import { requireAuth } from '@/lib/require-auth';
+import Coupon from '@/models/coupon.model';
 import Order from '@/models/order.model';
 import { ICheckoutRequest } from '@/types';
 
@@ -34,13 +35,42 @@ export async function POST(request: Request) {
     }
 
     // Calculate total from products
-    const totalAmount = products.reduce((sum, item) => sum + item.selling_price * item.quantity, 0);
+    const subtotal = products.reduce((sum, item) => sum + item.selling_price * item.quantity, 0);
+
+    // Validate and apply coupon discount
+    let discountPercentage = 0;
+    let validatedCouponCode: string | undefined;
+
+    if (couponCode) {
+      const coupon = await Coupon.findOne({
+        code: {
+          $regex: new RegExp(`^${couponCode.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`, 'i'),
+        },
+        deletedAt: null,
+        isActive: true,
+      });
+
+      if (coupon) {
+        const now = new Date();
+        if (
+          now >= new Date(coupon.validFrom) &&
+          now <= new Date(coupon.validTo) &&
+          subtotal >= coupon.minimumPurchase
+        ) {
+          discountPercentage = coupon.discount;
+          validatedCouponCode = coupon.code;
+        }
+      }
+    }
+
+    const discountAmount = (subtotal * discountPercentage) / 100;
+    const totalAmount = subtotal - discountAmount;
 
     // Create the order with pending payment status
     const order = await Order.create({
       userId: auth.user.id,
       customerSnapshot,
-      couponCode,
+      couponCode: validatedCouponCode,
       products,
       shippingAddress,
       totalAmount,
@@ -63,10 +93,21 @@ export async function POST(request: Request) {
       quantity: product.quantity,
     }));
 
+    // If coupon discount applies, create a Stripe coupon for the session
+    let discounts: { coupon: string }[] | undefined;
+    if (discountPercentage > 0) {
+      const stripeCoupon = await stripe.coupons.create({
+        percent_off: discountPercentage,
+        duration: 'once',
+      });
+      discounts = [{ coupon: stripeCoupon.id }];
+    }
+
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
       line_items: lineItems,
       mode: 'payment',
+      ...(discounts && { discounts }),
       success_url: `${APP_BASE_URL}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${APP_BASE_URL}/checkout/cancel`,
       metadata: {

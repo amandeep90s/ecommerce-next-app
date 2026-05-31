@@ -14,16 +14,15 @@ export async function GET() {
     await connectToDatabase();
 
     const [totalOrders, recentOrders, wishlist] = await Promise.all([
-      Order.countDocuments({ user: auth.user.id }),
-      Order.find({ user: auth.user.id })
+      Order.countDocuments({ userId: auth.user.id }),
+      Order.find({ userId: auth.user.id })
         .sort({ createdAt: -1 })
         .limit(5)
         .lean()
         .then((orders) =>
           orders.map((o) => ({
             id: o._id.toString(),
-            orderNumber: o.orderNumber,
-            total: o.total,
+            total: o.totalAmount,
             status: o.status,
             paymentStatus: o.paymentStatus,
             createdAt: o.createdAt,
@@ -33,7 +32,7 @@ export async function GET() {
     ]);
 
     const pendingOrders = await Order.countDocuments({
-      user: auth.user.id,
+      userId: auth.user.id,
       status: { $in: ['pending', 'processing', 'shipped'] },
     });
 

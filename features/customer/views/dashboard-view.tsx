@@ -16,7 +16,6 @@ interface DashboardData {
   wishlistCount: number;
   recentOrders: {
     id: string;
-    orderNumber: string;
     total: number;
     status: string;
     paymentStatus: string;
@@ -133,7 +132,7 @@ export function DashboardView() {
                   className="hover:bg-muted/50 flex items-center justify-between rounded-lg border p-3 transition-colors"
                 >
                   <div className="flex flex-col gap-1">
-                    <span className="text-sm font-medium">#{order.orderNumber}</span>
+                    <span className="text-sm font-medium">#{order.id.slice(-8).toUpperCase()}</span>
                     <span className="text-muted-foreground text-xs">
                       {new Date(order.createdAt).toLocaleDateString()}
                     </span>
