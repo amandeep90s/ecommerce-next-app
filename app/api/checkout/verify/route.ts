@@ -35,7 +35,7 @@ export async function GET(request: NextRequest) {
     const order = await Order.findOne({
       _id: session.metadata.orderId,
       userId: auth.user.id,
-    }).lean();
+    });
 
     if (!order) {
       return errorResponse({

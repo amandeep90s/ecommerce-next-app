@@ -40,8 +40,7 @@ export async function GET(request: Request) {
       Order.find(baseQuery)
         .sort({ createdAt: -1 })
         .skip((page - 1) * limit)
-        .limit(limit)
-        .lean(),
+        .limit(limit),
       Order.countDocuments(baseQuery),
     ]);
 

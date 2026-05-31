@@ -7,7 +7,7 @@ export type PaymentStatus = 'pending' | 'paid' | 'failed' | 'refunded';
 // ─── Embedded sub-shapes ──────────────────────────────────────────────────────
 
 export interface IOrderProduct {
-  productId: string; // ObjectId string after lean()
+  productId: string; // ObjectId string
   // Snapshot fields recorded at checkout time
   name: string;
   price: number;
