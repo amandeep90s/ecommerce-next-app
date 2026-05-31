@@ -1,4 +1,6 @@
 export type OrderStatus = 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled';
+export type PaymentMethod = 'stripe' | 'cod';
+export type PaymentStatus = 'pending' | 'paid' | 'failed' | 'refunded';
 
 // ─── Embedded sub-shapes ──────────────────────────────────────────────────────
 
@@ -44,6 +46,10 @@ export interface IOrder {
   shippingAddress?: IOrderShippingAddress;
   totalAmount: number;
   status: OrderStatus;
+  paymentMethod: PaymentMethod;
+  paymentStatus: PaymentStatus;
+  stripeSessionId?: string;
+  stripePaymentIntentId?: string;
   orderedAt: string;
   note?: string;
   createdAt: string;
@@ -72,4 +78,36 @@ export interface IGetOrderByIdResponse {
   success: boolean;
   message: string;
   data: IOrder | null;
+}
+
+// ─── Checkout request ─────────────────────────────────────────────────────────
+
+export interface ICheckoutProduct {
+  productId: string;
+  name: string;
+  price: number;
+  selling_price: number;
+  image?: string;
+  quantity: number;
+  variantId?: string | null;
+  color?: string | null;
+  size?: string | null;
+  sku?: string | null;
+}
+
+export interface ICheckoutRequest {
+  products: ICheckoutProduct[];
+  shippingAddress: IOrderShippingAddress;
+  customerSnapshot: IOrderCustomerSnapshot;
+  couponCode?: string;
+  note?: string;
+}
+
+export interface ICreateCheckoutSessionResponse {
+  success: boolean;
+  message: string;
+  data: {
+    sessionId: string;
+    url: string;
+  } | null;
 }
