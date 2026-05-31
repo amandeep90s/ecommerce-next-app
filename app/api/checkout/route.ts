@@ -93,14 +93,19 @@ export async function POST(request: Request) {
       quantity: product.quantity,
     }));
 
-    // If coupon discount applies, create a Stripe coupon for the session
+    // If coupon discount applies, create a short-lived Stripe coupon for this
+    // session only. We delete it immediately after the session is created so it
+    // doesn't accumulate in the Stripe dashboard — the discount is already
+    // embedded in the session at that point and deletion has no effect on it.
     let discounts: { coupon: string }[] | undefined;
+    let stripeCouponId: string | undefined;
     if (discountPercentage > 0) {
       const stripeCoupon = await stripe.coupons.create({
         percent_off: discountPercentage,
         duration: 'once',
       });
-      discounts = [{ coupon: stripeCoupon.id }];
+      stripeCouponId = stripeCoupon.id;
+      discounts = [{ coupon: stripeCouponId }];
     }
 
     const session = await stripe.checkout.sessions.create({
@@ -116,6 +121,14 @@ export async function POST(request: Request) {
       },
       customer_email: customerSnapshot?.email,
     });
+
+    // Delete the ephemeral Stripe coupon now that it is attached to the session.
+    // Fire-and-forget: a failure here is non-fatal — the session is already good.
+    if (stripeCouponId) {
+      stripe.coupons.del(stripeCouponId).catch(() => {
+        // Intentionally swallowed — coupon cleanup is best-effort.
+      });
+    }
 
     // Save the Stripe session ID to the order
     order.stripeSessionId = session.id;

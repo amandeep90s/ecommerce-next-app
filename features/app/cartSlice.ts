@@ -38,7 +38,12 @@ const cartSlice = createSlice({
       const key = cartItemKey(item);
       const existing = state.items.find((i) => cartItemKey(i) === key);
       if (existing) {
-        // Clamp to available stock
+        // Refresh snapshot fields in case price/stock changed since the item was first added
+        existing.price = item.price;
+        existing.selling_price = item.selling_price;
+        existing.discount = item.discount;
+        existing.stock = item.stock;
+        // Clamp to updated stock
         existing.quantity = Math.min(existing.quantity + requestedQty, existing.stock);
       } else {
         state.items.push({ ...item, quantity: Math.min(requestedQty, item.stock) });

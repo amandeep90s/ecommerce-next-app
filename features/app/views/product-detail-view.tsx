@@ -16,12 +16,13 @@ import { ProductVariantSelector } from '@/features/app/components/catalog/produc
 import { useGetProductBySlug } from '@/features/app/hooks/use-get-product-by-slug';
 import { useGetProductReviews } from '@/features/app/hooks/use-get-product-reviews';
 import { useGetProductVariants } from '@/features/app/hooks/use-get-product-variants';
+import { selectIsAuthenticated } from '@/features/auth/authSlice';
 import {
   useAddToWishlist,
   useGetWishlist,
   useRemoveFromWishlist,
 } from '@/features/customer/hooks/use-wishlist';
-import { useAppDispatch } from '@/store/hooks';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import type { IProductVariantItem } from '@/types';
 
 interface ProductDetailViewProps {
@@ -50,10 +51,11 @@ function ProductDetailSkeleton() {
 
 export function ProductDetailView({ slug }: ProductDetailViewProps) {
   const dispatch = useAppDispatch();
+  const isAuthenticated = useAppSelector(selectIsAuthenticated);
   const [quantity, setQuantity] = useState(1);
   const [selectedVariant, setSelectedVariant] = useState<IProductVariantItem | null>(null);
 
-  const { data: wishlistData } = useGetWishlist();
+  const { data: wishlistData } = useGetWishlist({ enabled: isAuthenticated });
   const addToWishlistMutation = useAddToWishlist();
   const removeFromWishlistMutation = useRemoveFromWishlist();
 

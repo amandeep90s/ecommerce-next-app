@@ -12,7 +12,7 @@ export async function POST(request: Request) {
   try {
     await connectToDatabase();
 
-    const { code, subtotal } = await request.json();
+    const { code } = await request.json();
 
     if (!code) {
       return errorResponse({
@@ -46,13 +46,6 @@ export async function POST(request: Request) {
     if (now > new Date(coupon.validTo)) {
       return errorResponse({
         message: 'This coupon has expired',
-        statusCode: StatusCodes.BAD_REQUEST,
-      });
-    }
-
-    if (subtotal && subtotal < coupon.minimumPurchase) {
-      return errorResponse({
-        message: `Minimum purchase of $${coupon.minimumPurchase.toFixed(2)} required for this coupon`,
         statusCode: StatusCodes.BAD_REQUEST,
       });
     }

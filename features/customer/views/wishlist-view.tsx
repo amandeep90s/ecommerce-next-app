@@ -15,7 +15,8 @@ export function WishlistView() {
   const { data, isLoading } = useGetWishlist();
   const removeFromWishlist = useRemoveFromWishlist();
 
-  const products = data?.data ?? [];
+  // Filter out entries where the product was deleted or failed to populate
+  const products = (data?.data ?? []).filter((item) => item.productId != null);
 
   function handleRemove(productId: string, productName: string) {
     removeFromWishlist.mutate(productId, {

@@ -35,10 +35,11 @@ async function getWishlist(): Promise<IGetWishlistResponse> {
   return result;
 }
 
-export function useGetWishlist() {
+export function useGetWishlist({ enabled = true }: { enabled?: boolean } = {}) {
   return useQuery({
     queryKey: WISHLIST_QUERY_KEY,
     queryFn: getWishlist,
+    enabled,
   });
 }
 
