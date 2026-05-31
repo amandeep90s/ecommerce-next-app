@@ -52,7 +52,7 @@ export async function POST(request: Request) {
           ).lean<import('@/types').IOrderDocument>();
           // Clean up the ephemeral Stripe coupon now that payment is confirmed.
           if (order?.stripeCouponId) {
-            stripe.coupons.del(order.stripeCouponId).catch(() => {
+            await stripe.coupons.del(order.stripeCouponId).catch(() => {
               // Intentionally swallowed — cleanup is best-effort.
             });
           }
@@ -75,7 +75,7 @@ export async function POST(request: Request) {
           ).lean<import('@/types').IOrderDocument>();
           // Clean up the ephemeral Stripe coupon now that the session is expired.
           if (order?.stripeCouponId) {
-            stripe.coupons.del(order.stripeCouponId).catch(() => {
+            await stripe.coupons.del(order.stripeCouponId).catch(() => {
               // Intentionally swallowed — cleanup is best-effort.
             });
           }
