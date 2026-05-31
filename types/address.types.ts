@@ -21,3 +21,16 @@ export interface IAddress {
 }
 
 export interface IAddressDocument extends IAddress, mongoose.Document {}
+
+// API response wrappers
+export interface IGetAddressesResponse {
+  success: boolean;
+  message: string;
+  data: IAddress[] | null;
+}
+
+export interface IGetAddressResponse {
+  success: boolean;
+  message: string;
+  data: IAddress | null;
+}

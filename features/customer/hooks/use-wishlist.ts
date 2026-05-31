@@ -20,9 +20,15 @@ export interface WishlistProduct {
   _id: string;
 }
 
+export interface IGetWishlistResponse {
+  success: boolean;
+  message: string;
+  data: WishlistProduct[] | null;
+}
+
 // ─── Fetch ─────────────────────────────────────────────────────────────────
 
-async function getWishlist(): Promise<{ data: WishlistProduct[] }> {
+async function getWishlist(): Promise<IGetWishlistResponse> {
   const response = await fetchWithAuth('/api/wishlist');
   const result = await response.json();
   if (!response.ok) throw new Error(result.message || 'Failed to fetch wishlist');
@@ -38,7 +44,7 @@ export function useGetWishlist() {
 
 // ─── Add to Wishlist ───────────────────────────────────────────────────────
 
-async function addToWishlist(productId: string): Promise<{ data: WishlistProduct[] }> {
+async function addToWishlist(productId: string): Promise<IGetWishlistResponse> {
   const response = await fetchWithAuth('/api/wishlist', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -59,7 +65,7 @@ export function useAddToWishlist() {
 
 // ─── Remove from Wishlist ──────────────────────────────────────────────────
 
-async function removeFromWishlist(productId: string): Promise<{ data: WishlistProduct[] }> {
+async function removeFromWishlist(productId: string): Promise<IGetWishlistResponse> {
   const response = await fetchWithAuth(`/api/wishlist?productId=${productId}`, {
     method: 'DELETE',
   });

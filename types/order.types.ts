@@ -82,6 +82,19 @@ export interface IGetOrderByIdResponse {
   data: IOrder | null;
 }
 
+// Customer-facing order response wrappers
+export interface IGetCustomerOrdersResponse {
+  success: boolean;
+  message: string;
+  data: IOrder[] | null;
+}
+
+export interface IGetCustomerOrderByIdResponse {
+  success: boolean;
+  message: string;
+  data: IOrder | null;
+}
+
 // ─── Checkout request ─────────────────────────────────────────────────────────
 
 export interface ICheckoutProduct {
