@@ -18,7 +18,7 @@ const productData = {
 
 export function ProductCardOne() {
   return (
-    <Card className="w-full max-w-[320px]">
+    <Card className="w-full max-w-xs">
       <CardContent>
         {/* Product Image */}
         <div className="relative mb-6">
