@@ -34,8 +34,10 @@ export function Header() {
             <SearchIcon className="h-5 w-5" />
           </Button>
 
-          <Button variant="ghost" size="icon-lg">
-            <HeartIcon className="h-5 w-5" />
+          <Button variant="ghost" size="icon-lg" asChild>
+            <Link href="/wishlist">
+              <HeartIcon className="h-5 w-5" />
+            </Link>
           </Button>
 
           <Button asChild variant="ghost" size="icon-lg" className="relative">
