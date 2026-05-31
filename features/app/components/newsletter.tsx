@@ -1,9 +1,9 @@
 'use client';
 
+import { Mail, Send } from 'lucide-react';
 import { useState } from 'react';
 import { toast } from 'sonner';
 
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -35,67 +35,46 @@ export function Newsletter() {
   return (
     <section className="w-full py-16 sm:py-24">
       <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
-        <Card>
-          <CardContent className="flex flex-col gap-6 py-6 sm:py-8">
-            <div className="flex flex-col gap-2 text-center">
-              <h2 className="text-4xl font-bold">Subscribe to Our Community</h2>
-              <p className="text-muted-foreground mx-auto max-w-2xl">
-                Get exclusive access to cutting-edge tech insights, industry trends, and expert
-                advice delivered straight to your inbox. Join our growing community today!
+        <Card className="bg-primary/5 border-primary/20">
+          <CardContent className="flex flex-col gap-6 py-8 sm:py-10">
+            <div className="flex flex-col items-center gap-3 text-center">
+              <div className="bg-primary/10 flex size-12 items-center justify-center rounded-full">
+                <Mail className="text-primary size-6" />
+              </div>
+              <h2 className="text-3xl font-bold sm:text-4xl">Stay in the Loop</h2>
+              <p className="text-muted-foreground mx-auto max-w-xl">
+                Be the first to know about new arrivals, exclusive deals, and style tips. No spam —
+                just the good stuff, delivered weekly.
               </p>
             </div>
 
             <form
               onSubmit={handleSubmit}
-              className="mx-auto flex flex-col gap-3 max-sm:w-full sm:flex-row"
+              className="mx-auto flex w-full max-w-md flex-col gap-3 sm:flex-row"
             >
               <Input
                 type="email"
-                className="h-9 w-78 max-sm:w-full"
-                placeholder="Enter your email here"
+                className="h-11 flex-1"
+                placeholder="Enter your email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
                 disabled={isPending}
               />
-              <Button type="submit" className="h-9 cursor-pointer px-4 py-2" disabled={isPending}>
-                {isPending ? 'Joining…' : 'Join Now'}
+              <Button type="submit" className="h-11 cursor-pointer px-6" disabled={isPending}>
+                {isPending ? (
+                  'Subscribing…'
+                ) : (
+                  <>
+                    Subscribe <Send className="ml-1 size-4" />
+                  </>
+                )}
               </Button>
             </form>
 
-            <div className="flex flex-wrap items-center justify-center gap-2">
-              <div className="*:ring-background flex -space-x-2 *:size-8 *:ring-2">
-                <Avatar className="bg-muted">
-                  <AvatarImage
-                    src="https://notion-avatars.netlify.app/api/avatar?preset=male-1"
-                    alt="User 1"
-                  />
-                  <AvatarFallback>CN</AvatarFallback>
-                </Avatar>
-                <Avatar className="bg-muted">
-                  <AvatarImage
-                    src="https://notion-avatars.netlify.app/api/avatar?preset=female-5"
-                    alt="User 2"
-                  />
-                  <AvatarFallback>LR</AvatarFallback>
-                </Avatar>
-                <Avatar className="bg-muted">
-                  <AvatarImage
-                    src="https://notion-avatars.netlify.app/api/avatar?preset=male-2"
-                    alt="User 3"
-                  />
-                  <AvatarFallback>ER</AvatarFallback>
-                </Avatar>
-                <Avatar className="bg-muted">
-                  <AvatarImage
-                    src="https://notion-avatars.netlify.app/api/avatar?preset=female-3"
-                    alt="User 4"
-                  />
-                  <AvatarFallback>DG</AvatarFallback>
-                </Avatar>
-              </div>
-              <span className="text-sm">5,000+ happy members</span>
-            </div>
+            <p className="text-muted-foreground text-center text-xs">
+              Unsubscribe anytime. We respect your privacy.
+            </p>
           </CardContent>
         </Card>
       </div>
