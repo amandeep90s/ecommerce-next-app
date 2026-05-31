@@ -2,6 +2,7 @@ import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
 
 export interface CartItem {
   productId: string;
+  variantId?: string | null;
   name: string;
   slug: string;
   image: string;
@@ -10,6 +11,9 @@ export interface CartItem {
   discount: number;
   quantity: number;
   stock: number;
+  color?: string | null;
+  size?: string | null;
+  sku?: string | null;
 }
 
 export interface CartState {
@@ -20,13 +24,19 @@ const initialState: CartState = {
   items: [],
 };
 
+/** Unique key for a cart line item (product + variant combination) */
+function cartItemKey(item: { productId: string; variantId?: string | null }): string {
+  return item.variantId ? `${item.productId}_${item.variantId}` : item.productId;
+}
+
 const cartSlice = createSlice({
   name: 'cart',
   initialState,
   reducers: {
     addToCart(state, action: PayloadAction<Omit<CartItem, 'quantity'> & { quantity?: number }>) {
       const { quantity: requestedQty = 1, ...item } = action.payload;
-      const existing = state.items.find((i) => i.productId === item.productId);
+      const key = cartItemKey(item);
+      const existing = state.items.find((i) => cartItemKey(i) === key);
       if (existing) {
         // Clamp to available stock
         existing.quantity = Math.min(existing.quantity + requestedQty, existing.stock);
@@ -35,10 +45,10 @@ const cartSlice = createSlice({
       }
     },
     removeFromCart(state, action: PayloadAction<string>) {
-      state.items = state.items.filter((i) => i.productId !== action.payload);
+      state.items = state.items.filter((i) => cartItemKey(i) !== action.payload);
     },
-    updateQuantity(state, action: PayloadAction<{ productId: string; quantity: number }>) {
-      const item = state.items.find((i) => i.productId === action.payload.productId);
+    updateQuantity(state, action: PayloadAction<{ key: string; quantity: number }>) {
+      const item = state.items.find((i) => cartItemKey(i) === action.payload.key);
       if (item) {
         const clamped = Math.max(1, Math.min(action.payload.quantity, item.stock));
         item.quantity = clamped;
@@ -53,6 +63,9 @@ const cartSlice = createSlice({
 export const { addToCart, removeFromCart, updateQuantity, clearCart } = cartSlice.actions;
 
 export default cartSlice.reducer;
+
+// Helpers
+export { cartItemKey };
 
 // Selectors
 export const selectCartItems = (state: { cart: CartState }) => state.cart.items;

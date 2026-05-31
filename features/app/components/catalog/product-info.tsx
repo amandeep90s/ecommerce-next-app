@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
-import type { IProductItem, IReviewItem } from '@/types';
+import type { IProductItem, IProductVariantItem, IReviewItem } from '@/types';
 
 interface ProductInfoProps {
   product: IProductItem;
@@ -13,6 +13,11 @@ interface ProductInfoProps {
   quantity: number;
   hasDiscount: boolean;
   isOutOfStock: boolean;
+  activePrice: number;
+  activeOriginalPrice: number;
+  activeStock: number;
+  selectedVariant: IProductVariantItem | null;
+  requiresVariantSelection: boolean;
   onDecrement: () => void;
   onIncrement: () => void;
   onAddToCart: () => void;
@@ -38,6 +43,11 @@ export function ProductInfo({
   quantity,
   hasDiscount,
   isOutOfStock,
+  activePrice,
+  activeOriginalPrice,
+  activeStock,
+  selectedVariant,
+  requiresVariantSelection,
   onDecrement,
   onIncrement,
   onAddToCart,
@@ -57,7 +67,9 @@ export function ProductInfo({
 
       {/* Badges */}
       <div className="flex flex-wrap gap-2">
-        {hasDiscount && <Badge variant="destructive">-{product.discount}% OFF</Badge>}
+        {hasDiscount && (
+          <Badge variant="destructive">-{selectedVariant?.discount ?? product.discount}% OFF</Badge>
+        )}
         {product.isFeatured && <Badge>Featured</Badge>}
         {product.isTrending && <Badge variant="secondary">Trending</Badge>}
       </div>
@@ -74,10 +86,10 @@ export function ProductInfo({
 
       {/* Price */}
       <div className="flex items-baseline gap-3">
-        <span className="text-2xl font-bold">${product.selling_price.toFixed(2)}</span>
+        <span className="text-2xl font-bold">${activePrice.toFixed(2)}</span>
         {hasDiscount && (
           <span className="text-muted-foreground text-base line-through">
-            ${product.price.toFixed(2)}
+            ${activeOriginalPrice.toFixed(2)}
           </span>
         )}
       </div>
@@ -89,13 +101,21 @@ export function ProductInfo({
         <p className="text-muted-foreground text-sm leading-relaxed">{product.description}</p>
       )}
 
+      {/* Selected variant info */}
+      {selectedVariant && (
+        <div className="text-muted-foreground text-xs">
+          <span className="font-medium">Selected:</span> {selectedVariant.color} /{' '}
+          {selectedVariant.size} — SKU: {selectedVariant.sku}
+        </div>
+      )}
+
       {/* Stock */}
       <p className={`text-sm font-medium ${isOutOfStock ? 'text-destructive' : 'text-green-600'}`}>
-        {isOutOfStock ? 'Out of Stock' : `In Stock (${product.stock} available)`}
+        {isOutOfStock ? 'Out of Stock' : `In Stock (${activeStock} available)`}
       </p>
 
       {/* SKU */}
-      <p className="text-muted-foreground text-xs">SKU: {product.sku}</p>
+      {!selectedVariant && <p className="text-muted-foreground text-xs">SKU: {product.sku}</p>}
 
       {/* Quantity + Add to Cart */}
       {!isOutOfStock && (
@@ -116,14 +136,19 @@ export function ProductInfo({
               size="icon"
               className="h-10 w-10 rounded-l-none"
               onClick={onIncrement}
-              disabled={quantity >= product.stock}
+              disabled={quantity >= activeStock}
             >
               <Plus className="size-4" />
             </Button>
           </div>
 
-          <Button className="flex-1" size="lg" onClick={onAddToCart}>
-            Add to Cart
+          <Button
+            className="flex-1"
+            size="lg"
+            onClick={onAddToCart}
+            disabled={requiresVariantSelection}
+          >
+            {requiresVariantSelection ? 'Select Size & Color' : 'Add to Cart'}
           </Button>
         </div>
       )}
