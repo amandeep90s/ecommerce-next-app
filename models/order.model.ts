@@ -5,6 +5,12 @@ import { IOrderDocument } from '@/types';
 
 const orderSchema = new mongoose.Schema(
   {
+    orderNumber: {
+      type: String,
+      required: true,
+      unique: true,
+      trim: true,
+    },
     userId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',
@@ -145,6 +151,10 @@ const orderSchema = new mongoose.Schema(
       trim: true,
     },
     stripePaymentIntentId: {
+      type: String,
+      trim: true,
+    },
+    stripeCouponId: {
       type: String,
       trim: true,
     },

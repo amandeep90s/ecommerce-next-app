@@ -37,9 +37,7 @@ export function OrderCard({ order }: OrderCardProps) {
       <CardHeader className="flex flex-row items-center justify-between pb-3">
         <div className="flex items-center gap-2">
           <PackageIcon className="text-muted-foreground size-4" />
-          <span className="font-mono text-sm font-medium">
-            #{String(order.id).slice(-8).toUpperCase()}
-          </span>
+          <span className="font-mono text-sm font-medium">#{order.orderNumber}</span>
         </div>
         <Badge
           className={`border text-xs capitalize ${STATUS_STYLES[order.status]}`}

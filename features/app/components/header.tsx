@@ -56,7 +56,7 @@ export function Header() {
             </Link>
           </Button>
 
-          <ThemeToggle size="icon-lg" className="ms-3" />
+          <ThemeToggle size="icon-lg" />
           {isAuthenticated ? (
             <UserAvatar />
           ) : (

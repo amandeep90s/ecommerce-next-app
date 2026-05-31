@@ -91,40 +91,42 @@ export function AdminOrderDetailView({ id }: AdminOrderDetailViewProps) {
 
   return (
     <div className="flex flex-col gap-6">
-      {/* Back */}
-      <Button variant="ghost" size="sm" className="w-fit" asChild>
-        <Link href="/admin/orders">
-          <ArrowLeftIcon className="size-4" />
-          Back to Orders
-        </Link>
-      </Button>
-
       {/* Header */}
       <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-xl font-semibold">
-            Order <span className="font-mono">#{order.id.slice(-8).toUpperCase()}</span>
+            Order <span className="font-mono">{order.orderNumber}</span>
           </h1>
           <div className="text-muted-foreground mt-1 flex items-center gap-1.5 text-sm">
             <CalendarIcon className="size-3.5" />
             <span>Placed on {new Date(order.orderedAt).toLocaleDateString()}</span>
           </div>
         </div>
-        <OrderStatusBadge status={order.status} />
+
+        {/* Back */}
+        <Button variant="ghost" size="sm" className="w-fit" asChild>
+          <Link href="/admin/orders">
+            <ArrowLeftIcon className="size-4" />
+            Back to Orders
+          </Link>
+        </Button>
       </div>
 
       <div className="grid gap-6 lg:grid-cols-3">
         <div className="flex flex-col gap-6 lg:col-span-2">
           {/* Items */}
           <Card>
-            <CardHeader className="pb-3">
-              <CardTitle className="flex items-center gap-2 text-base font-medium">
-                <PackageIcon className="size-4" />
-                Order Items
+            <CardHeader>
+              <CardTitle className="flex items-center justify-between gap-2 text-base font-medium">
+                <div className="flex items-center gap-2">
+                  <PackageIcon className="size-4" />
+                  Order Items
+                </div>
+                <OrderStatusBadge status={order.status} />
               </CardTitle>
             </CardHeader>
             <Separator />
-            <CardContent className="divide-y pt-4">
+            <CardContent className="divide-y">
               {order.products.map((item, index) => (
                 <div key={index} className="flex items-center gap-4 py-4 first:pt-0 last:pb-0">
                   {item.image ? (
@@ -168,11 +170,11 @@ export function AdminOrderDetailView({ id }: AdminOrderDetailViewProps) {
 
           {/* Summary */}
           <Card>
-            <CardHeader className="pb-3">
+            <CardHeader>
               <CardTitle className="text-base font-medium">Order Summary</CardTitle>
             </CardHeader>
             <Separator />
-            <CardContent className="space-y-2 pt-4 text-sm">
+            <CardContent className="space-y-2 text-sm">
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Subtotal</span>
                 <span>${subtotal.toFixed(2)}</span>
@@ -197,11 +199,11 @@ export function AdminOrderDetailView({ id }: AdminOrderDetailViewProps) {
           {/* Note */}
           {order.note && (
             <Card>
-              <CardHeader className="pb-3">
+              <CardHeader>
                 <CardTitle className="text-base font-medium">Order Note</CardTitle>
               </CardHeader>
               <Separator />
-              <CardContent className="pt-4">
+              <CardContent className="">
                 <p className="text-muted-foreground text-sm">{order.note}</p>
               </CardContent>
             </Card>
@@ -211,11 +213,11 @@ export function AdminOrderDetailView({ id }: AdminOrderDetailViewProps) {
         <div className="flex flex-col gap-6">
           {/* Update Status */}
           <Card>
-            <CardHeader className="pb-3">
+            <CardHeader>
               <CardTitle className="text-base font-medium">Update Status</CardTitle>
             </CardHeader>
             <Separator />
-            <CardContent className="space-y-3 pt-4">
+            <CardContent className="space-y-3">
               <Select
                 value={selectedStatus || order.status}
                 onValueChange={(v) => setSelectedStatus(v as OrderStatus)}
@@ -245,14 +247,14 @@ export function AdminOrderDetailView({ id }: AdminOrderDetailViewProps) {
           {/* Customer Info */}
           {order.customerSnapshot && (
             <Card>
-              <CardHeader className="pb-3">
+              <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-base font-medium">
                   <UserIcon className="size-4" />
                   Customer
                 </CardTitle>
               </CardHeader>
               <Separator />
-              <CardContent className="space-y-1 pt-4 text-sm">
+              <CardContent className="space-y-1 text-sm">
                 <p className="font-medium">{order.customerSnapshot.name}</p>
                 <p className="text-muted-foreground">{order.customerSnapshot.email}</p>
                 <Button variant="outline" size="sm" className="mt-2 w-full" asChild>
@@ -269,14 +271,14 @@ export function AdminOrderDetailView({ id }: AdminOrderDetailViewProps) {
           {/* Shipping Address */}
           {order.shippingAddress && (
             <Card>
-              <CardHeader className="pb-3">
+              <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-base font-medium">
                   <MapPinIcon className="size-4" />
                   Shipping Address
                 </CardTitle>
               </CardHeader>
               <Separator />
-              <CardContent className="space-y-0.5 pt-4 text-sm">
+              <CardContent className="space-y-0.5 text-sm">
                 <p className="font-medium">{order.shippingAddress.name}</p>
                 <p className="text-muted-foreground">{order.shippingAddress.phone}</p>
                 <p className="mt-1">

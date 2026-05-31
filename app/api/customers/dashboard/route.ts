@@ -18,10 +18,9 @@ export async function GET() {
       Order.find({ userId: auth.user.id })
         .sort({ createdAt: -1 })
         .limit(5)
-        .lean()
         .then((orders) =>
           orders.map((o) => ({
-            id: o._id.toString(),
+            id: o.id.toString(),
             total: o.totalAmount,
             status: o.status,
             paymentStatus: o.paymentStatus,

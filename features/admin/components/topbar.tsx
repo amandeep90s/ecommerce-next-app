@@ -1,12 +1,13 @@
 'use client';
 
-import { Bell, StoreIcon } from 'lucide-react';
+import { StoreIcon } from 'lucide-react';
 import Link from 'next/link';
 
 import { ThemeToggle } from '@/components/theme-toggle';
 import { Button } from '@/components/ui/button';
 import { SidebarTrigger } from '@/components/ui/sidebar';
 import { UserAvatar } from '@/components/user-avatar';
+import { AdminNotifications } from '@/features/admin/components/admin-notifications';
 import { GlobalSearch } from '@/features/admin/components/global-search';
 
 export function Topbar() {
@@ -22,10 +23,7 @@ export function Topbar() {
             <StoreIcon className="size-5" />
           </Link>
         </Button>
-        <Button variant="ghost" size="icon" className="relative">
-          <Bell className="size-5" />
-          <span className="absolute top-1 right-1 size-2 rounded-full bg-red-500" />
-        </Button>
+        <AdminNotifications />
 
         <ThemeToggle />
 

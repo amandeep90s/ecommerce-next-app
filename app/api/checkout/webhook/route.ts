@@ -41,11 +41,21 @@ export async function POST(request: Request) {
         const orderId = session.metadata?.orderId;
 
         if (orderId) {
-          await Order.findByIdAndUpdate(orderId, {
-            paymentStatus: EPaymentStatus.PAID,
-            status: EOrderStatus.PROCESSING,
-            stripePaymentIntentId: session.payment_intent as string,
-          });
+          const order = await Order.findByIdAndUpdate(
+            orderId,
+            {
+              paymentStatus: EPaymentStatus.PAID,
+              status: EOrderStatus.PROCESSING,
+              stripePaymentIntentId: session.payment_intent as string,
+            },
+            { new: true },
+          ).lean<import('@/types').IOrderDocument>();
+          // Clean up the ephemeral Stripe coupon now that payment is confirmed.
+          if (order?.stripeCouponId) {
+            await stripe.coupons.del(order.stripeCouponId).catch(() => {
+              // Intentionally swallowed — cleanup is best-effort.
+            });
+          }
         }
         break;
       }
@@ -55,10 +65,20 @@ export async function POST(request: Request) {
         const orderId = session.metadata?.orderId;
 
         if (orderId) {
-          await Order.findByIdAndUpdate(orderId, {
-            paymentStatus: EPaymentStatus.FAILED,
-            status: EOrderStatus.CANCELLED,
-          });
+          const order = await Order.findByIdAndUpdate(
+            orderId,
+            {
+              paymentStatus: EPaymentStatus.FAILED,
+              status: EOrderStatus.CANCELLED,
+            },
+            { new: true },
+          ).lean<import('@/types').IOrderDocument>();
+          // Clean up the ephemeral Stripe coupon now that the session is expired.
+          if (order?.stripeCouponId) {
+            await stripe.coupons.del(order.stripeCouponId).catch(() => {
+              // Intentionally swallowed — cleanup is best-effort.
+            });
+          }
         }
         break;
       }

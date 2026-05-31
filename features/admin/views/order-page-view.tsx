@@ -88,7 +88,7 @@ export function OrderPageView() {
               placeholder="Search customer name or email…"
               value={searchInput}
               onChange={(e) => setSearchInput(e.target.value)}
-              className="pl-8"
+              className="w-xs pl-8"
             />
           </div>
         </div>
