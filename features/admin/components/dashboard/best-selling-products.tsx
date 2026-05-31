@@ -12,58 +12,16 @@ import {
   TableRow,
 } from '@/components/ui/table';
 
-const products = [
-  {
-    name: 'Sports Shoes',
-    image: '/products/placeholder.svg',
-    price: '$316.00',
-    sold: 10,
-  },
-  {
-    name: 'Black T-Shirt',
-    image: '/products/placeholder.svg',
-    price: '$274.00',
-    sold: 20,
-  },
-  {
-    name: 'Jeans',
-    image: '/products/placeholder.svg',
-    price: '$195.00',
-    sold: 15,
-  },
-  {
-    name: 'Red Sneakers',
-    image: '/products/placeholder.svg',
-    price: '$402.00',
-    sold: 40,
-  },
-  {
-    name: 'Red Scarf',
-    image: '/products/placeholder.svg',
-    price: '$280.00',
-    sold: 37,
-  },
-  {
-    name: 'Kitchen Accessory',
-    image: '/products/placeholder.svg',
-    price: '$150.00',
-    sold: 18,
-  },
-  {
-    name: 'Bicycle',
-    image: '/products/placeholder.svg',
-    price: '$316.00',
-    sold: 25,
-  },
-  {
-    name: 'Sports Shoes',
-    image: '/products/placeholder.svg',
-    price: '$290.00',
-    sold: 12,
-  },
-];
+interface ProductItem {
+  name: string;
+  image: string;
+  price: number;
+  sold: number;
+}
 
-export function BestSellingProducts() {
+export function BestSellingProducts({ data }: { data?: ProductItem[] }) {
+  const products = data || [];
+
   return (
     <Card>
       <CardHeader>
@@ -79,26 +37,34 @@ export function BestSellingProducts() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {products.map((product, index) => (
-              <TableRow key={index}>
-                <TableCell className="pl-4">
-                  <div className="flex items-center gap-3">
-                    <div className="bg-muted size-10 overflow-hidden rounded-md">
-                      <Image
-                        src={product.image}
-                        alt={product.name}
-                        width={40}
-                        height={40}
-                        className="size-full object-cover"
-                      />
-                    </div>
-                    <span className="font-medium">{product.name}</span>
-                  </div>
+            {products.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={3} className="text-muted-foreground py-8 text-center">
+                  No sales data yet
                 </TableCell>
-                <TableCell>{product.price}</TableCell>
-                <TableCell>{product.sold}</TableCell>
               </TableRow>
-            ))}
+            ) : (
+              products.map((product, index) => (
+                <TableRow key={index}>
+                  <TableCell className="pl-4">
+                    <div className="flex items-center gap-3">
+                      <div className="bg-muted size-10 overflow-hidden rounded-md">
+                        <Image
+                          src={product.image ?? '/products/placeholder.svg'}
+                          alt={product.name}
+                          width={40}
+                          height={40}
+                          className="size-full object-cover"
+                        />
+                      </div>
+                      <span className="font-medium">{product.name}</span>
+                    </div>
+                  </TableCell>
+                  <TableCell>${product.price.toFixed(2)}</TableCell>
+                  <TableCell>{product.sold}</TableCell>
+                </TableRow>
+              ))
+            )}
           </TableBody>
         </Table>
       </CardContent>

@@ -5,18 +5,26 @@ import { Star } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 
-const ratings = [
-  { stars: 5, count: 4000 },
-  { stars: 4, count: 2100 },
-  { stars: 3, count: 800 },
-  { stars: 2, count: 631 },
-  { stars: 1, count: 344 },
-];
+interface RatingItem {
+  stars: number;
+  count: number;
+}
 
-const totalReviews = ratings.reduce((acc, r) => acc + r.count, 0);
-const averageRating = ratings.reduce((acc, r) => acc + r.stars * r.count, 0) / totalReviews;
+export function CustomerReviews({ data }: { data?: RatingItem[] }) {
+  const ratings = data || [
+    { stars: 5, count: 0 },
+    { stars: 4, count: 0 },
+    { stars: 3, count: 0 },
+    { stars: 2, count: 0 },
+    { stars: 1, count: 0 },
+  ];
 
-export function CustomerReviews() {
+  const totalReviews = ratings.reduce((acc, r) => acc + r.count, 0);
+  const averageRating = totalReviews
+    ? ratings.reduce((acc, r) => acc + r.stars * r.count, 0) / totalReviews
+    : 0;
+  const maxCount = Math.max(...ratings.map((r) => r.count), 1);
+
   return (
     <Card>
       <CardHeader>
@@ -46,7 +54,7 @@ export function CustomerReviews() {
               <span className="flex w-8 items-center gap-0.5">
                 {rating.stars} <Star className="size-3 fill-amber-400 text-amber-400" />
               </span>
-              <Progress value={(rating.count / ratings[0].count) * 100} className="h-2 flex-1" />
+              <Progress value={(rating.count / maxCount) * 100} className="h-2 flex-1" />
               <span className="text-muted-foreground w-12 text-right">
                 {rating.count.toLocaleString()}
               </span>
