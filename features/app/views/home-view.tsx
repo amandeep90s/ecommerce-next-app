@@ -1,5 +1,6 @@
 import { HomeCategories } from '@/features/app/components/categories';
 import { Hero } from '@/features/app/components/hero';
+import { NewArrivals } from '@/features/app/components/new-arrivals';
 import { Newsletter } from '@/features/app/components/newsletter';
 import { Testimonials } from '@/features/app/components/testimonials';
 
@@ -11,6 +12,7 @@ export function HomeView() {
     <>
       <Hero />
       <HomeCategories />
+      <NewArrivals />
       <PopularProducts />
       <BestDeals />
       <Testimonials />

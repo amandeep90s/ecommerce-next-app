@@ -31,21 +31,8 @@ export function Navbar() {
             <Link href="/about">About</Link>
           </NavigationMenuLink>
         </NavigationMenuItem>
-        <NavigationMenuItem>
-          <NavigationMenuTrigger>Collections</NavigationMenuTrigger>
-          <NavigationMenuContent>
-            <ul className="w-96">
-              <ListItem href="/trending" title="Trending">
-                Check out the trending products in our store.
-              </ListItem>
-              <ListItem href="/featured" title="Featured">
-                Discover our featured products and special offers.
-              </ListItem>
-            </ul>
-          </NavigationMenuContent>
-        </NavigationMenuItem>
         <NavigationMenuItem className="hidden md:flex">
-          <NavigationMenuTrigger>Shop</NavigationMenuTrigger>
+          <NavigationMenuTrigger>Collections</NavigationMenuTrigger>
           <NavigationMenuContent>
             {categoriesLoading ? (
               <div className="text-muted-foreground w-[400px] p-4 text-sm">Loading categories…</div>
@@ -65,6 +52,16 @@ export function Navbar() {
               </ul>
             )}
           </NavigationMenuContent>
+        </NavigationMenuItem>
+        <NavigationMenuItem>
+          <NavigationMenuLink asChild className={navigationMenuTriggerStyle()}>
+            <Link href="/trending">Trending</Link>
+          </NavigationMenuLink>
+        </NavigationMenuItem>
+        <NavigationMenuItem>
+          <NavigationMenuLink asChild className={navigationMenuTriggerStyle()}>
+            <Link href="/featured">Featured</Link>
+          </NavigationMenuLink>
         </NavigationMenuItem>
         <NavigationMenuItem>
           <NavigationMenuLink asChild className={navigationMenuTriggerStyle()}>

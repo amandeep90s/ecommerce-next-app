@@ -1,24 +1,17 @@
 'use client';
 
-import { ArrowRight, Flame, Search, ShoppingBag, TrendingUp } from 'lucide-react';
+import { ArrowRight, Flame, ShoppingBag, Sparkles } from 'lucide-react';
 import Image from 'next/image';
+import Link from 'next/link';
 import { useEffect, useState } from 'react';
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Carousel, CarouselContent, CarouselItem } from '@/components/ui/carousel';
-import { Input } from '@/components/ui/input';
 import { useGetFeaturedProducts } from '@/features/app/hooks/use-get-featured-products';
 
-const storeData = {
-  title: 'Discover Your Perfect Style',
-  subtitle:
-    'Explore our curated collection of premium products. Each piece is handpicked for those who appreciate quality and style.',
-};
-
 export function Hero() {
-  const [searchQuery, setSearchQuery] = useState('');
   const [api, setApi] = useState<{
     selectedScrollSnap: () => number;
     scrollTo: (index: number) => void;
@@ -27,7 +20,6 @@ export function Hero() {
   const { data, isPending } = useGetFeaturedProducts(4);
   const featuredProducts = data?.data ?? [];
 
-  // Auto-scroll functionality
   useEffect(() => {
     if (!api || featuredProducts.length === 0) return;
 
@@ -49,49 +41,39 @@ export function Hero() {
               variant="outline"
               className="flex h-auto w-fit items-center gap-2 rounded-full px-4 py-2 font-semibold"
             >
-              <TrendingUp className="size-4" />
-              New Collection 2025
+              <Sparkles className="size-4" />
+              New Arrivals Weekly
             </Badge>
 
             <h1 className="text-5xl leading-tight font-bold text-balance md:text-6xl lg:text-7xl">
-              {storeData.title}
+              Elevate Your Everyday Style
             </h1>
 
             <p className="text-muted-foreground max-w-lg text-xl text-balance">
-              {storeData.subtitle}
+              Premium fashion for men and women. From casual essentials to statement pieces — find
+              what makes you feel confident.
             </p>
 
-            <div className="relative max-w-md">
-              <Input
-                type="search"
-                placeholder="Search products..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="h-14 rounded-full pe-4 pl-12 text-lg"
-                aria-label="Search products"
-              />
-              <Search className="text-muted-foreground absolute start-4 top-1/2 size-5 -translate-y-1/2" />
-              <Button
-                size="lg"
-                className="absolute end-2 top-1/2 h-10 -translate-y-1/2 cursor-pointer rounded-full px-6"
-              >
-                Search
+            <div className="flex items-center gap-4">
+              <Button size="lg" className="h-12 cursor-pointer rounded-full px-6" asChild>
+                <Link href="/shop">
+                  <ShoppingBag className="mr-1" />
+                  Shop Now
+                  <ArrowRight className="ml-1" />
+                </Link>
               </Button>
             </div>
 
-            <div className="flex items-center gap-4">
-              <Button size="lg" className="h-10 cursor-pointer rounded-full px-4">
-                Shop Now
-                <ArrowRight />
-              </Button>
-              <Button
-                size="lg"
-                variant="outline"
-                className="h-10 cursor-pointer justify-center rounded-full px-4"
-              >
-                <ShoppingBag />
-                View Catalog
-              </Button>
+            {/* Trust Indicators */}
+            <div className="text-muted-foreground flex items-center gap-6 text-sm">
+              <span className="flex items-center gap-1.5">
+                <span className="size-2 rounded-full bg-green-500" />
+                Free Shipping over $75
+              </span>
+              <span className="flex items-center gap-1.5">
+                <span className="size-2 rounded-full bg-blue-500" />
+                Easy Returns
+              </span>
             </div>
           </header>
 
@@ -100,23 +82,16 @@ export function Hero() {
               <Carousel
                 className="group size-full"
                 setApi={setApi}
-                opts={{
-                  align: 'start',
-                  loop: true,
-                  duration: 20,
-                  skipSnaps: true,
-                }}
+                opts={{ align: 'start', loop: true, duration: 20, skipSnaps: true }}
                 onSelect={() => {
-                  if (api) {
-                    setCurrentSlide(api.selectedScrollSnap());
-                  }
+                  if (api) setCurrentSlide(api.selectedScrollSnap());
                 }}
               >
                 <CarouselContent className="h-full">
                   {isPending
                     ? Array.from({ length: 4 }).map((_, i) => (
                         <CarouselItem key={i} className="h-full">
-                          <Card className="relative size-full overflow-hidden border-1 py-4">
+                          <Card className="relative size-full overflow-hidden border py-4">
                             <CardContent className="px-4">
                               <div className="bg-muted h-[500px] w-full animate-pulse rounded-md" />
                             </CardContent>
@@ -125,55 +100,56 @@ export function Hero() {
                       ))
                     : featuredProducts.map((product) => (
                         <CarouselItem key={product.id} className="h-full">
-                          <Card className="relative size-full overflow-hidden border-1 py-4">
-                            <CardContent className="px-4">
-                              <div className="relative size-full overflow-hidden rounded-md">
-                                <Image
-                                  src={product.media[0]?.path ?? ''}
-                                  alt={product.name}
-                                  width={1200}
-                                  height={500}
-                                  className="h-[500px] w-full object-cover"
-                                  loading="lazy"
-                                />
-                              </div>
-                              <div className="from-background/90 via-background/30 absolute inset-0 bg-linear-to-t to-transparent" />
+                          <Link href={`/shop/${product.slug}`} className="block h-full">
+                            <Card className="relative size-full overflow-hidden border py-4">
+                              <CardContent className="px-4">
+                                <div className="relative size-full overflow-hidden rounded-md">
+                                  <Image
+                                    src={product.media[0]?.path ?? ''}
+                                    alt={product.name}
+                                    width={1200}
+                                    height={500}
+                                    className="h-[500px] w-full object-cover"
+                                  />
+                                </div>
+                                <div className="from-background/90 via-background/30 absolute inset-0 bg-linear-to-t to-transparent" />
 
-                              <div className="text-background-foreground absolute inset-0 flex flex-col justify-end p-8">
-                                <div className="relative z-10 flex max-w-md flex-col gap-4">
-                                  <Badge className="w-fit rounded-full px-2.5 py-0.5 font-semibold">
-                                    Featured
-                                  </Badge>
-                                  <h2 className="text-4xl font-bold">{product.name}</h2>
-                                  <p className="text-background-foreground/80 text-lg">
-                                    Discover the latest in style and comfort with our premium
-                                    collection.
-                                  </p>
-                                  <div className="flex items-center gap-4 pt-2">
-                                    <Button
-                                      size="lg"
-                                      className="h-10 cursor-pointer rounded-full px-8"
-                                    >
-                                      Shop Now
-                                    </Button>
+                                <div className="text-background-foreground absolute inset-0 flex flex-col justify-end p-8">
+                                  <div className="relative z-10 flex max-w-md flex-col gap-3">
+                                    <Badge className="w-fit rounded-full px-2.5 py-0.5 font-semibold">
+                                      {product.discount > 0
+                                        ? `${product.discount}% Off`
+                                        : 'Featured'}
+                                    </Badge>
+                                    <h2 className="text-3xl font-bold">{product.name}</h2>
+                                    <div className="flex items-center gap-3">
+                                      <span className="text-2xl font-bold">
+                                        ${product.selling_price.toFixed(2)}
+                                      </span>
+                                      {product.price > product.selling_price && (
+                                        <span className="text-lg line-through opacity-60">
+                                          ${product.price.toFixed(2)}
+                                        </span>
+                                      )}
+                                    </div>
                                   </div>
                                 </div>
-                              </div>
 
-                              {product.isTrending && (
-                                <div className="text-background-foreground bg-foreground/10 dark:bg-background/20 absolute end-8 top-8 flex items-center gap-1 rounded-full px-3 py-1 text-sm font-medium backdrop-blur-xs">
-                                  <Flame className="size-4" /> Trending
-                                </div>
-                              )}
-                            </CardContent>
-                          </Card>
+                                {product.isTrending && (
+                                  <div className="text-background-foreground bg-foreground/10 dark:bg-background/20 absolute top-8 right-8 flex items-center gap-1 rounded-full px-3 py-1 text-sm font-medium backdrop-blur-xs">
+                                    <Flame className="size-4" /> Trending
+                                  </div>
+                                )}
+                              </CardContent>
+                            </Card>
+                          </Link>
                         </CarouselItem>
                       ))}
                 </CarouselContent>
               </Carousel>
             </div>
 
-            {/* Dots Navigation - Enhanced */}
+            {/* Dots Navigation */}
             <div className="relative mt-8 flex justify-center gap-3">
               {featuredProducts.map((_, index) => (
                 <button
