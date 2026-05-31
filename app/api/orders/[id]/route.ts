@@ -18,7 +18,7 @@ export async function GET(_request: Request, { params }: RouteContext) {
 
     const { id } = await params;
 
-    const order = await Order.findOne({ _id: id, userId: auth.user.id }).lean();
+    const order = await Order.findOne({ _id: id, userId: auth.user.id });
 
     if (!order) {
       return errorResponse({

@@ -1,16 +1,16 @@
 'use client';
 
-import { ArrowLeft, CreditCard, Eye, EyeOff, Gift, Lock, Shield, Tag, Truck } from 'lucide-react';
+import { ArrowLeft, Gift, Loader2, Lock, Shield, Tag, Truck } from 'lucide-react';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+import { toast } from 'sonner';
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import {
   Select,
   SelectContent,
@@ -19,12 +19,20 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Separator } from '@/components/ui/separator';
+import { clearCart, selectCartItems, selectCartTotal } from '@/features/app/cartSlice';
+import { fetchWithAuth } from '@/lib/fetch-with-auth';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
 
 export function CheckoutView() {
+  const router = useRouter();
+  const dispatch = useAppDispatch();
+  const cartItems = useAppSelector(selectCartItems);
+  const cartTotal = useAppSelector(selectCartTotal);
+
   const [step, setStep] = useState(1);
-  const [showCvv, setShowCvv] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
-    // Personal Information
+    // Contact Information
     email: '',
     firstName: '',
     lastName: '',
@@ -32,80 +40,101 @@ export function CheckoutView() {
 
     // Shipping Address
     address: '',
+    address2: '',
     city: '',
     state: '',
     zipCode: '',
     country: 'US',
 
-    // Payment
-    cardNumber: '',
-    expiryDate: '',
-    cvv: '',
-    cardName: '',
-
     // Options
-    saveInfo: false,
-    sameAsBilling: true,
-    newsletter: false,
     promoCode: '',
+    note: '',
   });
 
-  const [orderSummary] = useState({
-    items: [
-      {
-        id: 1,
-        name: 'Premium Wireless Headphones',
-        variant: 'Midnight Black',
-        price: 299.99,
-        quantity: 1,
-        image:
-          'https://assets.shadcnstore.com/shadcnstore.com/stock/e-commerce/premium-wireless-headphones.600w.7d1414.avif',
-      },
-      {
-        id: 2,
-        name: 'Leather Laptop Sleeve',
-        variant: 'Brown, 13-inch',
-        price: 89.99,
-        quantity: 1,
-        image:
-          'https://assets.shadcnstore.com/shadcnstore.com/stock/e-commerce/leather-laptop-sleeve.800w.86ef12.avif',
-      },
-    ],
-    shipping: 15.99,
-    tax: 27.54,
-    discount: 0,
-    promoDiscount: 0,
-  });
-
-  const handleInputChange = (field: string, value: string | boolean) => {
+  const handleInputChange = (field: string, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
-  const handleCardNumberChange = (value: string) => {
-    // Format card number with spaces
-    const formatted = value
-      .replace(/\s/g, '')
-      .replace(/(.{4})/g, '$1 ')
-      .trim();
-    handleInputChange('cardNumber', formatted);
-  };
+  const subtotal = cartTotal;
+  const shipping = subtotal > 75 ? 0 : 15.99;
+  const total = subtotal + shipping;
 
-  const handleExpiryChange = (value: string) => {
-    // Format expiry as MM/YY
-    const formatted = value.replace(/\D/g, '').replace(/(\d{2})(\d)/, '$1/$2');
-    handleInputChange('expiryDate', formatted);
-  };
-
-  const subtotal = orderSummary.items.reduce((sum, item) => sum + item.price * item.quantity, 0);
-  const total =
-    subtotal +
-    orderSummary.shipping +
-    orderSummary.tax -
-    orderSummary.discount -
-    orderSummary.promoDiscount;
-
-  const nextStep = () => setStep((prev) => Math.min(prev + 1, 3));
+  const nextStep = () => setStep((prev) => Math.min(prev + 1, 2));
   const prevStep = () => setStep((prev) => Math.max(prev - 1, 1));
+
+  const handleCheckout = async () => {
+    if (cartItems.length === 0) {
+      toast.error('Your cart is empty');
+      return;
+    }
+
+    setIsLoading(true);
+
+    try {
+      const response = await fetchWithAuth('/api/checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          products: cartItems.map((item) => ({
+            productId: item.productId,
+            name: item.name,
+            price: item.price,
+            selling_price: item.selling_price,
+            image: item.image,
+            quantity: item.quantity,
+          })),
+          shippingAddress: {
+            name: `${formData.firstName} ${formData.lastName}`,
+            phone: formData.phone,
+            address_line1: formData.address,
+            address_line2: formData.address2,
+            city: formData.city,
+            state: formData.state,
+            postal_code: formData.zipCode,
+            country: formData.country,
+          },
+          customerSnapshot: {
+            name: `${formData.firstName} ${formData.lastName}`,
+            email: formData.email,
+          },
+          note: formData.note,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!data.success) {
+        toast.error(data.message || 'Failed to create checkout session');
+        return;
+      }
+
+      // Clear the cart after successful session creation
+      dispatch(clearCart());
+
+      // Redirect to Stripe Checkout
+      if (data.data?.url) {
+        window.location.href = data.data.url;
+      }
+    } catch {
+      toast.error('Something went wrong. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  if (cartItems.length === 0) {
+    return (
+      <div className="bg-muted/30">
+        <div className="mx-auto flex min-h-[60vh] w-full max-w-7xl flex-col items-center justify-center px-4 py-8 sm:px-6 lg:px-8">
+          <h1 className="mb-4 text-2xl font-bold">Your cart is empty</h1>
+          <p className="text-muted-foreground mb-6">Add some items to your cart to checkout.</p>
+          <Button onClick={() => router.push('/shop')} className="cursor-pointer">
+            Continue Shopping
+          </Button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="bg-muted/30">
@@ -119,7 +148,7 @@ export function CheckoutView() {
         {/* Progress Indicator */}
         <div className="mb-8 flex justify-center">
           <div className="flex items-center gap-4">
-            {[1, 2, 3].map((stepNumber) => (
+            {[1, 2].map((stepNumber) => (
               <div key={stepNumber} className="flex items-center">
                 <div
                   className={`flex size-10 items-center justify-center rounded-full text-sm font-medium transition-colors ${
@@ -130,7 +159,7 @@ export function CheckoutView() {
                 >
                   {stepNumber}
                 </div>
-                {stepNumber < 3 ? (
+                {stepNumber < 2 ? (
                   <div
                     className={`mx-4 h-1 w-16 rounded transition-colors ${
                       stepNumber < step ? 'bg-primary' : 'bg-muted'
@@ -148,24 +177,22 @@ export function CheckoutView() {
             <Card>
               <CardHeader>
                 <CardTitle className="text-balance">
-                  {step === 1 && 'Contact Information'}
-                  {step === 2 && 'Shipping Address'}
-                  {step === 3 && 'Payment Details'}
+                  {step === 1 && 'Contact & Shipping Information'}
+                  {step === 2 && 'Review & Pay'}
                 </CardTitle>
                 <CardDescription>
-                  {step === 1 && "We'll use this to send you order updates"}
-                  {step === 2 && 'Where should we deliver your order?'}
-                  {step === 3 && 'Your payment information is secure and encrypted'}
+                  {step === 1 && 'Enter your contact details and shipping address'}
+                  {step === 2 && 'Review your order and proceed to secure payment'}
                 </CardDescription>
               </CardHeader>
               <CardContent className="flex flex-col gap-6">
-                {/* Step 1: Contact Information */}
+                {/* Step 1: Contact & Shipping */}
                 {step === 1 ? (
                   <div className="flex flex-col gap-4">
                     <div className="flex flex-col gap-2">
-                      <Label htmlFor="email-kL9x23P">Email address</Label>
+                      <Label htmlFor="checkout-email">Email address</Label>
                       <Input
-                        id="email-kL9x23P"
+                        id="checkout-email"
                         type="email"
                         placeholder="john@example.com"
                         value={formData.email}
@@ -176,9 +203,9 @@ export function CheckoutView() {
 
                     <div className="grid gap-4 md:grid-cols-2">
                       <div className="flex flex-col gap-2">
-                        <Label htmlFor="firstName-mN7z84Q">First name</Label>
+                        <Label htmlFor="checkout-firstName">First name</Label>
                         <Input
-                          id="firstName-mN7z84Q"
+                          id="checkout-firstName"
                           placeholder="John"
                           value={formData.firstName}
                           onChange={(e) => handleInputChange('firstName', e.target.value)}
@@ -186,9 +213,9 @@ export function CheckoutView() {
                         />
                       </div>
                       <div className="flex flex-col gap-2">
-                        <Label htmlFor="lastName-pL8w45T">Last name</Label>
+                        <Label htmlFor="checkout-lastName">Last name</Label>
                         <Input
-                          id="lastName-pL8w45T"
+                          id="checkout-lastName"
                           placeholder="Doe"
                           value={formData.lastName}
                           onChange={(e) => handleInputChange('lastName', e.target.value)}
@@ -198,9 +225,9 @@ export function CheckoutView() {
                     </div>
 
                     <div className="flex flex-col gap-2">
-                      <Label htmlFor="phone-rM6n82S">Phone number (optional)</Label>
+                      <Label htmlFor="checkout-phone">Phone number</Label>
                       <Input
-                        id="phone-rM6n82S"
+                        id="checkout-phone"
                         type="tel"
                         placeholder="+1 (555) 123-4567"
                         value={formData.phone}
@@ -208,16 +235,13 @@ export function CheckoutView() {
                         className="h-9"
                       />
                     </div>
-                  </div>
-                ) : null}
 
-                {/* Step 2: Shipping Address */}
-                {step === 2 ? (
-                  <div className="flex flex-col gap-4">
+                    <Separator />
+
                     <div className="flex flex-col gap-2">
-                      <Label htmlFor="address-qP4z17X">Street address</Label>
+                      <Label htmlFor="checkout-address">Street address</Label>
                       <Input
-                        id="address-qP4z17X"
+                        id="checkout-address"
                         placeholder="123 Main Street"
                         value={formData.address}
                         onChange={(e) => handleInputChange('address', e.target.value)}
@@ -225,11 +249,22 @@ export function CheckoutView() {
                       />
                     </div>
 
+                    <div className="flex flex-col gap-2">
+                      <Label htmlFor="checkout-address2">Apartment, suite, etc. (optional)</Label>
+                      <Input
+                        id="checkout-address2"
+                        placeholder="Apt 4B"
+                        value={formData.address2}
+                        onChange={(e) => handleInputChange('address2', e.target.value)}
+                        className="h-9"
+                      />
+                    </div>
+
                     <div className="grid gap-4 md:grid-cols-2">
                       <div className="flex flex-col gap-2">
-                        <Label htmlFor="city-sT5y91B">City</Label>
+                        <Label htmlFor="checkout-city">City</Label>
                         <Input
-                          id="city-sT5y91B"
+                          id="checkout-city"
                           placeholder="New York"
                           value={formData.city}
                           onChange={(e) => handleInputChange('city', e.target.value)}
@@ -237,9 +272,9 @@ export function CheckoutView() {
                         />
                       </div>
                       <div className="flex flex-col gap-2">
-                        <Label htmlFor="state-wX3k85M">State</Label>
+                        <Label htmlFor="checkout-state">State</Label>
                         <Input
-                          id="state-wX3k85M"
+                          id="checkout-state"
                           placeholder="NY"
                           value={formData.state}
                           onChange={(e) => handleInputChange('state', e.target.value)}
@@ -250,9 +285,9 @@ export function CheckoutView() {
 
                     <div className="grid gap-4 md:grid-cols-2">
                       <div className="flex flex-col gap-2">
-                        <Label htmlFor="zipCode-vZ9q46N">ZIP code</Label>
+                        <Label htmlFor="checkout-zipCode">ZIP code</Label>
                         <Input
-                          id="zipCode-vZ9q46N"
+                          id="checkout-zipCode"
                           placeholder="10001"
                           value={formData.zipCode}
                           onChange={(e) => handleInputChange('zipCode', e.target.value)}
@@ -260,12 +295,12 @@ export function CheckoutView() {
                         />
                       </div>
                       <div className="flex flex-col gap-2">
-                        <Label htmlFor="country-bH7l52P">Country</Label>
+                        <Label htmlFor="checkout-country">Country</Label>
                         <Select
                           value={formData.country}
                           onValueChange={(value) => handleInputChange('country', value)}
                         >
-                          <SelectTrigger id="country-bH7l52P" className="mt-2 h-9! w-full py-3">
+                          <SelectTrigger id="checkout-country" className="mt-2 h-9! w-full py-3">
                             <SelectValue />
                           </SelectTrigger>
                           <SelectContent position="popper">
@@ -273,110 +308,54 @@ export function CheckoutView() {
                             <SelectItem value="CA">Canada</SelectItem>
                             <SelectItem value="UK">United Kingdom</SelectItem>
                             <SelectItem value="AU">Australia</SelectItem>
+                            <SelectItem value="IN">India</SelectItem>
                           </SelectContent>
                         </Select>
                       </div>
                     </div>
+
+                    <div className="flex flex-col gap-2">
+                      <Label htmlFor="checkout-note">Order note (optional)</Label>
+                      <Input
+                        id="checkout-note"
+                        placeholder="Any special instructions..."
+                        value={formData.note}
+                        onChange={(e) => handleInputChange('note', e.target.value)}
+                        className="h-9"
+                      />
+                    </div>
                   </div>
                 ) : null}
 
-                {/* Step 3: Payment */}
-                {step === 3 ? (
+                {/* Step 2: Review & Pay */}
+                {step === 2 ? (
                   <div className="flex flex-col gap-6">
-                    {/* Payment Method */}
-                    <div className="flex flex-col gap-4">
-                      <Label className="text-sm font-medium">Payment method</Label>
-                      <RadioGroup defaultValue="card" className="flex flex-col gap-3">
-                        <div className="flex items-center gap-3 rounded-lg border p-4">
-                          <RadioGroupItem value="card" id="card-payment-cN9m74K" />
-                          <CreditCard className="text-muted-foreground size-5" />
-                          <Label htmlFor="card-payment-cN9m74K" className="flex-1 cursor-pointer">
-                            Credit or debit card
-                          </Label>
-                        </div>
-                      </RadioGroup>
+                    {/* Shipping Details Summary */}
+                    <div className="rounded-lg border p-4">
+                      <h3 className="mb-2 text-sm font-medium">Shipping to:</h3>
+                      <p className="text-muted-foreground text-sm">
+                        {formData.firstName} {formData.lastName}
+                      </p>
+                      <p className="text-muted-foreground text-sm">{formData.address}</p>
+                      {formData.address2 && (
+                        <p className="text-muted-foreground text-sm">{formData.address2}</p>
+                      )}
+                      <p className="text-muted-foreground text-sm">
+                        {formData.city}, {formData.state} {formData.zipCode}
+                      </p>
+                      <p className="text-muted-foreground text-sm">{formData.email}</p>
                     </div>
 
-                    {/* Card Details */}
-                    <div className="flex flex-col gap-4">
-                      <div className="flex flex-col gap-2">
-                        <Label htmlFor="cardNumber-dK5p83L">Card number</Label>
-                        <Input
-                          id="cardNumber-dK5p83L"
-                          placeholder="1234 5678 9012 3456"
-                          value={formData.cardNumber}
-                          onChange={(e) => handleCardNumberChange(e.target.value)}
-                          maxLength={19}
-                          className="h-9"
-                        />
-                      </div>
-
-                      <div className="grid gap-4 md:grid-cols-3">
-                        <div className="flex flex-col gap-2">
-                          <Label htmlFor="expiryDate-fJ6r29M">Expiry</Label>
-                          <Input
-                            id="expiryDate-fJ6r29M"
-                            placeholder="MM/YY"
-                            value={formData.expiryDate}
-                            onChange={(e) => handleExpiryChange(e.target.value)}
-                            maxLength={5}
-                            className="h-9"
-                          />
-                        </div>
-                        <div className="flex flex-col gap-2">
-                          <Label htmlFor="cvv-gH8s34N">CVV</Label>
-                          <div className="relative">
-                            <Input
-                              id="cvv-gH8s34N"
-                              type={showCvv ? 'text' : 'password'}
-                              placeholder="123"
-                              value={formData.cvv}
-                              onChange={(e) => handleInputChange('cvv', e.target.value)}
-                              maxLength={4}
-                              className="h-9 pe-10"
-                            />
-                            <Button
-                              type="button"
-                              variant="ghost"
-                              size="icon"
-                              className="absolute inset-e-0 top-1/2 h-9 w-9 -translate-y-1/2 cursor-pointer hover:bg-transparent"
-                              onClick={() => setShowCvv(!showCvv)}
-                            >
-                              {showCvv ? (
-                                <EyeOff className="text-muted-foreground size-4" />
-                              ) : (
-                                <Eye className="text-muted-foreground size-4" />
-                              )}
-                            </Button>
-                          </div>
-                        </div>
-                        <div className="flex flex-col gap-2">
-                          <Label htmlFor="cardName-hI9t45O">Name on card</Label>
-                          <Input
-                            id="cardName-hI9t45O"
-                            placeholder="John Doe"
-                            value={formData.cardName}
-                            onChange={(e) => handleInputChange('cardName', e.target.value)}
-                            className="h-9"
-                          />
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Additional Options */}
-                    <div className="flex flex-col gap-4">
+                    {/* Payment Info */}
+                    <div className="rounded-lg border border-blue-200 bg-blue-50 p-4 dark:border-blue-900 dark:bg-blue-950/30">
                       <div className="flex items-center gap-2">
-                        <Checkbox
-                          id="saveInfo-jK0u56P"
-                          checked={formData.saveInfo}
-                          onCheckedChange={(checked) =>
-                            handleInputChange('saveInfo', checked as boolean)
-                          }
-                        />
-                        <Label htmlFor="saveInfo-jK0u56P" className="text-sm">
-                          Save payment information for future purchases
-                        </Label>
+                        <Shield className="size-5 text-blue-600" />
+                        <p className="text-sm font-medium">Secure Payment via Stripe</p>
                       </div>
+                      <p className="text-muted-foreground mt-1 text-xs">
+                        You will be redirected to Stripe&apos;s secure checkout page to complete
+                        your payment. Your card details are never stored on our servers.
+                      </p>
                     </div>
                   </div>
                 ) : null}
@@ -394,14 +373,34 @@ export function CheckoutView() {
                     Back
                   </Button>
 
-                  {step < 3 ? (
-                    <Button onClick={nextStep} className="h-9 cursor-pointer px-4 py-2">
+                  {step < 2 ? (
+                    <Button
+                      onClick={nextStep}
+                      className="h-9 cursor-pointer px-4 py-2"
+                      disabled={
+                        !formData.email ||
+                        !formData.firstName ||
+                        !formData.lastName ||
+                        !formData.address ||
+                        !formData.city ||
+                        !formData.state ||
+                        !formData.zipCode
+                      }
+                    >
                       Continue
                     </Button>
                   ) : (
-                    <Button className="flex h-9 cursor-pointer items-center gap-2 px-4 py-2">
-                      <Lock className="size-4" />
-                      Complete Order
+                    <Button
+                      onClick={handleCheckout}
+                      disabled={isLoading}
+                      className="flex h-9 cursor-pointer items-center gap-2 px-4 py-2"
+                    >
+                      {isLoading ? (
+                        <Loader2 className="size-4 animate-spin" />
+                      ) : (
+                        <Lock className="size-4" />
+                      )}
+                      {isLoading ? 'Processing...' : 'Proceed to Payment'}
                     </Button>
                   )}
                 </div>
@@ -418,8 +417,8 @@ export function CheckoutView() {
               <CardContent className="flex flex-col gap-4">
                 {/* Items */}
                 <div className="flex flex-col gap-4">
-                  {orderSummary.items.map((item) => (
-                    <div key={item.id} className="flex gap-4">
+                  {cartItems.map((item) => (
+                    <div key={item.productId} className="flex gap-4">
                       <div className="relative">
                         <Image
                           src={item.image}
@@ -437,8 +436,8 @@ export function CheckoutView() {
                       </div>
                       <div className="min-w-0 flex-1">
                         <h4 className="truncate text-sm font-medium">{item.name}</h4>
-                        <p className="text-muted-foreground text-xs">{item.variant}</p>
-                        <p className="mt-1 text-sm font-medium">${item.price}</p>
+                        <p className="text-muted-foreground text-xs">Qty: {item.quantity}</p>
+                        <p className="mt-1 text-sm font-medium">${item.selling_price.toFixed(2)}</p>
                       </div>
                     </div>
                   ))}
@@ -448,12 +447,12 @@ export function CheckoutView() {
 
                 {/* Promo Code */}
                 <div className="flex flex-col gap-2">
-                  <Label htmlFor="promoCode-kL1m67Q" className="text-sm">
+                  <Label htmlFor="checkout-promoCode" className="text-sm">
                     Promo code
                   </Label>
                   <div className="flex gap-2">
                     <Input
-                      id="promoCode-kL1m67Q"
+                      id="checkout-promoCode"
                       placeholder="Enter code"
                       value={formData.promoCode}
                       className="h-9"
@@ -478,19 +477,15 @@ export function CheckoutView() {
                       <Truck className="size-3" />
                       Shipping
                     </span>
-                    <span>${orderSummary.shipping.toFixed(2)}</span>
+                    <span>{shipping === 0 ? 'Free' : `$${shipping.toFixed(2)}`}</span>
                   </div>
-                  <div className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">Tax</span>
-                    <span>${orderSummary.tax.toFixed(2)}</span>
-                  </div>
-                  {orderSummary.promoDiscount > 0 ? (
+                  {formData.promoCode ? (
                     <div className="flex justify-between text-sm text-green-600">
                       <span className="flex items-center gap-1">
                         <Tag className="size-3" />
                         Promo discount
                       </span>
-                      <span>-${orderSummary.promoDiscount.toFixed(2)}</span>
+                      <span>-$0.00</span>
                     </div>
                   ) : null}
                 </div>

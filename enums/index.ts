@@ -16,3 +16,23 @@ export enum EProductVariantSize {
   XL = 'XL',
   XXL = 'XXL',
 }
+
+export enum EOrderStatus {
+  PENDING = 'pending',
+  PROCESSING = 'processing',
+  SHIPPED = 'shipped',
+  DELIVERED = 'delivered',
+  CANCELLED = 'cancelled',
+}
+
+export enum EPaymentMethod {
+  STRIPE = 'stripe',
+  COD = 'cod',
+}
+
+export enum EPaymentStatus {
+  PENDING = 'pending',
+  PAID = 'paid',
+  FAILED = 'failed',
+  REFUNDED = 'refunded',
+}

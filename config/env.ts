@@ -18,3 +18,8 @@ export const EMAIL_PORT = Number(process.env.EMAIL_PORT) || 587;
 export const CLOUDINARY_CLOUD_NAME = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
 export const CLOUDINARY_API_KEY = process.env.NEXT_PUBLIC_CLOUDINARY_API_KEY;
 export const CLOUDINARY_API_SECRET = process.env.CLOUDINARY_API_SECRET;
+
+// Stripe configuration
+export const STRIPE_PUBLISHABLE_KEY = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY as string;
+export const STRIPE_SECRET_KEY = process.env.STRIPE_SECRET_KEY as string;
+export const STRIPE_WEBHOOK_SECRET = process.env.STRIPE_WEBHOOK_SECRET as string;

@@ -20,7 +20,7 @@ export async function GET(_request: Request, { params }: RouteContext) {
     await connectToDatabase();
 
     const { id } = await params;
-    const order = await Order.findById(id).lean();
+    const order = await Order.findById(id);
 
     if (!order) {
       return errorResponse({ message: 'Order not found', statusCode: StatusCodes.NOT_FOUND });
@@ -54,7 +54,7 @@ export async function PATCH(request: Request, { params }: RouteContext) {
       });
     }
 
-    const order = await Order.findByIdAndUpdate(id, { status }, { new: true }).lean();
+    const order = await Order.findByIdAndUpdate(id, { status }, { new: true });
 
     if (!order) {
       return errorResponse({ message: 'Order not found', statusCode: StatusCodes.NOT_FOUND });

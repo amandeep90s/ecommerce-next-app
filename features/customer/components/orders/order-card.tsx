@@ -1,13 +1,13 @@
 'use client';
 
-import { CalendarIcon, PackageIcon } from 'lucide-react';
+import { CalendarIcon, CreditCardIcon, PackageIcon } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
-import type { IOrder, OrderStatus } from '@/types';
+import type { IOrder, OrderStatus, PaymentStatus } from '@/types';
 
 const STATUS_STYLES: Record<OrderStatus, string> = {
   pending: 'bg-yellow-100 text-yellow-800 border-yellow-200',
@@ -15,6 +15,13 @@ const STATUS_STYLES: Record<OrderStatus, string> = {
   shipped: 'bg-purple-100 text-purple-800 border-purple-200',
   delivered: 'bg-green-100 text-green-800 border-green-200',
   cancelled: 'bg-red-100 text-red-800 border-red-200',
+};
+
+const PAYMENT_STATUS_STYLES: Record<PaymentStatus, string> = {
+  pending: 'bg-yellow-100 text-yellow-800 border-yellow-200',
+  paid: 'bg-green-100 text-green-800 border-green-200',
+  failed: 'bg-red-100 text-red-800 border-red-200',
+  refunded: 'bg-gray-100 text-gray-800 border-gray-200',
 };
 
 interface OrderCardProps {
@@ -44,7 +51,7 @@ export function OrderCard({ order }: OrderCardProps) {
 
       <Separator />
 
-      <CardContent className="pt-4 pb-3">
+      <CardContent>
         <div className="flex items-center gap-3">
           {firstProduct?.image ? (
             <div className="relative size-14 shrink-0 overflow-hidden rounded-md border">
@@ -80,12 +87,21 @@ export function OrderCard({ order }: OrderCardProps) {
         </div>
       </CardContent>
 
-      <Separator />
-
       <CardFooter className="flex items-center justify-between pt-3 pb-3">
-        <div className="text-muted-foreground flex items-center gap-1.5 text-xs">
-          <CalendarIcon className="size-3.5" />
-          <span>{new Date(order.orderedAt).toLocaleDateString()}</span>
+        <div className="flex items-center gap-3">
+          <div className="text-muted-foreground flex items-center gap-1.5 text-xs">
+            <CalendarIcon className="size-3.5" />
+            <span>{new Date(order.orderedAt).toLocaleDateString()}</span>
+          </div>
+          <div className="flex items-center gap-1.5 text-xs">
+            <CreditCardIcon className="text-muted-foreground size-3.5" />
+            <Badge
+              className={`border px-1.5 py-0 text-[10px] capitalize ${PAYMENT_STATUS_STYLES[order.paymentStatus]}`}
+              variant="outline"
+            >
+              {order.paymentStatus}
+            </Badge>
+          </div>
         </div>
         <Link
           href={`/orders/${order.id}`}

@@ -1,5 +1,8 @@
 import mongoose from 'mongoose';
 
+import { EOrderStatus, EPaymentMethod, EPaymentStatus } from '@/enums';
+import { IOrderDocument } from '@/types';
+
 const orderSchema = new mongoose.Schema(
   {
     userId: {
@@ -116,14 +119,32 @@ const orderSchema = new mongoose.Schema(
     },
     status: {
       type: String,
-      enum: ['pending', 'processing', 'shipped', 'delivered', 'cancelled'],
-      default: 'pending',
+      enum: Object.values(EOrderStatus),
+      default: EOrderStatus.PENDING,
     },
     orderedAt: {
       type: Date,
       default: Date.now,
     },
     note: {
+      type: String,
+      trim: true,
+    },
+    paymentMethod: {
+      type: String,
+      enum: Object.values(EPaymentMethod),
+      default: EPaymentMethod.STRIPE,
+    },
+    paymentStatus: {
+      type: String,
+      enum: Object.values(EPaymentStatus),
+      default: EPaymentStatus.PENDING,
+    },
+    stripeSessionId: {
+      type: String,
+      trim: true,
+    },
+    stripePaymentIntentId: {
       type: String,
       trim: true,
     },
@@ -142,6 +163,7 @@ const orderSchema = new mongoose.Schema(
   },
 );
 
-const Order = mongoose.models.Order || mongoose.model('Order', orderSchema, 'orders');
+const Order = (mongoose.models.Order ||
+  mongoose.model<IOrderDocument>('Order', orderSchema, 'orders')) as mongoose.Model<IOrderDocument>;
 
 export default Order;
