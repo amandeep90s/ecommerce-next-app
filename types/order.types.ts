@@ -41,6 +41,7 @@ export interface IOrderCustomerSnapshot {
 
 export interface IOrder {
   id: string;
+  orderNumber: string;
   userId: string;
   customerSnapshot?: IOrderCustomerSnapshot;
   couponCode?: string;
@@ -52,6 +53,7 @@ export interface IOrder {
   paymentStatus: PaymentStatus;
   stripeSessionId?: string;
   stripePaymentIntentId?: string;
+  stripeCouponId?: string;
   orderedAt: string;
   note?: string;
   createdAt: string;

@@ -103,7 +103,7 @@ export function AdminOrderDetailView({ id }: AdminOrderDetailViewProps) {
       <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-xl font-semibold">
-            Order <span className="font-mono">#{order.id.slice(-8).toUpperCase()}</span>
+            Order <span className="font-mono">{order.orderNumber}</span>
           </h1>
           <div className="text-muted-foreground mt-1 flex items-center gap-1.5 text-sm">
             <CalendarIcon className="size-3.5" />

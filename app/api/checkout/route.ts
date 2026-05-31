@@ -1,6 +1,13 @@
 import { StatusCodes } from 'http-status-codes';
 
 import { connectToDatabase } from '@/config/database';
+
+function generateOrderNumber(): string {
+  const ts = Date.now().toString(36).toUpperCase();
+  const rand = Math.random().toString(36).slice(2, 6).toUpperCase();
+  return `ORD-${ts}${rand}`;
+}
+
 import { APP_BASE_URL } from '@/config/env';
 import { stripe } from '@/config/stripe';
 import { EOrderStatus, EPaymentMethod, EPaymentStatus } from '@/enums';
@@ -68,6 +75,7 @@ export async function POST(request: Request) {
 
     // Create the order with pending payment status
     const order = await Order.create({
+      orderNumber: generateOrderNumber(),
       userId: auth.user.id,
       customerSnapshot,
       couponCode: validatedCouponCode,
@@ -122,16 +130,11 @@ export async function POST(request: Request) {
       customer_email: customerSnapshot?.email,
     });
 
-    // Delete the ephemeral Stripe coupon now that it is attached to the session.
-    // Fire-and-forget: a failure here is non-fatal — the session is already good.
-    if (stripeCouponId) {
-      stripe.coupons.del(stripeCouponId).catch(() => {
-        // Intentionally swallowed — coupon cleanup is best-effort.
-      });
-    }
-
-    // Save the Stripe session ID to the order
+    // Save the Stripe session ID and coupon ID to the order.
+    // The Stripe coupon is deleted from Stripe in the webhook after the session
+    // completes or expires — deleting it here would invalidate the session discount.
     order.stripeSessionId = session.id;
+    if (stripeCouponId) order.stripeCouponId = stripeCouponId;
     await order.save();
 
     return successResponse({

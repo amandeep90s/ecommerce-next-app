@@ -86,7 +86,7 @@ export function OrderDetailView({ id }: OrderDetailViewProps) {
         <div>
           <h1 className="text-xl font-semibold">
             Order&nbsp;
-            <span className="font-mono">#{String(order.id).slice(-8).toUpperCase()}</span>
+            <span className="font-mono">{order.orderNumber}</span>
           </h1>
           <div className="text-muted-foreground mt-1 flex items-center gap-1.5 text-sm">
             <CalendarIcon className="size-3.5" />
