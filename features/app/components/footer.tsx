@@ -17,6 +17,7 @@ export function Footer() {
             <Link href="/about">About</Link>
             <Link href="/shop">Shop</Link>
             <Link href="/contact">Contact</Link>
+            <Link href="/support">Support</Link>
             <Link href="/faqs">FAQs</Link>
           </nav>
 
@@ -73,9 +74,9 @@ export function Footer() {
             </Link>
             <Link
               className="text-muted-foreground hover:text-primary text-xs hover:underline"
-              href="/support"
+              href="/shipping-policy"
             >
-              Support
+              Shipping Policy
             </Link>
           </div>
         </div>
