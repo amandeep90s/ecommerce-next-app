@@ -50,8 +50,8 @@ export async function POST(request: Request) {
 
     const ticket = await SupportTicket.create({ ...parsed.data, ticketNumber });
 
-    // Fire-and-forget admin notification
-    createNotification({
+    // Non-fatal admin notification
+    await createNotification({
       type: 'new_support_ticket',
       title: 'New Support Ticket',
       message: `${ticket.ticketNumber} — ${parsed.data.subject}`,
