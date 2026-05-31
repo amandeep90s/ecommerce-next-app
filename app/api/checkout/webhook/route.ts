@@ -4,6 +4,7 @@ import { headers } from 'next/headers';
 import { connectToDatabase } from '@/config/database';
 import { STRIPE_WEBHOOK_SECRET } from '@/config/env';
 import { stripe } from '@/config/stripe';
+import { EOrderStatus, EPaymentStatus } from '@/enums';
 import { errorResponse, successResponse } from '@/lib/api-response';
 import Order from '@/models/order.model';
 
@@ -41,8 +42,8 @@ export async function POST(request: Request) {
 
         if (orderId) {
           await Order.findByIdAndUpdate(orderId, {
-            paymentStatus: 'paid',
-            status: 'processing',
+            paymentStatus: EPaymentStatus.PAID,
+            status: EOrderStatus.PROCESSING,
             stripePaymentIntentId: session.payment_intent as string,
           });
         }
@@ -55,8 +56,8 @@ export async function POST(request: Request) {
 
         if (orderId) {
           await Order.findByIdAndUpdate(orderId, {
-            paymentStatus: 'failed',
-            status: 'cancelled',
+            paymentStatus: EPaymentStatus.FAILED,
+            status: EOrderStatus.CANCELLED,
           });
         }
         break;
@@ -68,8 +69,8 @@ export async function POST(request: Request) {
         await Order.findOneAndUpdate(
           { stripePaymentIntentId: paymentIntent.id },
           {
-            paymentStatus: 'failed',
-            status: 'cancelled',
+            paymentStatus: EPaymentStatus.FAILED,
+            status: EOrderStatus.CANCELLED,
           },
         );
         break;

@@ -3,6 +3,7 @@ import { StatusCodes } from 'http-status-codes';
 import { connectToDatabase } from '@/config/database';
 import { APP_BASE_URL } from '@/config/env';
 import { stripe } from '@/config/stripe';
+import { EOrderStatus, EPaymentMethod, EPaymentStatus } from '@/enums';
 import { errorResponse, successResponse } from '@/lib/api-response';
 import { requireAuth } from '@/lib/require-auth';
 import Order from '@/models/order.model';
@@ -43,9 +44,9 @@ export async function POST(request: Request) {
       products,
       shippingAddress,
       totalAmount,
-      status: 'pending',
-      paymentMethod: 'stripe',
-      paymentStatus: 'pending',
+      status: EOrderStatus.PENDING,
+      paymentMethod: EPaymentMethod.STRIPE,
+      paymentStatus: EPaymentStatus.PENDING,
       note,
     });
 

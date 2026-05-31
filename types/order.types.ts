@@ -1,3 +1,5 @@
+import mongoose from 'mongoose';
+
 export type OrderStatus = 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled';
 export type PaymentMethod = 'stripe' | 'cod';
 export type PaymentStatus = 'pending' | 'paid' | 'failed' | 'refunded';
@@ -111,3 +113,5 @@ export interface ICreateCheckoutSessionResponse {
     url: string;
   } | null;
 }
+
+export interface IOrderDocument extends IOrder, mongoose.Document {}
