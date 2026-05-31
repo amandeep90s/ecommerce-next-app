@@ -26,7 +26,7 @@ export async function POST(request: NextRequest) {
 
     const decodeToken = await jwtVerify(token, secret);
 
-    const userId = decodeToken.payload.userId;
+    const userId = decodeToken.payload.userId as string | undefined;
 
     if (!isValidObjectId(userId)) {
       return errorResponse({

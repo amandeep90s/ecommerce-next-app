@@ -7,9 +7,11 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { CategoryForm } from '@/features/admin/components/category/category-form';
 import { useGetCategoryById } from '@/features/admin/hooks/use-get-category-by-id';
 import { useUpdateCategory } from '@/features/admin/hooks/use-update-category';
-import { type UpdateCategoryFormData } from '@/features/admin/validator';
+import {
+  type CreateCategoryFormData,
+  type UpdateCategoryFormData,
+} from '@/features/admin/validator';
 import { handleFormError } from '@/lib/form-error';
-
 interface CategoryEditViewProps {
   id: string;
 }
@@ -20,8 +22,8 @@ export function CategoryEditView({ id }: CategoryEditViewProps) {
 
   const category = data?.data;
 
-  function onSubmit(formData: UpdateCategoryFormData, form: UseFormReturn<UpdateCategoryFormData>) {
-    updateCategory(formData, {
+  function onSubmit(formData: CreateCategoryFormData, form: UseFormReturn<CreateCategoryFormData>) {
+    updateCategory(formData as UpdateCategoryFormData, {
       onSuccess: (res) => {
         toast.success(res.message);
       },
