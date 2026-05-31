@@ -35,8 +35,8 @@ export async function POST(request: Request) {
 
     const contact = await Contact.create(parsed.data);
 
-    // Fire-and-forget admin notification
-    createNotification({
+    // Non-fatal admin notification
+    await createNotification({
       type: 'new_contact',
       title: 'New Contact Submission',
       message: `${parsed.data.firstName} ${parsed.data.lastName} — ${parsed.data.subject}`,
