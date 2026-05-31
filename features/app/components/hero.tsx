@@ -57,19 +57,9 @@ export function Hero() {
             <div className="flex items-center gap-4">
               <Button size="lg" className="h-12 cursor-pointer rounded-full px-6" asChild>
                 <Link href="/shop">
+                  <ShoppingBag className="mr-1" />
                   Shop Now
                   <ArrowRight className="ml-1" />
-                </Link>
-              </Button>
-              <Button
-                size="lg"
-                variant="outline"
-                className="h-12 cursor-pointer rounded-full px-6"
-                asChild
-              >
-                <Link href="/collections">
-                  <ShoppingBag className="mr-1" />
-                  Collections
                 </Link>
               </Button>
             </div>

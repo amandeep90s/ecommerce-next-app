@@ -52,7 +52,7 @@ async function seedUsers(): Promise<void> {
 }
 
 // ─── Seed Categories ────────────────────────────────────────
-async function seedCategories(): Promise<void> {
+async function seedCategories(mediaIds: mongoose.Types.ObjectId[]): Promise<void> {
   if (shouldFresh) {
     await Category.deleteMany({});
     console.log('  ✓ Cleared categories collection');
@@ -65,7 +65,7 @@ async function seedCategories(): Promise<void> {
       console.log(`  · Skipped category: ${data.name} (already exists)`);
       continue;
     }
-    await Category.create(data);
+    await Category.create({ ...data, image: getRandomItems(mediaIds)[0] });
     console.log(`  ✓ Created category: ${data.name}`);
     inserted++;
   }
@@ -606,8 +606,14 @@ async function main(): Promise<void> {
     console.log('👤 Seeding admin & base users...');
     await seedUsers();
 
+    console.log('\n🖼️  Fetching media...');
+    const mediaIds = await Media.find({ deletedAt: null }).then((media) =>
+      media.map((m) => m._id as mongoose.Types.ObjectId),
+    );
+    console.log(`  ✓ Fetched ${mediaIds.length} media records`);
+
     console.log('\n📦 Seeding categories...');
-    await seedCategories();
+    await seedCategories(mediaIds);
 
     console.log('\n👥 Seeding customers...');
     const customerIds = await seedCustomers();
@@ -617,12 +623,6 @@ async function main(): Promise<void> {
 
     console.log('\n�🎟️  Seeding coupons...');
     await seedCoupons();
-
-    console.log('\n🖼️  Fetching media...');
-    const mediaIds = await Media.find({ deletedAt: null }).then((media) =>
-      media.map((m) => m._id as mongoose.Types.ObjectId),
-    );
-    console.log(`  ✓ Fetched ${mediaIds.length} media records`);
 
     console.log('\n🛍️  Seeding products & variants...');
     const productIds = await seedProducts(mediaIds);

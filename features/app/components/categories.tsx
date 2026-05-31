@@ -32,7 +32,7 @@ export function HomeCategories() {
                 </Card>
               ))
             : categories.map((category) => (
-                <Link key={category.id} href={`/shop?category=${category.id}`}>
+                <Link key={category.id} href={`/collections/${category.slug}`}>
                   <Card className="group cursor-pointer overflow-hidden py-0 transition-all duration-500 hover:shadow-lg">
                     <div className="relative aspect-5/4 overflow-hidden">
                       {category.image?.path ? (
