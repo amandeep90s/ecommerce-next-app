@@ -1,6 +1,14 @@
 'use client';
 
-import { ArrowLeftIcon, CalendarIcon, MapPinIcon, PackageIcon, TagIcon } from 'lucide-react';
+import {
+  ArrowLeftIcon,
+  CalendarIcon,
+  CreditCardIcon,
+  MapPinIcon,
+  PackageIcon,
+  TagIcon,
+  UserIcon,
+} from 'lucide-react';
 import Link from 'next/link';
 
 import { Badge } from '@/components/ui/badge';
@@ -9,7 +17,7 @@ import { Separator } from '@/components/ui/separator';
 import { Skeleton } from '@/components/ui/skeleton';
 import { OrderItems } from '@/features/customer/components/orders/order-items';
 import { useGetOrderById } from '@/features/customer/hooks/use-orders';
-import type { OrderStatus } from '@/types';
+import type { OrderStatus, PaymentStatus } from '@/types';
 
 const STATUS_STYLES: Record<OrderStatus, string> = {
   pending: 'bg-yellow-100 text-yellow-800 border-yellow-200',
@@ -17,6 +25,13 @@ const STATUS_STYLES: Record<OrderStatus, string> = {
   shipped: 'bg-purple-100 text-purple-800 border-purple-200',
   delivered: 'bg-green-100 text-green-800 border-green-200',
   cancelled: 'bg-red-100 text-red-800 border-red-200',
+};
+
+const PAYMENT_STATUS_STYLES: Record<PaymentStatus, string> = {
+  pending: 'bg-yellow-100 text-yellow-800 border-yellow-200',
+  paid: 'bg-green-100 text-green-800 border-green-200',
+  failed: 'bg-red-100 text-red-800 border-red-200',
+  refunded: 'bg-gray-100 text-gray-800 border-gray-200',
 };
 
 interface OrderDetailViewProps {
@@ -93,7 +108,7 @@ export function OrderDetailView({ id }: OrderDetailViewProps) {
           </CardTitle>
         </CardHeader>
         <Separator />
-        <CardContent className="pt-4">
+        <CardContent>
           <OrderItems products={order.products} />
         </CardContent>
       </Card>
@@ -104,7 +119,7 @@ export function OrderDetailView({ id }: OrderDetailViewProps) {
           <CardTitle className="text-base font-medium">Order Summary</CardTitle>
         </CardHeader>
         <Separator />
-        <CardContent className="space-y-2 pt-4 text-sm">
+        <CardContent className="space-y-2 text-sm">
           <div className="flex justify-between">
             <span className="text-muted-foreground">Subtotal</span>
             <span>${subtotal.toFixed(2)}</span>
@@ -129,6 +144,51 @@ export function OrderDetailView({ id }: OrderDetailViewProps) {
         </CardContent>
       </Card>
 
+      {/* Payment Details */}
+      <Card>
+        <CardHeader className="pb-3">
+          <CardTitle className="flex items-center gap-2 text-base font-medium">
+            <CreditCardIcon className="size-4" />
+            Payment Details
+          </CardTitle>
+        </CardHeader>
+        <Separator />
+        <CardContent className="space-y-2 text-sm">
+          <div className="flex justify-between">
+            <span className="text-muted-foreground">Payment Method</span>
+            <span className="capitalize">
+              {order.paymentMethod === 'cod' ? 'Cash on Delivery' : 'Stripe'}
+            </span>
+          </div>
+          <div className="flex justify-between">
+            <span className="text-muted-foreground">Payment Status</span>
+            <Badge
+              className={`border text-xs capitalize ${PAYMENT_STATUS_STYLES[order.paymentStatus]}`}
+              variant="outline"
+            >
+              {order.paymentStatus}
+            </Badge>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Customer Info */}
+      {order.customerSnapshot && (
+        <Card>
+          <CardHeader className="pb-3">
+            <CardTitle className="flex items-center gap-2 text-base font-medium">
+              <UserIcon className="size-4" />
+              Customer Info
+            </CardTitle>
+          </CardHeader>
+          <Separator />
+          <CardContent className="space-y-1 text-sm">
+            <p className="font-medium">{order.customerSnapshot.name}</p>
+            <p className="text-muted-foreground">{order.customerSnapshot.email}</p>
+          </CardContent>
+        </Card>
+      )}
+
       {/* Note */}
       {order.note && (
         <Card>
@@ -136,7 +196,7 @@ export function OrderDetailView({ id }: OrderDetailViewProps) {
             <CardTitle className="text-base font-medium">Order Note</CardTitle>
           </CardHeader>
           <Separator />
-          <CardContent className="pt-4">
+          <CardContent>
             <p className="text-muted-foreground text-sm">{order.note}</p>
           </CardContent>
         </Card>
@@ -152,7 +212,7 @@ export function OrderDetailView({ id }: OrderDetailViewProps) {
             </CardTitle>
           </CardHeader>
           <Separator />
-          <CardContent className="pt-4 text-sm">
+          <CardContent className="text-sm">
             <p className="font-medium">{order.shippingAddress.name}</p>
             <p className="text-muted-foreground">{order.shippingAddress.phone}</p>
             <p className="mt-1">
