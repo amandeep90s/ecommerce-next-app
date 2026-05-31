@@ -11,35 +11,38 @@ import {
   ChartTooltipContent,
 } from '@/components/ui/chart';
 
-const chartData = [
-  { month: 'Feb', rate: 32 },
-  { month: 'Mar', rate: 45 },
-  { month: 'Apr', rate: 38 },
-  { month: 'May', rate: 52 },
-  { month: 'Jun', rate: 48 },
-  { month: 'Jul', rate: 61 },
-  { month: 'Aug', rate: 55 },
-  { month: 'Oct', rate: 42 },
-  { month: 'Dec', rate: 58 },
-];
+interface OrdersTrendItem {
+  month: string;
+  total: number;
+  delivered: number;
+}
 
 const chartConfig = {
-  rate: {
-    label: 'Returning Rate',
+  total: {
+    label: 'Total Orders',
     color: 'var(--chart-3)',
+  },
+  delivered: {
+    label: 'Delivered',
+    color: 'var(--chart-4)',
   },
 } satisfies ChartConfig;
 
-export function ReturningRateChart() {
+export function ReturningRateChart({ data }: { data?: OrdersTrendItem[] }) {
+  const chartData = data || [];
+  const totalOrders = chartData.reduce((acc, d) => acc + d.total, 0);
+  const totalDelivered = chartData.reduce((acc, d) => acc + d.delivered, 0);
+  const deliveryRate = totalOrders ? ((totalDelivered / totalOrders) * 100).toFixed(1) : '0';
+
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Returning Rate</CardTitle>
+        <CardTitle>Orders Overview</CardTitle>
         <div className="flex items-center gap-2">
-          <span className="text-2xl font-bold">$42,379</span>
+          <span className="text-2xl font-bold">{totalOrders} orders</span>
           <span className="flex items-center gap-0.5 text-xs text-emerald-500">
             <TrendingUp className="size-3" />
-            +2.5%
+            {deliveryRate}% delivered
           </span>
         </div>
       </CardHeader>
@@ -50,7 +53,8 @@ export function ReturningRateChart() {
             <XAxis dataKey="month" tickLine={false} axisLine={false} tickMargin={8} />
             <YAxis tickLine={false} axisLine={false} tickMargin={8} />
             <ChartTooltip content={<ChartTooltipContent />} />
-            <Bar dataKey="rate" fill="var(--chart-3)" radius={[4, 4, 0, 0]} />
+            <Bar dataKey="total" fill="var(--chart-3)" radius={[4, 4, 0, 0]} />
+            <Bar dataKey="delivered" fill="var(--chart-4)" radius={[4, 4, 0, 0]} />
           </BarChart>
         </ChartContainer>
       </CardContent>

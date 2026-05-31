@@ -11,80 +11,34 @@ import {
   TableRow,
 } from '@/components/ui/table';
 
-const orders = [
-  {
-    id: '#1023',
-    customer: 'Theodore Bell',
-    product: 'Tire Doodad',
-    amount: '$300.00',
-    status: 'Processing',
-  },
-  {
-    id: '#2045',
-    customer: 'Amelia Grant',
-    product: 'Engine Kit',
-    amount: '$450.00',
-    status: 'Paid',
-  },
-  {
-    id: '#3067',
-    customer: 'Eleanor Ward',
-    product: 'Brake Pad',
-    amount: '$200.00',
-    status: 'Success',
-  },
-  {
-    id: '#4089',
-    customer: 'Henry Carter',
-    product: 'Fuel Pump',
-    amount: '$500.00',
-    status: 'Processing',
-  },
-  {
-    id: '#5102',
-    customer: 'Olivia Harris',
-    product: 'Steering Wheel',
-    amount: '$350.00',
-    status: 'Failed',
-  },
-  {
-    id: '#6123',
-    customer: 'James Robinson',
-    product: 'Air Filter',
-    amount: '$180.00',
-    status: 'Paid',
-  },
-  {
-    id: '#7145',
-    customer: 'Sophia Martinez',
-    product: 'Oil Filter',
-    amount: '$220.00',
-    status: 'Success',
-  },
-  {
-    id: '#8167',
-    customer: 'Liam Thompson',
-    product: 'Radiator Cap',
-    amount: '$290.00',
-    status: 'Processing',
-  },
-];
+interface OrderItem {
+  id: string;
+  customer: string;
+  product: string;
+  amount: number;
+  status: string;
+  paymentStatus: string;
+}
 
 function getStatusVariant(status: string) {
   switch (status) {
-    case 'Success':
-    case 'Paid':
+    case 'delivered':
+    case 'paid':
       return 'default' as const;
-    case 'Processing':
+    case 'processing':
+    case 'shipped':
       return 'secondary' as const;
-    case 'Failed':
+    case 'cancelled':
+    case 'failed':
       return 'destructive' as const;
     default:
       return 'outline' as const;
   }
 }
 
-export function RecentOrders() {
+export function RecentOrders({ data }: { data?: OrderItem[] }) {
+  const orders = data || [];
+
   return (
     <Card>
       <CardHeader>
@@ -102,17 +56,27 @@ export function RecentOrders() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {orders.map((order) => (
-              <TableRow key={order.id}>
-                <TableCell className="pl-4 font-medium">{order.id}</TableCell>
-                <TableCell>{order.customer}</TableCell>
-                <TableCell>{order.product}</TableCell>
-                <TableCell>{order.amount}</TableCell>
-                <TableCell>
-                  <Badge variant={getStatusVariant(order.status)}>{order.status}</Badge>
+            {orders.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={5} className="text-muted-foreground py-8 text-center">
+                  No orders yet
                 </TableCell>
               </TableRow>
-            ))}
+            ) : (
+              orders.map((order, index) => (
+                <TableRow key={`${order.id}-${index}`}>
+                  <TableCell className="pl-4 font-medium">{order.id}</TableCell>
+                  <TableCell>{order.customer}</TableCell>
+                  <TableCell>{order.product}</TableCell>
+                  <TableCell>${order.amount.toFixed(2)}</TableCell>
+                  <TableCell>
+                    <Badge variant={getStatusVariant(order.status)} className="capitalize">
+                      {order.status}
+                    </Badge>
+                  </TableCell>
+                </TableRow>
+              ))
+            )}
           </TableBody>
         </Table>
       </CardContent>

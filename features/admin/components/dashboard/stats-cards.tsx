@@ -4,38 +4,57 @@ import { DollarSign, ShoppingCart, TrendingDown, TrendingUp, Users } from 'lucid
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
-const stats = [
-  {
-    title: 'Monthly Recurring Revenue',
-    value: '$34.1K',
-    change: '+6.1%',
-    trend: 'up' as const,
-    icon: DollarSign,
-  },
-  {
-    title: 'Total Users',
-    value: '500.1K',
-    change: '+19.2%',
-    trend: 'up' as const,
-    icon: Users,
-  },
-  {
-    title: 'Total Orders',
-    value: '12,463',
-    change: '+8.5%',
-    trend: 'up' as const,
-    icon: ShoppingCart,
-  },
-  {
-    title: 'User Growth',
-    value: '11.3%',
-    change: '-1.2%',
-    trend: 'down' as const,
-    icon: TrendingUp,
-  },
-];
+interface StatData {
+  revenue: { value: number; change: string; trend: 'up' | 'down' };
+  users: { value: number; change: string; trend: 'up' | 'down' };
+  orders: { value: number; change: string; trend: 'up' | 'down' };
+  userGrowth: { value: string; change: string; trend: 'up' | 'down' };
+}
 
-export function StatsCards() {
+function formatValue(value: number, prefix = '') {
+  if (value >= 1000000) return `${prefix}${(value / 1000000).toFixed(1)}M`;
+  if (value >= 1000) return `${prefix}${(value / 1000).toFixed(1)}K`;
+  return `${prefix}${value}`;
+}
+
+export function StatsCards({ data }: { data?: StatData }) {
+  const stats = [
+    {
+      title: 'Monthly Revenue',
+      value: data ? formatValue(data.revenue.value, '$') : '$0',
+      change: data
+        ? `${parseFloat(data.revenue.change) >= 0 ? '+' : ''}${data.revenue.change}%`
+        : '0%',
+      trend: data?.revenue.trend || ('up' as const),
+      icon: DollarSign,
+    },
+    {
+      title: 'Total Users',
+      value: data ? formatValue(data.users.value) : '0',
+      change: data ? `${parseFloat(data.users.change) >= 0 ? '+' : ''}${data.users.change}%` : '0%',
+      trend: data?.users.trend || ('up' as const),
+      icon: Users,
+    },
+    {
+      title: 'Total Orders',
+      value: data ? data.orders.value.toLocaleString() : '0',
+      change: data
+        ? `${parseFloat(data.orders.change) >= 0 ? '+' : ''}${data.orders.change}%`
+        : '0%',
+      trend: data?.orders.trend || ('up' as const),
+      icon: ShoppingCart,
+    },
+    {
+      title: 'User Growth',
+      value: data ? `${data.userGrowth.value}%` : '0%',
+      change: data
+        ? `${parseFloat(data.userGrowth.change) >= 0 ? '+' : ''}${data.userGrowth.change}%`
+        : '0%',
+      trend: data?.userGrowth.trend || ('up' as const),
+      icon: TrendingUp,
+    },
+  ];
+
   return (
     <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
       {stats.map((stat) => {
