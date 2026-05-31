@@ -12,10 +12,12 @@ import { UserAvatar } from '@/components/user-avatar';
 import { selectCartItemCount } from '@/features/app/cartSlice';
 import { MobileMenu } from '@/features/app/components/mobile-menu';
 import { Navbar } from '@/features/app/components/navbar';
+import { ProductSearchDialog } from '@/features/app/components/product-search-dialog';
 import { useAppSelector } from '@/store/hooks';
 
 export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
   const { isAuthenticated } = useAppSelector((state) => state.auth);
   const cartCount = useAppSelector(selectCartItemCount);
 
@@ -30,7 +32,7 @@ export function Header() {
 
         {/* Icons and Buttons */}
         <div className="flex items-center gap-1">
-          <Button variant="ghost" size="icon-lg">
+          <Button variant="ghost" size="icon-lg" onClick={() => setSearchOpen(true)}>
             <SearchIcon className="h-5 w-5" />
           </Button>
 
@@ -76,6 +78,7 @@ export function Header() {
       </div>
 
       <MobileMenu open={mobileMenuOpen} onOpenChange={setMobileMenuOpen} />
+      <ProductSearchDialog open={searchOpen} onOpenChange={setSearchOpen} />
     </header>
   );
 }
