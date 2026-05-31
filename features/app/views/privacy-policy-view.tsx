@@ -63,7 +63,7 @@ export function PrivacyPolicyView() {
 
         <Accordion type="multiple" className="flex flex-col gap-4">
           {privacyItems.map((item) => (
-            <AccordionItem key={item.value} value={item.value} className="rounded-md !border">
+            <AccordionItem key={item.value} value={item.value} className="rounded-md border!">
               <AccordionTrigger className="cursor-pointer px-4 py-4">
                 {item.question}
               </AccordionTrigger>
