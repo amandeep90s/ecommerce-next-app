@@ -11,7 +11,8 @@
     "lint": "eslint",
     "lint:fix": "eslint . --fix",
     "format": "prettier --write .",
-    "format:check": "prettier --check ."
+    "format:check": "prettier --check .",
+    "stripe:webhook:listen": "stripe listen --forward-to localhost:3000/api/checkout/webhook"
   },
   "dependencies": {
     "@base-ui/react": "^1.5.0",

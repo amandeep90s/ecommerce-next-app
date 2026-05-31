@@ -12,7 +12,7 @@ export async function GET() {
   try {
     await connectToDatabase();
 
-    const orders = await Order.find({ userId: auth.user.id }).sort({ createdAt: -1 }).lean();
+    const orders = await Order.find({ userId: auth.user.id }).sort({ createdAt: -1 });
 
     return successResponse({
       message: 'Orders fetched successfully',
