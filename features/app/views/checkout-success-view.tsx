@@ -97,7 +97,7 @@ export function CheckoutSuccessView() {
               <div className="grid gap-4 sm:grid-cols-2">
                 <div>
                   <p className="text-muted-foreground text-sm">Order ID</p>
-                  <p className="font-mono text-sm font-medium">{order.id}</p>
+                  <p className="font-mono text-sm font-medium">{order.orderNumber}</p>
                 </div>
                 <div>
                   <p className="text-muted-foreground text-sm">Status</p>

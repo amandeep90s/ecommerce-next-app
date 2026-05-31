@@ -12,6 +12,7 @@ import { APP_BASE_URL } from '@/config/env';
 import { stripe } from '@/config/stripe';
 import { EOrderStatus, EPaymentMethod, EPaymentStatus } from '@/enums';
 import { errorResponse, successResponse } from '@/lib/api-response';
+import { createNotification } from '@/lib/create-notification';
 import { requireAuth } from '@/lib/require-auth';
 import Coupon from '@/models/coupon.model';
 import Order from '@/models/order.model';
@@ -136,6 +137,14 @@ export async function POST(request: Request) {
     order.stripeSessionId = session.id;
     if (stripeCouponId) order.stripeCouponId = stripeCouponId;
     await order.save();
+
+    // Fire-and-forget admin notification
+    createNotification({
+      type: 'new_order',
+      title: 'New Order Placed',
+      message: `Order ${order.orderNumber} — $${totalAmount.toFixed(2)}`,
+      referenceId: order._id.toString(),
+    });
 
     return successResponse({
       message: 'Checkout session created successfully',

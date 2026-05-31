@@ -4,6 +4,7 @@ import { z } from 'zod';
 import { connectToDatabase } from '@/config/database';
 import { ERole } from '@/enums';
 import { errorResponse, successResponse } from '@/lib/api-response';
+import { createNotification } from '@/lib/create-notification';
 import { requireAuth } from '@/lib/require-auth';
 import SupportTicket from '@/models/support-ticket.model';
 
@@ -48,6 +49,14 @@ export async function POST(request: Request) {
     const ticketNumber = generateTicketId();
 
     const ticket = await SupportTicket.create({ ...parsed.data, ticketNumber });
+
+    // Fire-and-forget admin notification
+    createNotification({
+      type: 'new_support_ticket',
+      title: 'New Support Ticket',
+      message: `${ticket.ticketNumber} — ${parsed.data.subject}`,
+      referenceId: ticket._id.toString(),
+    });
 
     return successResponse({
       message: `Your support ticket has been submitted. Your ticket number is ${ticket.ticketNumber}. We will get back to you soon.`,

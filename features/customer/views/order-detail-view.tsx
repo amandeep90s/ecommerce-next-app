@@ -103,7 +103,7 @@ export function OrderDetailView({ id }: OrderDetailViewProps) {
 
       {/* Order Items */}
       <Card>
-        <CardHeader className="pb-3">
+        <CardHeader>
           <CardTitle className="flex items-center gap-2 text-base font-medium">
             <PackageIcon className="size-4" />
             Items
@@ -117,7 +117,7 @@ export function OrderDetailView({ id }: OrderDetailViewProps) {
 
       {/* Summary */}
       <Card>
-        <CardHeader className="pb-3">
+        <CardHeader>
           <CardTitle className="text-base font-medium">Order Summary</CardTitle>
         </CardHeader>
         <Separator />
@@ -148,7 +148,7 @@ export function OrderDetailView({ id }: OrderDetailViewProps) {
 
       {/* Payment Details */}
       <Card>
-        <CardHeader className="pb-3">
+        <CardHeader>
           <CardTitle className="flex items-center gap-2 text-base font-medium">
             <CreditCardIcon className="size-4" />
             Payment Details
@@ -177,7 +177,7 @@ export function OrderDetailView({ id }: OrderDetailViewProps) {
       {/* Customer Info */}
       {order.customerSnapshot && (
         <Card>
-          <CardHeader className="pb-3">
+          <CardHeader>
             <CardTitle className="flex items-center gap-2 text-base font-medium">
               <UserIcon className="size-4" />
               Customer Info
@@ -194,7 +194,7 @@ export function OrderDetailView({ id }: OrderDetailViewProps) {
       {/* Note */}
       {order.note && (
         <Card>
-          <CardHeader className="pb-3">
+          <CardHeader>
             <CardTitle className="text-base font-medium">Order Note</CardTitle>
           </CardHeader>
           <Separator />
@@ -207,7 +207,7 @@ export function OrderDetailView({ id }: OrderDetailViewProps) {
       {/* Shipping Address */}
       {order.shippingAddress && (
         <Card>
-          <CardHeader className="pb-3">
+          <CardHeader>
             <CardTitle className="flex items-center gap-2 text-base font-medium">
               <MapPinIcon className="size-4" />
               Shipping Address

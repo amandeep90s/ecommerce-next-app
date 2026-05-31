@@ -4,6 +4,7 @@ import { z } from 'zod';
 import { connectToDatabase } from '@/config/database';
 import { ERole } from '@/enums';
 import { errorResponse, successResponse } from '@/lib/api-response';
+import { createNotification } from '@/lib/create-notification';
 import { requireAuth } from '@/lib/require-auth';
 import Contact from '@/models/contact.model';
 
@@ -33,6 +34,14 @@ export async function POST(request: Request) {
     await connectToDatabase();
 
     const contact = await Contact.create(parsed.data);
+
+    // Fire-and-forget admin notification
+    createNotification({
+      type: 'new_contact',
+      title: 'New Contact Submission',
+      message: `${parsed.data.firstName} ${parsed.data.lastName} — ${parsed.data.subject}`,
+      referenceId: contact._id.toString(),
+    });
 
     return successResponse({
       message: 'Your message has been sent successfully. We will get back to you soon.',
