@@ -1,13 +1,13 @@
 import { useQuery } from '@tanstack/react-query';
 
 import { fetchWithAuth } from '@/lib/fetch-with-auth';
-import type { IOrder } from '@/types';
+import type { IGetCustomerOrderByIdResponse, IGetCustomerOrdersResponse } from '@/types';
 
 export const ORDERS_QUERY_KEY = ['customer', 'orders'] as const;
 
 // ─── Fetch list ────────────────────────────────────────────────────────────
 
-async function getOrders(): Promise<{ data: IOrder[] }> {
+async function getOrders(): Promise<IGetCustomerOrdersResponse> {
   const response = await fetchWithAuth('/api/orders');
   const result = await response.json();
   if (!response.ok) throw new Error(result.message || 'Failed to fetch orders');
@@ -23,7 +23,7 @@ export function useGetOrders() {
 
 // ─── Fetch single ──────────────────────────────────────────────────────────
 
-async function getOrderById(id: string): Promise<{ data: IOrder }> {
+async function getOrderById(id: string): Promise<IGetCustomerOrderByIdResponse> {
   const response = await fetchWithAuth(`/api/orders/${id}`);
   const result = await response.json();
   if (!response.ok) throw new Error(result.message || 'Failed to fetch order');

@@ -18,6 +18,7 @@ import { Button, buttonVariants } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import {
+  cartItemKey,
   clearCart,
   removeFromCart,
   selectCartItemCount,
@@ -71,7 +72,7 @@ export function CartView() {
           ) : (
             <>
               {items.map((item) => (
-                <Card key={item.productId} className="gap-0 overflow-hidden py-0">
+                <Card key={cartItemKey(item)} className="gap-0 overflow-hidden py-0">
                   <div className="flex flex-col sm:flex-row">
                     <Link
                       href={`/shop/${item.slug}`}
@@ -94,6 +95,11 @@ export function CartView() {
                               {item.name}
                             </h3>
                           </Link>
+                          {(item.color || item.size) && (
+                            <p className="text-muted-foreground mt-0.5 text-sm">
+                              {[item.color, item.size].filter(Boolean).join(' / ')}
+                            </p>
+                          )}
                           {item.discount > 0 && (
                             <p className="text-muted-foreground mt-1 text-sm">
                               {item.discount}% off
@@ -104,7 +110,7 @@ export function CartView() {
                           variant="ghost"
                           size="icon"
                           className="text-muted-foreground hover:bg-destructive/10 hover:text-destructive size-8 cursor-pointer"
-                          onClick={() => dispatch(removeFromCart(item.productId))}
+                          onClick={() => dispatch(removeFromCart(cartItemKey(item)))}
                           aria-label={`Remove ${item.name} from cart`}
                         >
                           <Trash2 />
@@ -120,7 +126,7 @@ export function CartView() {
                             onClick={() =>
                               dispatch(
                                 updateQuantity({
-                                  productId: item.productId,
+                                  key: cartItemKey(item),
                                   quantity: item.quantity - 1,
                                 }),
                               )
@@ -139,7 +145,7 @@ export function CartView() {
                             onClick={() =>
                               dispatch(
                                 updateQuantity({
-                                  productId: item.productId,
+                                  key: cartItemKey(item),
                                   quantity: item.quantity + 1,
                                 }),
                               )

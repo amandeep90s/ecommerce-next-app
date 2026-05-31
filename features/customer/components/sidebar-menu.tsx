@@ -1,6 +1,6 @@
 'use client';
 
-import { HomeIcon, KeyIcon, MapPinIcon, ShoppingBagIcon, UserIcon } from 'lucide-react';
+import { HeartIcon, HomeIcon, KeyIcon, MapPinIcon, ShoppingBagIcon, UserIcon } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useMemo } from 'react';
@@ -37,6 +37,11 @@ export function CustomerSidebarMenu() {
         label: 'My Orders',
         href: '/orders',
         icon: <ShoppingBagIcon />,
+      },
+      {
+        label: 'My Wishlist',
+        href: '/wishlist',
+        icon: <HeartIcon />,
       },
       {
         label: 'My Addresses',

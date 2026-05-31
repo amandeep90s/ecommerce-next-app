@@ -87,7 +87,7 @@ export function AdminOrderDetailView({ id }: AdminOrderDetailViewProps) {
     (sum, item) => sum + item.selling_price * item.quantity,
     0,
   );
-  const discount = subtotal - order.totalAmount;
+  const discountAmount = Math.max(0, subtotal - order.totalAmount);
 
   return (
     <div className="flex flex-col gap-6">
@@ -177,13 +177,13 @@ export function AdminOrderDetailView({ id }: AdminOrderDetailViewProps) {
                 <span className="text-muted-foreground">Subtotal</span>
                 <span>${subtotal.toFixed(2)}</span>
               </div>
-              {order.couponCode && (
+              {order.couponCode && discountAmount > 0 && (
                 <div className="flex justify-between">
                   <span className="text-muted-foreground flex items-center gap-1">
                     <TagIcon className="size-3.5" />
                     Coupon ({order.couponCode})
                   </span>
-                  <span className="text-green-600">-${discount.toFixed(2)}</span>
+                  <span className="text-green-600">-${discountAmount.toFixed(2)}</span>
                 </div>
               )}
               <Separator />

@@ -4,13 +4,13 @@ import { StatusCodes } from 'http-status-codes';
 import type { AddressFormData } from '@/features/customer/validator';
 import { fetchWithAuth } from '@/lib/fetch-with-auth';
 import { ValidationError } from '@/lib/form-error';
-import type { IAddress } from '@/types';
+import type { IGetAddressesResponse, IGetAddressResponse } from '@/types';
 
 export const ADDRESS_QUERY_KEY = ['customer', 'addresses'] as const;
 
 // ─── Fetch ─────────────────────────────────────────────────────────────────
 
-async function getAddresses(): Promise<{ data: IAddress[] }> {
+async function getAddresses(): Promise<IGetAddressesResponse> {
   const response = await fetchWithAuth('/api/addresses');
   const result = await response.json();
   if (!response.ok) throw new Error(result.message || 'Failed to fetch addresses');
@@ -26,7 +26,7 @@ export function useGetAddresses() {
 
 // ─── Create ────────────────────────────────────────────────────────────────
 
-async function createAddress(data: AddressFormData): Promise<{ data: IAddress }> {
+async function createAddress(data: AddressFormData): Promise<IGetAddressResponse> {
   const response = await fetchWithAuth('/api/addresses', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -58,7 +58,7 @@ async function updateAddress({
 }: {
   id: string;
   data: AddressFormData;
-}): Promise<{ data: IAddress }> {
+}): Promise<IGetAddressResponse> {
   const response = await fetchWithAuth(`/api/addresses/${id}`, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
@@ -84,7 +84,7 @@ export function useUpdateAddress() {
 
 // ─── Set Default ───────────────────────────────────────────────────────────
 
-async function setDefaultAddress(id: string): Promise<{ data: IAddress }> {
+async function setDefaultAddress(id: string): Promise<IGetAddressResponse> {
   const response = await fetchWithAuth(`/api/addresses/${id}`, { method: 'PATCH' });
   const result = await response.json();
   if (!response.ok) throw new Error(result.message || 'Failed to set default address');
